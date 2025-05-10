@@ -1,0 +1,98 @@
+/* Container */
+.internship-list-container {
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Title */
+.internship-title {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #4a7706;
+  font-size: 36px;
+  font-weight: bold;
+}
+
+/* Search bar */
+.search-container {
+  text-align: center;
+  margin: 20px auto 40px;
+}
+
+.search-input {
+  width: 90%;
+  max-width: 400px;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: 2px solid #4a7706;
+  border-radius: 8px;
+  outline: none;
+  transition: 0.3s ease-in-out;
+}
+
+.search-input:focus {
+  border-color: #3a5e05;
+  box-shadow: 0 0 5px rgba(74, 119, 6, 0.4);
+}
+
+/* Table Styling */
+.internship-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.internship-table th,
+.internship-table td {
+  padding: 12px 20px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.internship-table th {
+  background-color: #4a7706;
+  color: white;
+  font-size: 18px;
+}
+
+.internship-table td {
+  font-size: 16px;
+}
+
+.internship-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Apply Button */
+.button {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  text-decoration: none;
+  color: white !important;
+  background-color: #4a7706 !important;
+  border: none;
+  border-radius: 8px;
+  text-align: center;
+  transition: background-color 0.3s ease, transform 0.2s ease, color 0.3s ease;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #3a5e05 !important;
+  color: #f5f5f5 !important;
+}
+
+.button:active {
+  transform: scale(0.95);
+}
+
+/* No Results */
+.no-results {
+  text-align: center;
+  margin-top: 30px;
+  color: #a00;
+  font-size: 18px;
+}

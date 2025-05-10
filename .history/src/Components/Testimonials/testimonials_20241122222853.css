@@ -1,0 +1,33 @@
+.testimonials {
+    padding: 2rem 0;
+  }
+  
+  .testimonial-item {
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 1rem;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    color:#333;
+  }
+  
+  .testimonial-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 10%;
+    margin-bottom: 1rem;
+  }
+  
+  .testimonial-role {
+    font-size: 0.9rem;
+    color: #555;
+    margin: 0;
+  }
+  
+  .testimonial-message {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: #333;
+  }
+  
