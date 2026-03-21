@@ -45,6 +45,24 @@
   border-radius: 2rem;
 }
 
+/* Show more / Show less toggle */
+.tl-toggle-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-top: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #1a5b31;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+}
+
+.tl-toggle-btn:hover {
+  text-decoration: underline;
+  color: #155228;
+}
+
 /* Button styles */
 /* .button base/hover is fully controlled by App.css (uses CSS variables + !important).
    Only add layout-specific overrides here that App.css doesn't set. */

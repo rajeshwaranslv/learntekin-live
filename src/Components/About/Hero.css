@@ -1,3 +1,9 @@
+/* Pull hero up to fill #main's navbar-offset padding — no gap */
+#hero {
+  margin-top: -110px;
+  padding-top: 110px;
+}
+
 #hero .hero-content {
   min-height: inherit;
   padding: clamp(1rem, 2.2vw, 2rem) 1rem;
@@ -32,6 +38,8 @@
 @media (max-width: 992px) {
   #hero {
     min-height: 68vh;
+    margin-top: -126px;
+    padding-top: 126px;
   }
 
   #hero .hero-content {
@@ -42,7 +50,7 @@
 @media (max-width: 576px) {
   #hero {
     min-height: 58vh;
-    border-radius: 0.72rem;
+    border-radius: 0 0 1.25rem 1.25rem;
   }
 
   #hero .hero-welcome-text {

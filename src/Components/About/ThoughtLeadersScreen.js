@@ -31,7 +31,7 @@ const ThoughtLeadersScreen = () => {
       description:
         "It stands for a balanced and secular approach to justice and rules that uplift society as a whole.",
       image:
-        " https://politicalmarketer.com/wp-content/uploads/2024/10/TVK_Offficial_Flag.webp", // Replace with an actual image URL
+        "https://upload.wikimedia.org/wikipedia/commons/f/fe/TVK_Official_Flag.jpg",
     },
     {
       title: "R&D Tech",
@@ -92,6 +92,14 @@ const ThoughtLeadersScreen = () => {
     },
   ];
 
+  const [expandedCards, setExpandedCards] = useState(new Set());
+  const toggleCard = (key) =>
+    setExpandedCards((prev) => {
+      const next = new Set(prev);
+      next.has(key) ? next.delete(key) : next.add(key);
+      return next;
+    });
+
   const [charities, setCharities] = useState([]);
   const [charityError, setCharityError] = useState("");
 
@@ -137,46 +145,70 @@ const ThoughtLeadersScreen = () => {
       <h1>Thought Leaders</h1>
 
       <div className="leaders-container">
-        {/* Render each leader */}
-        {leaders.map((leader, index) => (
-          <div className="leader-card" key={index}>
-            <h2>{leader.title}</h2>
-            <img
-              src={leader.image}
-              style={{ height: "10rem", width: "10rem", margin: "2rem", borderRadius: "2rem" }}
-              alt={leader.name}
-            />
-            <h3>{leader.name}</h3>
+        {leaders.map((leader, index) => {
+          const isExpanded = expandedCards.has(`leader-${index}`);
+          const LIMIT = 90;
+          const isLong = leader.description.length > LIMIT;
+          return (
+            <div className="leader-card" key={index}>
+              <h2>{leader.title}</h2>
+              <img
+                src={leader.image}
+                style={{
+                  height: "10rem",
+                  width: "10rem",
+                  margin: "1.5rem auto",
+                  borderRadius: "2rem",
+                  objectFit: "cover",
+                  display: "block",
+                }}
+                alt={leader.name}
+              />
+              <h3>{leader.name}</h3>
+              <p align="justify" style={{ fontWeight: "bolder" }}>
+                {isLong && !isExpanded
+                  ? leader.description.slice(0, LIMIT) + "…"
+                  : leader.description}
+              </p>
+              {isLong && (
+                <button className="tl-toggle-btn" onClick={() => toggleCard(`leader-${index}`)}>
+                  {isExpanded ? "Show less ▲" : "Show more ▼"}
+                </button>
+              )}
+            </div>
+          );
+        })}
 
-            <p align="justify" style={{ fontWeight: "bolder" }}>
-              {leader.description}
-            </p>
-          </div>
-        ))}
-
-        {/* Add Bharathiyaar Section */}
-        <div className="leader-card">
-          <h2>Motivational Leader</h2>
-
-          <img
-            src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimg.freepik.com%2Fvector-premium%2Fbharathiyar_764504-155.jpg%3Fw%3D360&f=1&nofb=1&ipt=aa554cd8df9b7bdd27aeef0ddc56ab8ff2172b362e1373fe734cce5e3f362c19&ipo=images" // Replace with an actual image URL
-            alt="Bharathiyaar"
-            className="leader-image"
-            style={{ height: "10rem", width: "10rem", margin: "2rem", borderRadius: "15rem" }}
-          />
-          <h3>Bharathiyaar</h3>
-          <p align="justify" style={{ fontWeight: "bolder" }}>
-            Bharathiyaar's poetic works inspire courage and patriotism,
-            especially his motivational quotes written in Tamil.
-          </p>
-          <ul>
-            {tamilQuotes.map((quote, idx) => (
-              <li align="justify" key={idx}>
-                {quote}
-              </li>
-            ))}
-          </ul>
-        </div>
+        {/* Bharathiyaar */}
+        {(() => {
+          const key = "bharathiyaar";
+          const isExpanded = expandedCards.has(key);
+          return (
+            <div className="leader-card">
+              <h2>Motivational Leader</h2>
+              <img
+                src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimg.freepik.com%2Fvector-premium%2Fbharathiyar_764504-155.jpg%3Fw%3D360&f=1&nofb=1&ipt=aa554cd8df9b7bdd27aeef0ddc56ab8ff2172b362e1373fe734cce5e3f362c19&ipo=images"
+                alt="Bharathiyaar"
+                style={{ height: "10rem", width: "10rem", margin: "1.5rem auto", borderRadius: "50%", objectFit: "cover", display: "block" }}
+              />
+              <h3>Bharathiyaar</h3>
+              <p align="justify" style={{ fontWeight: "bolder" }}>
+                Bharathiyaar's poetic works inspire courage and patriotism,
+                especially his motivational quotes written in Tamil.
+              </p>
+              {isExpanded && (
+                <ul>
+                  {tamilQuotes.map((quote, idx) => (
+                    <li align="justify" key={idx}>{quote}</li>
+                  ))}
+                </ul>
+              )}
+              <button className="tl-toggle-btn" onClick={() => toggleCard(key)}>
+                {isExpanded ? "Show less ▲" : "Show more ▼"}
+              </button>
+            </div>
+          );
+        })()}
       </div>
       <h1 className="m-4">All Tech Products & Services from:</h1>
       <div className="leaders-container">
