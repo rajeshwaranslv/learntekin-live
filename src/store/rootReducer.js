@@ -3,11 +3,13 @@ import { combineReducers } from 'redux';
 import authReducer from './authReducer';
 import faqReducer from './faqReducer';
 import certificateReducer from './certificateReducer';
+import notificationReducer from './notificationReducer';
 
 const rootReducer = combineReducers({
   auth: authReducer,
   faqs: faqReducer,
-  certificates: certificateReducer
+  certificates: certificateReducer,
+  notifications: notificationReducer,
   // Add more reducers if needed
 });
 

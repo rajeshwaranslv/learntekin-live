@@ -6,6 +6,7 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import { useAuth } from "../auth/authContext";
+import NotificationBell from "./NotificationBell";
 import "./Navbar.css";
 
 function AppNavbar() {
@@ -220,6 +221,8 @@ function AppNavbar() {
                 >
                   <span className="nav-link-label">FAQ</span>
                 </Nav.Link>
+
+                {currentUser && <NotificationBell />}
 
                 {currentUser ? (
                   <NavDropdown

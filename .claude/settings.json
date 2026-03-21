@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -r \"CHARITY\\\\|API_URL\\\\|localhost:5000\\\\|BASE_URL\" 'd:/Production/2025/MERN/Learn TEK In/ltin-admin/src' --include=*.js -l)",
+      "Bash(npm install:*)",
+      "Bash(node -e \":*)",
+      "Bash(curl -s http://localhost:5000/api/notifications)",
+      "Bash(curl -s http://localhost:5000/)",
+      "Bash(python -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(list\\(d.get\\(''''dependencies'''',{}\\).keys\\(\\)\\)\\)\")",
+      "Bash(node -e \"const p=require\\(''./package.json''\\); console.log\\(Object.keys\\(p.dependencies||{}\\).join\\(''\\\\n''\\)\\)\" --cwd \"d:/Production/2025/MERN/Learn TEK In/learntekin-live\")",
+      "Bash(node -e \"const p=require\\(''d:/Production/2025/MERN/Learn TEK In/learntekin-live/package.json''\\); console.log\\(Object.keys\\(p.dependencies||{}\\).join\\(''\\\\n''\\)\\)\")",
+      "Bash(node -e \"const p=require\\(''''d:/Production/2025/MERN/Learn TEK In/ltin-admin/node_modules/draft-js/package.json''''\\); console.log\\(''''immutable peer:'''', p.peerDependencies?.immutable || p.dependencies?.immutable\\)\")"
+    ]
+  }
+}

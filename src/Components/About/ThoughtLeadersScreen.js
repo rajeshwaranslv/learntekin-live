@@ -1,10 +1,21 @@
 ﻿import React, { useEffect, useState } from "react";
+import parse from "html-react-parser";
 import "./ThoughtLeadersScreen.css"; // Styling for the screen
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 const CHARITY_API_URL = `${API_BASE}/api/charities`;
 
 const ThoughtLeadersScreen = () => {
+  const renderRichText = (value) => {
+    const cleanValue = typeof value === "string" ? value.trim() : "";
+
+    if (!cleanValue) {
+      return null;
+    }
+
+    return parse(cleanValue);
+  };
+
   const leaders = [
     {
       title: "People and Business",
@@ -77,7 +88,7 @@ const ThoughtLeadersScreen = () => {
       benefits:
         "I wanted to reach out about a small but impactful project hashtag #collarthevoiceless we're working on - getting reflective collars for stray dogs to keep them safe at night.",
       image: "assets/img/charity.jpeg",
-      link: "https://wa.me/+919941918157",
+      whatsapp: "https://wa.me/919941918157",
     },
   ];
 
@@ -203,42 +214,66 @@ const ThoughtLeadersScreen = () => {
         ))}
       </div>
 
-      <h1 className="m-4">Charity Partner</h1>
-      <div className="leaders-container">
-        {/* Render each leader */}
-        {charityError && <p style={{ color: "#b42318" }}>{charityError}</p>}
-        {displayCharities.map((chars, index) => (
-          <div className="charity-card" key={index}>
-            <h2>{chars.name}</h2>
-            <img
-              src={chars.image || "assets/img/charity.jpeg"}
-              style={{ height: "10rem", width: "10rem", margin: "2rem", borderRadius: "3rem" }}
-              alt={chars.name}
-            />
-            <ul>
-              <li>
-                <h6 align="justify">{chars.description}</h6>
-              </li>
-              {chars.benefits && (
-                <li>
-                  <h6 align="justify">{chars.benefits}</h6>
-                </li>
-              )}
-            </ul>
+      <section className="cp-section">
+        <div className="cp-section-header">
+          <span className="cp-section-badge">Making a Difference</span>
+          <h2 className="cp-section-title">Charity Partners</h2>
+          <p className="cp-section-sub">
+            We proudly support changemakers creating real impact in their communities.
+          </p>
+        </div>
 
-            {chars.link && (
-              <a
-                href={chars.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="button"
-              >
-                CONTACT US
-              </a>
-            )}
-          </div>
-        ))}
-      </div>
+        {charityError && (
+          <p className="cp-error">{charityError}</p>
+        )}
+
+        <div className="cp-grid">
+          {displayCharities.map((chars, index) => (
+            <article className="cp-card" key={index}>
+              <div className="cp-card-accent" />
+
+              <div className="cp-card-inner">
+                <div className="cp-avatar-wrap">
+                  <img
+                    src={chars.image || "assets/img/charity.jpeg"}
+                    alt={chars.name}
+                    className="cp-avatar"
+                    onError={(e) => { e.target.src = "assets/img/charity.jpeg"; }}
+                  />
+                  <span className="cp-avatar-ring" />
+                </div>
+
+                <div className="cp-card-body">
+                  <div className="cp-card-meta">
+                    <span className="cp-badge">Charity Partner</span>
+                  </div>
+                  <h3 className="cp-name">{chars.name}</h3>
+
+                  <div className="cp-description">
+                    {renderRichText(chars.description)}
+                    {chars.benefits && (
+                      <p className="cp-benefits">{chars.benefits}</p>
+                    )}
+                  </div>
+
+                  <a
+                    href={chars.whatsapp || chars.link || "https://wa.me/919941918157"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="cp-cta gfg-btn"
+                  >
+                    <span>Connect</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                      <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
     </div>
   );
 };

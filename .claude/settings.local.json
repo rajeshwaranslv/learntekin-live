@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \":*)",
+      "Bash(node -e \"const p=require\\(''d:/Production/2025/MERN/Learn TEK In/ltin-admin/node_modules/immutable/package.json''\\); console.log\\(''immutable version:'', p.version\\)\")",
+      "Bash(npx vite:*)",
+      "Bash(netstat -ano)",
+      "Read(//d/Production/2025/MERN/Learn TEK In/learntekin-live/**)",
+      "Bash(xargs -I{} taskkill //PID {} //F)",
+      "Bash(grep -E \"\\\\.\\(js|jsx\\)$\")"
+    ]
+  }
+}
