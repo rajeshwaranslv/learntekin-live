@@ -7,7 +7,8 @@
       "Bash(netstat -ano)",
       "Read(//d/Production/2025/MERN/Learn TEK In/learntekin-live/**)",
       "Bash(xargs -I{} taskkill //PID {} //F)",
-      "Bash(grep -E \"\\\\.\\(js|jsx\\)$\")"
+      "Bash(grep -E \"\\\\.\\(js|jsx\\)$\")",
+      "Read(//d/Production/2025/MERN/Learn TEK In/**)"
     ]
   }
 }
