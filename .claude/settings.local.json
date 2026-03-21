@@ -18,7 +18,8 @@
       "Bash(grep -rn \"fetch\\\\|axios\" 'd:/Production/2025/MERN/Learn TEK In/ltin-admin/src' --include=*.js --include=*.jsx)",
       "Bash(grep -rn \"baseURL\\\\|API_BASE\\\\|api\\\\/\" 'd:/Production/2025/MERN/Learn TEK In/ltin-admin/src/components/actions' --include=*.js)",
       "Bash(grep -rn \"axiosInstance\\\\|axios.create\\\\|baseURL\" 'd:/Production/2025/MERN/Learn TEK In/ltin-admin/src' --include=*.js --include=*.jsx)",
-      "Bash(xargs grep:*)"
+      "Bash(xargs grep:*)",
+      "Bash(find d:/Production/repos/chatify-master/backend -name *.js -path */routes/*)"
     ]
   }
 }

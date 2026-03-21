@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { Icon } from "@iconify/react";
 import { Modal, Form, Input, Radio, Checkbox, Button, Card } from "antd";
 import 'antd/dist/reset.css';
-import { db } from "../../firebase";
 import './formStyles.css';
+
+const API_BASE = (import.meta.env.VITE_API_BASE_URL || "https://lte-node.onrender.com").trim().replace(/\/$/, "");
+const CAREER_URL = `${API_BASE}/api/careers`;
 
 const Careers = () => {
   const [submitting, setSubmitting] = useState(false);
@@ -30,7 +32,15 @@ const Careers = () => {
     };
 
     try {
-      await db.collection("careers").add(formData);
+      const res = await fetch(CAREER_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || "Failed to submit application.");
+      }
       Modal.success({
         title: "Success",
         content: "Your application has been successfully submitted! We will review it and get back to you soon.",
@@ -40,10 +50,10 @@ const Careers = () => {
         },
       });
     } catch (error) {
-      console.error("Error sending data to Firestore:", error);
+      console.error("Error submitting career form:", error);
       Modal.error({
         title: "Error",
-        content: `An error occurred: ${error.message}. Please check your connection and try again.`,
+        content: error.message || "An error occurred. Please check your connection and try again.",
         onOk: () => setSubmitting(false),
       });
     }
@@ -82,7 +92,7 @@ const Careers = () => {
                   },
                 ].map((box, index) => (
                   <div className="col-md-12" key={index}>
-                    <div className="info-box1">
+                    <div className="info-box mt-4">
                       <h3>{box.title}</h3>
                       <p align="justify">{box.content}</p>
                     </div>

@@ -25,19 +25,19 @@
   border-radius: 12px;
   padding: 22px;
   box-shadow: 0 8px 24px rgba(16, 24, 40, 0.06);
-  text-align: center;
+  text-align: left;
   margin-bottom: 20px;
-  min-height: 130px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 
 .info-box i, .icon-box i, .info-box .bi, .icon-box .bi {
   font-size: 30px;
   color: #118C4F;
   margin-bottom: 12px;
+  align-self: center;
 }
 
 .info-box h3, .icon-box h2, .info-box h4 {

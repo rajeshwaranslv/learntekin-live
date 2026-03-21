@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Modal, Card } from "antd";
-import { db } from "../../firebase";
 import 'antd/dist/reset.css';
 import './formStyles.css';
+
+const API_BASE = (import.meta.env.VITE_API_BASE_URL || "https://lte-node.onrender.com").trim().replace(/\/$/, "");
+const CONTACT_URL = `${API_BASE}/api/contacts`;
 
 const Contact = () => {
   const [submitting, setSubmitting] = useState(false);
@@ -25,7 +27,15 @@ const Contact = () => {
     };
 
     try {
-      await db.collection('contacts').add(payload);
+      const res = await fetch(CONTACT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || "Failed to send message.");
+      }
       Modal.success({
         title: 'Message sent',
         content: 'Your message has been sent. Thank you!',
@@ -38,7 +48,7 @@ const Contact = () => {
       console.error('Error saving contact:', err);
       Modal.error({
         title: 'Error',
-        content: 'An error occurred while sending your message. Please try again.',
+        content: err.message || 'An error occurred while sending your message. Please try again.',
         onOk: () => setSubmitting(false)
       });
     }
