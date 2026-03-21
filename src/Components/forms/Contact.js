@@ -52,34 +52,24 @@ const Contact = () => {
         </div>
         <div className="row" data-aos="fade-up" data-aos-delay="100">
           <div className="col-lg-6">
-            <div className="row left-card-grid">
-              <div className="col-md-12"></div>
-              <div className="col-md-6">
-                <div className="info-box mt-4">
-                  <i className="bx bx-envelope"></i>
-                  <h3>Email Us</h3>
-                  <p>
-                    <a href="mailto:learntekin@gmail.com">Email: learntekin@gmail.com</a>
-                  </p>
-                </div>
-              </div>
-              <div className="col-md-6">
-                <div className="info-box mt-4">
-                  <i className="bx bx-phone-call"></i>
-                  <h3>Call Us</h3>
-                  <p>
-                    <a href="tel:+916382422474">Phone: +91-638-242-2474</a>
-                  </p>
-                </div>
-              </div>
-              <div className="col-md-6 center-card">
-                <div className="info-box mt-4">
-                  <i className="bi bi-clock flex-shrink-0"></i>
-                  <h4>Open Hours:</h4>
-                  <p>Mon-Fri: 9AM - 5PM</p>
-                </div>
-              </div>
-              <div className="col-md-6"></div>
+            <div className="info-box mt-4">
+              <i className="bx bx-envelope"></i>
+              <h3>Email Us</h3>
+              <p>
+                <a href="mailto:learntekin@gmail.com">Email: learntekin@gmail.com</a>
+              </p>
+            </div>
+            <div className="info-box mt-4">
+              <i className="bx bx-phone-call"></i>
+              <h3>Call Us</h3>
+              <p>
+                <a href="tel:+916382422474">Phone: +91-638-242-2474</a>
+              </p>
+            </div>
+            <div className="info-box mt-4">
+              <i className="bi bi-clock flex-shrink-0"></i>
+              <h4>Open Hours:</h4>
+              <p>Mon-Fri: 9AM - 5PM</p>
             </div>
           </div>
 

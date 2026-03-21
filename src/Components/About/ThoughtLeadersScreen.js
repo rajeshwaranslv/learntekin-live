@@ -185,6 +185,8 @@ const ThoughtLeadersScreen = () => {
         {(() => {
           const key = "bharathiyaar";
           const isExpanded = expandedCards.has(key);
+          const fullDesc = "Bharathiyaar's poetic works inspire courage and patriotism, especially his motivational quotes written in Tamil.";
+          const LIMIT = 90;
           return (
             <div className="leader-card">
               <h2>Motivational Leader</h2>
@@ -195,8 +197,7 @@ const ThoughtLeadersScreen = () => {
               />
               <h3>Bharathiyaar</h3>
               <p align="justify" style={{ fontWeight: "bolder" }}>
-                Bharathiyaar's poetic works inspire courage and patriotism,
-                especially his motivational quotes written in Tamil.
+                {isExpanded ? fullDesc : fullDesc.slice(0, LIMIT) + "…"}
               </p>
               {isExpanded && (
                 <ul>
