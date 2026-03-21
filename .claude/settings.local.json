@@ -19,7 +19,9 @@
       "Bash(grep -rn \"baseURL\\\\|API_BASE\\\\|api\\\\/\" 'd:/Production/2025/MERN/Learn TEK In/ltin-admin/src/components/actions' --include=*.js)",
       "Bash(grep -rn \"axiosInstance\\\\|axios.create\\\\|baseURL\" 'd:/Production/2025/MERN/Learn TEK In/ltin-admin/src' --include=*.js --include=*.jsx)",
       "Bash(xargs grep:*)",
-      "Bash(find d:/Production/repos/chatify-master/backend -name *.js -path */routes/*)"
+      "Bash(find d:/Production/repos/chatify-master/backend -name *.js -path */routes/*)",
+      "Bash(grep -rn \"href.*linkedin\\\\|href.*instagram\\\\|href.*youtube\\\\|href.*twitter\\\\|href.*facebook\\\\|href.*whatsapp\" 'd:/Production/2025/MERN/Learn TEK In/learntekin-live' --include=*.js --include=*.jsx --include=*.html)",
+      "Bash(grep -rn \"social\\\\|linkedin\\\\|instagram\\\\|youtube\" 'd:/Production/2025/MERN/Learn TEK In/learntekin-live/src' --include=*.js --include=*.jsx)"
     ]
   }
 }
