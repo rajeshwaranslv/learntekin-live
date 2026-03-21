@@ -1,6 +1,6 @@
 {
- "short_name": "LTIN Admin",
- "name": "Learn TEK In - Admin",
+ "short_name": "LTIN",
+ "name": "Learn TEK In",
  "start_url": ".",
  "display": "standalone",
  "theme_color": "#ffffff",

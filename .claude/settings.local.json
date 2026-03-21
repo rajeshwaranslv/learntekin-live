@@ -8,7 +8,16 @@
       "Read(//d/Production/2025/MERN/Learn TEK In/learntekin-live/**)",
       "Bash(xargs -I{} taskkill //PID {} //F)",
       "Bash(grep -E \"\\\\.\\(js|jsx\\)$\")",
-      "Read(//d/Production/2025/MERN/Learn TEK In/**)"
+      "Read(//d/Production/2025/MERN/Learn TEK In/**)",
+      "Bash(\"d:/Production/2025/MERN/Learn TEK In/ltin-admin/.env\")",
+      "Bash(\"d:/Production/2025/MERN/Learn TEK In/learntekin-live/.env\")",
+      "Bash(grep -rn \"localhost\\\\|VITE_API\" 'd:/Production/2025/MERN/Learn TEK In/learntekin-live/src' --include=*.js --include=*.jsx)",
+      "Bash(grep -rn \"localhost\\\\|VITE_API\\\\|API_BASE\\\\|http://\" 'd:/Production/2025/MERN/Learn TEK In/ltin-admin/src' --include=*.js --include=*.jsx)",
+      "Bash(grep -rn \"http://\\\\|https://\\\\|baseURL\\\\|BASE_URL\\\\|localhost\" 'd:/Production/2025/MERN/Learn TEK In/ltin-admin/src' --include=*.js --include=*.jsx)",
+      "Bash(grep -rn \"\\\\/api\\\\/\\\\|axios\" 'd:/Production/2025/MERN/Learn TEK In/ltin-admin/src' --include=*.js --include=*.jsx)",
+      "Bash(grep -rn \"fetch\\\\|axios\" 'd:/Production/2025/MERN/Learn TEK In/ltin-admin/src' --include=*.js --include=*.jsx)",
+      "Bash(grep -rn \"baseURL\\\\|API_BASE\\\\|api\\\\/\" 'd:/Production/2025/MERN/Learn TEK In/ltin-admin/src/components/actions' --include=*.js)",
+      "Bash(grep -rn \"axiosInstance\\\\|axios.create\\\\|baseURL\" 'd:/Production/2025/MERN/Learn TEK In/ltin-admin/src' --include=*.js --include=*.jsx)"
     ]
   }
 }
