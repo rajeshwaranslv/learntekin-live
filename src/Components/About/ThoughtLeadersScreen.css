@@ -50,12 +50,14 @@
   background: none;
   border: none;
   padding: 0;
-  margin-top: 6px;
+  margin-top: auto;
+  padding-top: 10px;
   font-size: 0.78rem;
   font-weight: 600;
   color: #1a5b31;
   cursor: pointer;
   letter-spacing: 0.01em;
+  align-self: center;
 }
 
 .tl-toggle-btn:hover {

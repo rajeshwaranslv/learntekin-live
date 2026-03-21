@@ -32,6 +32,7 @@ const ThoughtLeadersScreen = () => {
         "It stands for a balanced and secular approach to justice and rules that uplift society as a whole.",
       image:
         "https://upload.wikimedia.org/wikipedia/commons/f/fe/TVK_Official_Flag.jpg",
+      imgStyle: { height: "7rem", width: "12rem", borderRadius: "0.75rem" },
     },
     {
       title: "R&D Tech",
@@ -161,6 +162,7 @@ const ThoughtLeadersScreen = () => {
                   borderRadius: "2rem",
                   objectFit: "cover",
                   display: "block",
+                  ...( leader.imgStyle || {} ),
                 }}
                 alt={leader.name}
               />
