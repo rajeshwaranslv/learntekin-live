@@ -2,7 +2,7 @@
 import parse from "html-react-parser";
 import "./ThoughtLeadersScreen.css"; // Styling for the screen
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://lte-node.onrender.com";
 const CHARITY_API_URL = `${API_BASE}/api/charities`;
 
 const ThoughtLeadersScreen = () => {

@@ -12,7 +12,7 @@ const EMPTY_FORM = {
   description: "",
 };
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://lte-node.onrender.com";
 const API_URL = `${API_BASE}/api/charities`;
 const MAX_IMAGE_SIZE = 2 * 1024 * 1024;
 
