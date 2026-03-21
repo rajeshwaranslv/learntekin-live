@@ -1,606 +1,324 @@
 import React, { Component } from "react";
-import { Icon } from "@iconify/react";
-import { Button, Form } from "react-bootstrap";
- 
+import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { verifyCertificate } from "../../Components/actions/verifyCertificate";
 import "./product.css";
+
+const learningTracks = [
+  {
+    type: "Fellowship",
+    title: "Website Development Fellowship",
+    duration: "1 week to 6 months",
+    description:
+      "Build production-grade web applications with full-stack practices, mentor reviews, and delivery milestones.",
+    points: [
+      "Mentor-guided project workflow",
+      "Milestone evaluations and feedback",
+      "Certification and profile support",
+      "Placement preparation assistance",
+    ],
+    roadmap: "https://roadmap.sh/full-stack",
+    joinLink: "https://forms.gle/MWZy2xVp6v3jHLoJ8",
+  },
+  {
+    type: "Fellowship",
+    title: "Android Development Fellowship",
+    duration: "1 week to 6 months",
+    description:
+      "Learn Android foundations to advanced app delivery, including architecture, APIs, and performance optimization.",
+    points: [
+      "Real implementation tasks",
+      "Project-based assessments",
+      "Mentor review checkpoints",
+      "Interview readiness modules",
+    ],
+    roadmap: "https://roadmap.sh/android",
+    joinLink: "https://forms.gle/MWZy2xVp6v3jHLoJ8",
+  },
+  {
+    type: "Fellowship",
+    title: "Data & Analytics Fellowship",
+    duration: "4 weeks to 6 months",
+    description:
+      "Master analytics through practical datasets, SQL workflows, reporting, and decision-support projects.",
+    points: [
+      "Dashboard and reporting practice",
+      "Business-case analysis",
+      "Mentored SQL and data skills",
+      "Completion + excellence certificates",
+    ],
+    roadmap: "https://roadmap.sh/data-analyst",
+    joinLink: "https://forms.gle/MWZy2xVp6v3jHLoJ8",
+  },
+  {
+    type: "Internship",
+    title: "Website Development Internship",
+    duration: "1 week to 6 months",
+    description:
+      "Work on delivery-oriented tasks with a product mindset and strengthen execution quality.",
+    points: [
+      "Project and internship certificates",
+      "Community and mentor support",
+      "Performance-based stipend pathways",
+      "Profile and interview guidance",
+    ],
+    joinLink: "https://forms.gle/KY7gWBv78dzy3MC48",
+  },
+  {
+    type: "Internship",
+    title: "Android Development Internship",
+    duration: "1 week to 6 months",
+    description:
+      "Build and improve Android modules with debugging practice and mentor-based delivery feedback.",
+    points: [
+      "Hands-on module development",
+      "Debugging and quality checks",
+      "Project + internship certification",
+      "Placement support tracks",
+    ],
+    joinLink: "https://forms.gle/KY7gWBv78dzy3MC48",
+  },
+];
+
+const solutions = [
+  {
+    title: "financeFrenzy",
+    description:
+      "A focused platform for financial planning, investment pathways, and goal-based wealth guidance.",
+    points: [
+      "Personalized planning support",
+      "Mutual funds, ETFs, stocks guidance",
+      "Retirement and wealth strategy",
+      "Consultation from experienced advisors",
+    ],
+    link: "https://financefrenzy-biz.web.app/",
+    cta: "Explore financeFrenzy",
+  },
+  {
+    title: "mummyDaddyCars",
+    description:
+      "Affordable and flexible car booking options for city rides, family travel, and long-distance trips.",
+    points: [
+      "Transparent pricing",
+      "Flexible rental options",
+      "Multiple vehicle categories",
+      "Simple booking with support",
+    ],
+    link: "https://mummydaddycars.learntekin.co.in/",
+    cta: "Book a Car Now",
+  },
+];
+
 class Products extends Component {
   state = {
     certificateId: "",
     verifyMessage: "",
     verifiedCertificate: null,
+    verifyStatus: "idle",
   };
 
   componentDidMount() {
     document.title = "Products";
   }
 
-  handleScrollToTop = () => {
-    window.scrollTo(0, 0);
+  handleCertificateIdChange = (event) => {
+    this.setState({ certificateId: event.target.value });
   };
 
-  handleCertificateIdChange = (e) => {
-    this.setState({ certificateId: e.target.value });
-  };
+  handleVerifyCertificate = async (event) => {
+    event.preventDefault();
 
-  handleVerifyCertificate = async () => {
-    const { certificateId } = this.state;
     const { verifyCertificate } = this.props;
+    const certificateId = this.state.certificateId.trim();
+
+    if (!certificateId) {
+      this.setState({
+        verifyStatus: "error",
+        verifyMessage: "Please enter a certificate ID.",
+        verifiedCertificate: null,
+      });
+      return;
+    }
+
+    this.setState({
+      verifyStatus: "loading",
+      verifyMessage: "",
+      verifiedCertificate: null,
+    });
 
     try {
       const certificate = await verifyCertificate(certificateId);
       this.setState({
-        verifyMessage: `Certificate Found: ${certificate.candidateName}`,
+        verifyStatus: "success",
+        verifyMessage: `Certificate found: ${certificate.candidateName}`,
         verifiedCertificate: certificate,
       });
-    } catch (e) {
+    } catch {
       this.setState({
-        verifyMessage: "Certificate not found",
+        verifyStatus: "error",
+        verifyMessage: "Certificate not found. Please verify the ID and try again.",
         verifiedCertificate: null,
       });
     }
   };
 
   render() {
-    const { certificateId, verifyMessage, verifiedCertificate } = this.state;
+    const { certificateId, verifyMessage, verifiedCertificate, verifyStatus } =
+      this.state;
+
     return (
-      <section id="pricing" class="pricing section-bg">
-        <div class="container-fluid" data-aos="fade-up">
-          <div class="section-title">
-            <h2 style={{ color: "black" }}>Products Bucket List</h2>
-            <p align="justify" style={{ fontSize: "22px", color: "black" }}>
-              Meeting the financial challenges of today’s consumers requires a
-              unique mix of experience and expertise. Backed by a wealth of
-              resources, Finance Frenzy is uniquely positioned to meet these
-              challenges. As an independent financial services company, Finance
-              Frenzy is able to bring together the best products and companies
-              to deliver unparalleled financial solutions to its clients. These
-              world-class products, concepts, and support companies gives
-              Finance Frenzy a competitive advantage in the marketplace.
+      <section id="pricing" className="products-page">
+        <div className="container-fluid products-shell">
+          <header className="products-hero">
+            <p className="products-kicker">PRODUCTS BUCKET LIST</p>
+            <h1>Programs, Verification, and Solutions</h1>
+            <p>
+              Explore fellowship and internship tracks, verify certificates, and
+              discover high-value solutions from the Learn TEK In ecosystem.
             </p>
-          </div>
-         
-       
-
-          <div class="row mt-4 ">
-            <div class="col-lg-12 col-md-12 align-item-center">
-              <div class="box" data-aos="fade-up" data-aos-delay="100">
-                <h1 align="justify" style={{ color: "black" }}>
-                  Finance Frenzy
-                </h1>
-                <h4></h4>
-                <p>
-                  <p align="justify" style={{ color: "black" }}>
-                    Learntekin's Finance Frenzy is an independent financial
-                    services company that provides a wide range of investment,
-                    retirement, and estate planning products through a network
-                    of independent affiliates. Our expert licensed professionals
-                    work with clients to conduct a thorough financial analysis,
-                    identify financial gaps, and recommend appropriate
-                    investment options to fill those gaps. In today's uncertain
-                    financial climate, Finance Frenzy is committed to helping
-                    clients preserve their capital while seeking long-term
-                    growth and appreciation. Our associates are highly educated
-                    and well-trained in the industry, and we have the experience
-                    and resources to create successful financial plans for
-                    clients facing any financial challenge. Some of the
-                    investment products we offer include mutual funds,
-                    exchange-traded funds (ETFs), stocks, bonds, and annuities.
-                    Our retirement planning products include individual
-                    retirement accounts (IRAs), 401(k)s, and other retirement
-                    savings options. We also offer estate planning services to
-                    help clients plan for the future of their assets and
-                    minimize tax liabilities.
-                  </p>
-                  <p align="justify" style={{ color: "black" }}>
-                    {" "}
-                    <b>
-                      At Finance Frenzy, we believe in a personalized approach
-                      to financial planning, and we work closely with clients to
-                      understand their unique financial goals and challenges.
-                      Our commitment to excellence and client satisfaction has
-                      made us a trusted provider of financial services, and we
-                      are dedicated to helping our clients achieve financial
-                      success.
-                    </b>
-                  </p>
-                </p>
-              </div>
+            <div className="products-hero-actions">
+              <Link to="/Contact" className="gfg-btn">
+                Talk to Team
+              </Link>
+              <Link to="/Blogs" className="gfg-btn gfg-btn-outline">
+                Explore Blogs
+              </Link>
             </div>
-          </div>
-          <h4 className="mt-4" align="justify" style={{ color: "black" }}>
-            {" "}
-            *Provided Through world class companies which have earned strong
-            ratings from the top rating agencies (A.M. Best, S&P Global Ratings,
-            Fitch Ratings) as well as accreditation from the Better Business
-            Bureau. You can feel confident that Finance Frenzy will be around to
-            deliver on our promise to you and your loved ones when you need it
-            most.
-          </h4>
-        </div>
-        <div class="container-fluid" data-aos="fade-up">
-          <div class="section-title">
-            <h2 style={{ color: "black", marginTop: "3rem" }}>
-              1. Fellowship Program
-            </h2>
-            <p align="justify" style={{ fontSize: "22px", color: "black" }}>
-              LearnTekin offers an enriching Fellowship Program designed to
-              empower individuals across diverse backgrounds in the fields of
-              web development, Android app development, data analytics,
-              networking, and business model solutions. Tailored for students,
-              working professionals, those re-entering the workforce after a
-              career gap, and non-IT students, this program provides a
-              comprehensive learning experience.
-            </p>
-            <p
-              align="justify"
-              style={{ marginTop: "3rem", fontSize: "22px", color: "black" }}
-            >
-              Participants will delve into the latest technologies and industry
-              best practices, gaining hands-on expertise through practical
-              projects and real-world scenarios. Whether you're a tech
-              enthusiast aiming to build a solid foundation or a professional
-              seeking to upskill, LearnTekin's Fellowship Program offers a
-              dynamic curriculum led by industry experts.
-            </p>
-            <p
-              align="justify"
-              style={{ marginTop: "3rem", fontSize: "22px", color: "black" }}
-            >
-              The program's inclusive approach ensures that individuals from
-              various backgrounds can seamlessly integrate into the tech
-              landscape. By fostering a collaborative and supportive learning
-              environment, LearnTekin aims to bridge the gap between aspiration
-              and achievement. Whether you're charting a new career path or
-              augmenting your existing skills, this Fellowship Program is your
-              gateway to success in the rapidly evolving tech industry.
-            </p>
-            <p
-              align="justify"
-              style={{
-                marginTop: "3rem",
-                fontWeight: "bolder",
-                fontSize: "22px",
-                color: "black",
-              }}
-            >
-              Join LearnTekin's Fellowship Program to unlock a world of
-              opportunities, enhance your skill set, and embark on a
-              transformative journey toward a rewarding and fulfilling career in
-              the digital realm.
-            </p>
-          </div>
-        </div>
+          </header>
 
-        <div className="container-fluid">
-          <div className="row">
-            {/* Website Development */}
-            <div class="col-md-6 mt-2">
-              <div
-                class="icon-box"
-                style={{ padding: "1rem" }}
-                data-aos="fade-up"
-                data-aos-delay="100"
-              >
-                <p align="justify" style={{ color: "white" }}>
-                  <h2 style={{ color: "white" }}>
-                    {" "}
-                    <i class="bi">
-                      <Icon icon="mdi:web" style={{ color: "white" }} />
-                    </i>{" "}
-                    Website Development{" "}
-                  </h2>{" "}
-                  <p align="justify">
-                    We provide top-notch website development services to our
-                    clients. Our team of experienced developers uses the latest
-                    technologies and frameworks to develop websites that are
-                    responsive, fast, and secure. We can build websites of all
-                    types, including e-commerce, corporate, and personal
-                    websites.
-                  </p>
-                  <p align="justify">
-                    {" "}
-                    <p>
-                      <a
-                        className="roadmap"
-                        href="https://roadmap.sh/full-stack"
-                        title="hello"
-                        target="_blank"
-                      >
-                        Click here for roadmap
-                      </a>
-                    </p>
-                    <strong>
-                      <p> 🚀Trained by Experienced Industrialist.</p>
-                    </strong>
-                    <strong>
-                      <p> 🚀Duration starts from 1 Week upto 6 months.</p>
-                    </strong>
-                    <strong>
-                      <p> 🚀Certificates and bonus based on performance.</p>
-                    </strong>
-                    <strong>
-                      <p> 🚀Support Systems: Community of Chat, Calls 24/7.</p>
-                    </strong>
-                    <strong>
-                      <p>
-                        {" "}
-                        🚀Placement Systems: Assistance till you placed, No
-                        guarantee.
-                      </p>
-                    </strong>
-                    <strong>
-                      <p> 🚀Price starts from Rs.99 - Rs. 9999/-</p>
-                    </strong>
-                    <strong>
-                      <p> 🚀Registration fee <strike>Rs.999/-</strike> Rs.499/- </p>
-                    </strong>
-                    <a
-                      href="https://forms.gle/MWZy2xVp6v3jHLoJ8"
-                      target="_blank"
-                      class="button"
-                    >
-                      Buy now
-                    </a>
-                  </p>
-                  <p>
-                    {" "}
-                    <span class="marquee-container">
-                      <span class="marquee">
-                        Don't miss the Scholarship Test!
+          <section className="products-section">
+            <div className="products-section-head">
+              <h2>Learning Tracks</h2>
+              <p>
+                Choose your learning journey based on role, duration, and career
+                outcome.
+              </p>
+            </div>
+            <div className="row g-4">
+              {learningTracks.map((track) => (
+                <div className="col-xl-4 col-lg-6" key={track.title}>
+                  <article className="products-track-card h-100">
+                    <div className="products-track-head">
+                      <span className={`products-tag ${track.type.toLowerCase()}`}>
+                        {track.type}
                       </span>
-                    </span>{" "}
-                  </p>
-                  <a
-                    target="_blank"
-                    className="roadmap"
-                   
-                    href="https://www.hackerrank.com/coding-challenge-learn-tek-in"
-                  >
-                    Click here!
-                  </a>
-                </p>
-              </div>
-            </div>
-            {/* Android Development */}
-            <div class="col-md-6 mt-2">
-              <div
-                class="icon-box"
-                data-aos="fade-up"
-                style={{ padding: "1rem" }}
-                data-aos-delay="100"
-              >
-                <p align="justify" style={{ color: "white" }}>
-                  <h2 style={{ color: "white" }}>
-                    {" "}
-                    <i class="bi">
-                      <Icon icon="material-symbols:android-sharp" />
-                    </i>{" "}
-                    Android Development
-                  </h2>{" "}
-                  <p>
-                    {" "}
-                    We provide top-notch website development services to our
-                    clients. Our team of experienced developers uses the latest
-                    technologies and frameworks to develop websites that are
-                    responsive, fast, and secure. We can build websites of all
-                    types, including e-commerce, corporate, and personal
-                    websites.
-                  </p>
-                  <p>
-                    {" "}
-                    <p>
+                      <small>{track.duration}</small>
+                    </div>
+                    <h3>{track.title}</h3>
+                    <p>{track.description}</p>
+                    <ul>
+                      {track.points.map((point) => (
+                        <li key={point}>{point}</li>
+                      ))}
+                    </ul>
+                    <div className="products-actions">
                       <a
-                        className="roadmap"
-                        href="https://roadmap.sh/android"
-                        title="hello"
+                        href={track.joinLink}
                         target="_blank"
+                        rel="noopener noreferrer"
+                        className="gfg-btn"
                       >
-                        Click here for roadmap
+                        Apply Now
                       </a>
-                    </p>
-                    <strong>
-                      <p> 🚀Trained by Experienced Industrialist.</p>
-                    </strong>
-                    <strong>
-                      <p> 🚀Duration starts from 1 Week upto 6 months.</p>
-                    </strong>
-                    <strong>
-                      <p> 🚀Certificates and bonus based on performance.</p>
-                    </strong>
-                    <strong>
-                      <p> 🚀Support Systems: Community of Chat, Calls 24/7.</p>
-                    </strong>
-                    <strong>
-                      <p>
-                        {" "}
-                        🚀Placement Systems: Assistance till you placed, No
-                        guarantee.
-                      </p>
-                    </strong>
-                    <strong>
-                      <p> 🚀Price starts from Rs.99 - Rs. 27999/-</p>
-                    </strong>
-                    <strong>
-                      <p> 🚀Registration fee <strike>Rs.999/-</strike> Rs.499/- </p>
-                    </strong>
-                    <a
-                      href="https://forms.gle/MWZy2xVp6v3jHLoJ8"
-                      target="_blank"
-                      class="button"
-                    >
-                      Buy Now
-                    </a>
-                  </p>
-                  <p>
-                    {" "}
-                    <span class="marquee-container">
-                      <span class="marquee">
-                        Don't miss the Scholarship Test!
-                      </span>
-                    </span>{" "}
-                  </p>
-                  <a
-                    className="roadmap"
-                    target="_blank"
-                    href="https://www.hackerrank.com/coding-challenge-learn-tek-in"
-                  >
-                    Click here!
-                  </a>
-                </p>
-              </div>
+                      {track.roadmap ? (
+                        <a
+                          href={track.roadmap}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="products-link"
+                        >
+                          View Roadmap
+                        </a>
+                      ) : null}
+                    </div>
+                  </article>
+                </div>
+              ))}
             </div>
-          </div>
-        </div>
+          </section>
 
-        <div class="container-fluid" data-aos="fade-up">
-          <div class="section-title">
-            <h2 style={{ color: "black", marginTop: "3rem" }}>2. Internship</h2>
-            <p align="justify" style={{ fontSize: "22px", color: "black" }}>
-              🚀 Exciting Internship Opportunities Await at LearnTek! Ready to
-              take your skills to the next level? LearnTek invites passionate
-              individuals to explore our dynamic internship programs! From web
-              and Android app development to networking, business analysis, data
-              analytics, machine learning, deep learning, data science, and
-              blockchain dapps solutions, our programs offer hands-on experience
-              in cutting-edge fields.
-            </p>
-
-            <p
-              align="justify"
-              style={{
-                marginTop: "3rem",
-                fontWeight: "bolder",
-                fontSize: "22px",
-                color: "black",
-              }}
-            >
-              Join LearnTekin's Internship to unlock a world of opportunities,
-              enhance your skill set, and embark on a transformative journey
-              toward a rewarding and fulfilling career in the digital realm.
-            </p>
-          </div>
-        </div>
-
-        <div className="container-fluid ">
-          <div className="row ">
-            {/* Website Development */}
-            <div class=" col-md-6 mt-2">
-              <div
-                class="icon-box"
-                style={{ padding: "1rem" }}
-                data-aos="fade-up"
-                data-aos-delay="100"
-              >
-                <p align="justify" style={{ color: "white" }}>
-                  <h2 style={{ color: "white" }}>
-                    {" "}
-                    <i class="bi">
-                      <Icon icon="mdi:web" style={{ color: "white" }} />
-                    </i>{" "}
-                    Website Development{" "}
-                  </h2>
-                  <strong>
-                    <p>
-                      {" "}
-                      🌐 Elevate Your Web Development Skills with LearnTek! 🚀
-                    </p>
-                  </strong>
-
-                  <p>
-                    {" "}
-                    Exciting news for aspiring web developers! LearnTek is
-                    offering a unique web internship program to fuel your
-                    passion and enhance your expertise. Dive into hands-on
-                    projects, stay updated on the latest industry trends, and
-                    make meaningful contributions to real-world development
-                    scenarios. Ready to shape the digital future? Apply now and
-                    let's build something extraordinary together!
-                  </p>
-                  <strong>
-                      <p> 🚀Work with Experienced Industrialist & Team.</p>
-                    </strong>
-
-                  <strong>
-                    <p> 🚀Duration starts from 1 Week upto 6 months.</p>
-                  </strong>
-                  <strong>
-                    <p>
-                      {" "}
-                      🚀Certificates(Project Completion, Internship Completion,
-                      No Due).
-                    </p>
-                  </strong>
-                  <strong>
-                    <p> 🚀Support Systems: Community of Chat, Calls 24/7.</p>
-                  </strong>
-                  <strong>
-                    <p>
-                      {" "}
-                      🚀Placement Systems: Assistance till you placed, No
-                      guarantee.
-                    </p>
-                  </strong>
-                  <strong>
-                    <p> 🚀Stipend starts from Rs.999 - Rs. 2999/-</p>
-                  </strong>
-
-                  <strong>
-                    <p> 🚀Registration fee of <strike>Rs.99/-</strike> Rs.19/-</p>
-                  </strong>
-                  <a
-                    href="https://forms.gle/KY7gWBv78dzy3MC48"
-                    target="_blank"
-                    class="button"
-                  >
-                    Join Now
-                  </a>
-                </p>
-              </div>
+          <section className="products-section products-verify">
+            <div className="products-section-head products-section-head-center">
+              <h2>Certificate Verification</h2>
+              <p>
+                Enter your certificate ID to instantly validate completion and
+                learner details.
+              </p>
             </div>
 
-            {/* Android Development */}
-            <div class="col-md-6 mt-2">
-              <div
-                class="icon-box"
-                data-aos="fade-up"
-                style={{ padding: "1rem" }}
-                data-aos-delay="100"
-              >
-                <p align="justify" style={{ color: "white" }}>
-                  <h2 style={{ color: "white" }}>
-                    {" "}
-                    <i class="bi">
-                      <Icon icon="material-symbols:android-sharp" />
-                    </i>{" "}
-                    Android Development
-                  </h2>{" "}
-                  <strong>
-                    <p>
-                      {" "}
-                      📱 Ignite Your Android App Development Journey with
-                      LearnTek!
-                    </p>
-                  </strong>
-                  <p>
-                    Calling all budding app developers! LearnTek presents an
-                    exclusive Android app development internship program to
-                    elevate your skills. Immerse yourself in hands-on projects,
-                    stay abreast of industry innovations, and contribute to
-                    real-world app creation. Ready to transform your passion
-                    into expertise? Apply today and let's craft exceptional
-                    mobile experiences together!
-                  </p>
-                  <p>
-                  <strong>
-                      <p> 🚀Work with Experienced Industrialist & Team.</p>
-                    </strong>
-                    <strong>
-                      <p> 🚀Duration starts from 1 Week upto 6 months.</p>
-                    </strong>
-                    <strong>
-                      <p>
-                        {" "}
-                        🚀Certificates(Project Completion, Internship
-                        Completion, No Due).
-                      </p>
-                    </strong>
-                    <strong>
-                      <p> 🚀Support Systems: Community of Chat, Calls 24/7.</p>
-                    </strong>
-                    <strong>
-                      <p>
-                        {" "}
-                        🚀Placement Systems: Assistance till you placed, No
-                        guarantee.
-                      </p>
-                    </strong>
-                    <strong>
-                      <p> 🚀Stipend starts from Rs.999 - Rs. 2999/-</p>
-                    </strong>
-
-                    <strong>
-                      <p> 🚀Registration fee of <strike>Rs.99/-</strike>  Rs.19/-</p>
-                    </strong>
-                    <a
-                      href="https://forms.gle/KY7gWBv78dzy3MC48"
-                      target="_blank"
-                      class="button"
-                    >
-                      Join Now
-                    </a>
-                  </p>
-                </p>
-              </div>
-            </div>
-
-          </div>
-           {/* Certificate Verification start  */}
-           <div
-            className="section-title mt-4 d-flex flex-column align-items-center justify-content-center"
-            style={{
-              background: "rgba(255, 255, 255, 0.2)",
-              borderRadius: "15px",
-              padding: "20px",
-              backdropFilter: "blur(10px)",
-              WebkitBackdropFilter: "blur(10px)",
-              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-              maxWidth: "400px",
-              margin: "auto",
-            }}
-          >
-            <h2 style={{ color: "black", textAlign: "center" }}>
-              Certificate Verification
-            </h2>
-            <Form className="w-100">
-              <Form.Group>
-                <Form.Label style={{ fontSize: "20px", color: "black" }}>
-                  Enter Certificate ID
-                </Form.Label>
-                <Form.Control
+            <form onSubmit={this.handleVerifyCertificate} className="products-verify-form">
+              <label htmlFor="certificate-id">Certificate ID</label>
+              <div className="products-verify-row">
+                <input
+                  id="certificate-id"
                   type="text"
                   value={certificateId}
                   onChange={this.handleCertificateIdChange}
-                  placeholder="e.g., LTIN2025XXXX"
-                  className="p-2"
-                  style={{
-                    background: "rgba(255, 255, 255, 0.3)",
-                    border: "none",
-                    borderRadius: "10px",
-                    color: "black",
-                  }}
+                  placeholder="e.g. LTIN2025XXXX"
+                  autoComplete="off"
                 />
-              </Form.Group>
-              <Button
-                variant="primary"
-                className="mt-3 w-100"
-                onClick={this.handleVerifyCertificate}
-                style={{ borderRadius: "10px", backgroundColor:"green" }}
-              >
-                Verify Certificate
-              </Button>
-            </Form>
+                <button
+                  type="submit"
+                  className="gfg-btn"
+                  disabled={verifyStatus === "loading"}
+                >
+                  {verifyStatus === "loading" ? "Verifying..." : "Verify"}
+                </button>
+              </div>
+              <p className="products-helper">
+                Use your official certificate ID exactly as issued by Learn TEK In.
+              </p>
+            </form>
 
-            {/* Verification Result */}
-            {verifyMessage && (
-              <div
-                className="mt-4 text-center"
-                style={{
-                  color: verifiedCertificate ? "green" : "red",
-                  fontSize: "18px",
-                }}
+            {verifyMessage ? (
+              <p
+                className={`products-verify-message ${
+                  verifiedCertificate ? "success" : "error"
+                }`}
               >
                 {verifyMessage}
-              </div>
-            )}
-          </div>
-          {/* Certificate verification end */}
+              </p>
+            ) : null}
+          </section>
+
+          <section className="products-section">
+            <div className="products-section-head">
+              <h2>Products and Solutions</h2>
+              <p>
+                Business-ready platforms from the Learn TEK In ecosystem for
+                finance and mobility needs.
+              </p>
+            </div>
+            <div className="row g-4">
+              {solutions.map((solution) => (
+                <div className="col-lg-6" key={solution.title}>
+                  <article className="products-solution-card h-100">
+                    <h3>{solution.title}</h3>
+                    <p>{solution.description}</p>
+                    <ul>
+                      {solution.points.map((point) => (
+                        <li key={point}>{point}</li>
+                      ))}
+                    </ul>
+                    <a
+                      href={solution.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="gfg-btn"
+                    >
+                      {solution.cta}
+                    </a>
+                  </article>
+                </div>
+              ))}
+            </div>
+          </section>
         </div>
       </section>
     );
   }
 }
+
 const mapDispatchToProps = {
   verifyCertificate,
 };

@@ -11,18 +11,18 @@ export default class courseDetails extends Component {
 
   render() {
     return (
-      <section id="pricing" class="pricing section-bg">
+      <section id="pricing" className="pricing section-bg">
 
-<div class="container-fluid" data-aos="fade-up">
-          <div class="section-title">
+<div className="container-fluid" data-aos="fade-up">
+          <div className="section-title">
             <h2 style={{ color: "black" }}>Course Bucket List</h2>
 
           </div>
           
             <h3 style={{ color: "black" }}>Laravel frameworks</h3>
-            <div class="row mt-4 ">
-            <div class="col-lg-12 col-md-12 align-item-center">
-              <div class="box" style={{backgroundColor:"black"}} data-aos="fade-up" data-aos-delay="100">
+            <div className="row mt-4 ">
+            <div className="col-lg-12 col-md-12 align-item-center">
+              <div className="box" style={{backgroundColor:"black"}} data-aos="fade-up" data-aos-delay="100">
         
               
                 <ul>
@@ -31,11 +31,11 @@ export default class courseDetails extends Component {
                   </li>
                   <li align="justify">
                     <h6>Skills</h6>
-                    <i class="fa-brands fa-html5 " style={{padding:"10px",fontSize:"100px"}}></i>
-                    <i class="fa-brands fa-css3-alt" style={{color: "#00cc6a",padding:"10px",fontSize:"100px"}}></i>
-                    <i class="fa-brands fa-js" style={{color: "#F0DB4F",padding:"10px",fontSize:"100px"}}></i>
-                    <i class="fa-brands fa-bootstrap" style={{color: "voilet",padding:"10px",fontSize:"100px"}}></i>
-                    <i class="fa-brands fa-php" style={{color: "#474A8A",padding:"10px",fontSize:"100px"}}></i>
+                    <i className="fa-brands fa-html5 " style={{padding:"10px",fontSize:"100px"}}></i>
+                    <i className="fa-brands fa-css3-alt" style={{color: "#00cc6a",padding:"10px",fontSize:"100px"}}></i>
+                    <i className="fa-brands fa-js" style={{color: "#F0DB4F",padding:"10px",fontSize:"100px"}}></i>
+                    <i className="fa-brands fa-bootstrap" style={{color: "voilet",padding:"10px",fontSize:"100px"}}></i>
+                    <i className="fa-brands fa-php" style={{color: "#474A8A",padding:"10px",fontSize:"100px"}}></i>
  <Tabs
       defaultActiveKey="1"
       id="fill-tab-example"
@@ -160,3 +160,4 @@ export default class courseDetails extends Component {
     );
   }
 }
+

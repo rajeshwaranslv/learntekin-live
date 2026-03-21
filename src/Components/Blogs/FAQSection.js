@@ -1,88 +1,123 @@
-import React, { Component } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { connect } from "react-redux";
-import { fetchFaqs } from "../../store/faqActions"; // Adjust path as needed
-import { Spin } from "antd";  // Import Spin component from Ant Design
+import { fetchFaqs } from "../../store/faqActions";
+import "./FAQSection.css";
 
-class FAQSection extends Component {
-  componentDidMount() {
-    // Dispatch the action to fetch FAQs when component mounts
-    this.props.fetchFaqs();
-  }
+const extractTextFromRaw = (raw = {}) => {
+  const values = Object.values(raw).filter(
+    (value) => typeof value === "string" && value.trim() !== ""
+  );
+  return values.length > 0 ? values.join(" | ") : "";
+};
 
-  render() {
-    const { loading, faqs, error } = this.props;
+const resolveQuestion = (faq, index) =>
+  faq.question?.trim() ||
+  faq.raw?.question ||
+  faq.raw?.Question ||
+  faq.raw?.title ||
+  faq.raw?.Title ||
+  `FAQ ${index + 1}`;
 
-    // Show loading state using Ant Design's Spin component
-    if (loading) {
-      return (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100vh",
-          }}
-        >
-          <Spin size="large" />
+const resolveAnswer = (faq) =>
+  faq.answer?.trim() ||
+  faq.raw?.answer ||
+  faq.raw?.Answer ||
+  faq.raw?.description ||
+  faq.raw?.Description ||
+  extractTextFromRaw(faq.raw) ||
+  "Answer not available.";
+
+function FAQSection({ fetchFaqs: loadFaqs, loading, faqs, error }) {
+  const [openIndex, setOpenIndex] = useState(0);
+
+  useEffect(() => {
+    loadFaqs();
+  }, [loadFaqs]);
+
+  const displayFaqs = useMemo(
+    () => (Array.isArray(faqs) ? faqs : []),
+    [faqs]
+  );
+
+  useEffect(() => {
+    if (displayFaqs.length === 0) {
+      setOpenIndex(-1);
+      return;
+    }
+
+    if (openIndex < 0 || openIndex > displayFaqs.length - 1) {
+      setOpenIndex(0);
+    }
+  }, [displayFaqs, openIndex]);
+
+  const toggleFaq = (index) => {
+    setOpenIndex((currentOpenIndex) =>
+      currentOpenIndex === index ? -1 : index
+    );
+  };
+
+  return (
+    <section id="faq" className="faq faq-restored">
+      <div className="container-fluid" data-aos="fade-up">
+        <div className="section-title">
+          <h2>Frequently Asked Questions</h2>
         </div>
-      );
-    }
 
-    // Show error message if there's any
-    if (error) {
-      return <div>{error}</div>;
-    }
+        {error ? <div className="faq-alert">{error}</div> : null}
 
-    // Render the FAQ section
-    return (
-      <section id="faq" className="faq" style={{ marginTop: "4rem" }}>
-        <div className="container-fluid" data-aos="fade-up">
-          <div className="section-title">
-            <h2>Frequently Asked Questions</h2>
-          </div>
-
+        {loading ? (
+          <div className="faq-loading">Loading FAQs...</div>
+        ) : (
           <ul className="faq-list accordion" data-aos="fade-up">
-            {faqs.length > 0 ? (
-              faqs.map((faq, index) => (
-                <li key={index}>
-                  <a
-                    data-bs-toggle="collapse"
-                    className="collapsed"
-                    data-bs-target={`#faq${index}`}
-                  >
-                    {faq.question}
-                    <i className="bx bx-chevron-down icon-show"></i>
-                    <i className="bx bx-x icon-close"></i>
-                  </a>
-                  <div
-                    id={`faq${index}`}
-                    className="collapse"
-                    data-bs-parent=".faq-list"
-                  >
-                    <p>{faq.answer}</p>
-                  </div>
-                </li>
-              ))
+            {displayFaqs.length > 0 ? (
+              displayFaqs.map((faq, index) => {
+                const isOpen = openIndex === index;
+
+                return (
+                  <li key={faq.id || index} className={isOpen ? "faq-active" : ""}>
+                    <button
+                      type="button"
+                      className={`faq-toggle ${isOpen ? "" : "collapsed"}`.trim()}
+                      onClick={() => toggleFaq(index)}
+                      aria-expanded={isOpen}
+                      aria-controls={`faq-item-${index}`}
+                    >
+                      <span>{resolveQuestion(faq, index)}</span>
+                      <i
+                        className={`bx ${
+                          isOpen ? "bx-chevron-up" : "bx-chevron-down"
+                        } faq-icon`}
+                        aria-hidden="true"
+                      ></i>
+                    </button>
+
+                    <div
+                      id={`faq-item-${index}`}
+                      className={`faq-answer ${isOpen ? "open" : ""}`.trim()}
+                    >
+                      <p>{resolveAnswer(faq)}</p>
+                    </div>
+                  </li>
+                );
+              })
             ) : (
-              <li>No FAQs available</li>
+              <li className="faq-empty">No FAQs available.</li>
             )}
           </ul>
-        </div>
-      </section>
-    );
-  }
+        )}
+      </div>
+    </section>
+  );
 }
 
-// Map state to props
 const mapStateToProps = (state) => ({
   faqs: state.faqs.faqs,
   loading: state.faqs.loading,
-  error: state.faqs.error
+  error: state.faqs.error,
 });
 
-// Map dispatch to props
 const mapDispatchToProps = {
-  fetchFaqs
+  fetchFaqs,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(FAQSection);

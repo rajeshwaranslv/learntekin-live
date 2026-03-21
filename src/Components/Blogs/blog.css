@@ -3,33 +3,40 @@ color:white !important;
 }
 
 .roadmap{
-    color:greenyellow !important;
+    color:#bfdbfe !important;
     }
 
-     /* Basic button styling */
-     .button {
+      /* Basic button styling */
+      .button {
         display: inline-block;
-        padding: 10px 20px;
-        font-size: 16px;
-        font-weight: bold;
+        padding: 9px 16px;
+        font-size: 13px;
+        font-weight: 600;
         text-decoration: none;
         color: white !important;
-        background-color: rgb(74, 119, 6) !important; /* Primary blue */
-        border-radius: 5px;
-        border: none;
+        background: linear-gradient(180deg, #2f9d44 0%, #228b39 100%) !important;
+        border-radius: 10px;
+        border: 1px solid #1d7e34;
         text-align: center;
-        transition: background-color 0.3s ease, transform 0.2s ease;
+        box-shadow: 0 1px 1px rgba(15, 23, 42, 0.08),
+          0 10px 20px rgba(34, 139, 57, 0.26);
+        transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
       }
   
       /* Hover and active effects */
       .button:hover {
-        background-color: #0056b3 !important; 
+        background: linear-gradient(180deg, #36ab4b 0%, #26953d 100%) !important;
         color:whitesmoke !important;
-        /* Darker blue */
+        transform: translateY(-1px);
+        box-shadow: 0 1px 1px rgba(15, 23, 42, 0.1),
+          0 13px 24px rgba(34, 139, 57, 0.3);
+        filter: saturate(1.05);
       }
   
       .button:active {
-        transform: scale(0.95); /* Slightly shrink on click */
+        transform: translateY(0) scale(0.98);
+        box-shadow: 0 1px 1px rgba(15, 23, 42, 0.08),
+          0 6px 12px rgba(34, 139, 57, 0.25);
       }
 
       .marquee-container {
@@ -54,3 +61,29 @@ color:white !important;
             transform: translateX(-100%);
         }
     }
+
+#blog .entry-content p,
+#blog .entry-content li,
+#blog .entry-content td,
+#blog .entry-content th {
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+#blog .entry-content table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+#blog .entry-content th,
+#blog .entry-content td {
+  white-space: normal;
+}
+
+@media (max-width: 768px) {
+  #blog .entry-content table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}

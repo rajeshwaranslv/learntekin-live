@@ -41,7 +41,7 @@ export default class Testimonials extends Component {
         name: "Ashwadhani S",
         role: "Workday Consultant at Document IT LLC ",
         img: "assets/img/testimonials/testimonials-5.jpg",
-        message: "Amazing results! I’m beyond impressed.",
+        message: "Amazing results! I'm beyond impressed.",
       },
 
       {

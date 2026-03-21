@@ -1,50 +1,59 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import { Icon } from "@iconify/react";
-import firebase from "../../firebase";
-import "firebase/database";
+import { Modal, Form, Input, Radio, Checkbox, Button, Card } from "antd";
+import 'antd/dist/reset.css';
+import { db } from "../../firebase";
+import './formStyles.css';
 
-// Reference to the Firebase Realtime Database
-const database = firebase.database();
+const Careers = () => {
+  const [submitting, setSubmitting] = useState(false);
+  const [form] = Form.useForm();
 
-export default class Careers extends Component {
-  handleSubmit = (event) => {
-    event.preventDefault();
+  const onFinish = async (values) => {
+    if (submitting) return;
+    setSubmitting(true);
 
-    // Collect form data
     const formData = {
-      title: document.querySelector('input[name="options"]:checked')?.value || "", // Safeguard against no selection
-      firstName: event.target.elements.firstname.value,
-      lastName: event.target.elements.lastname.value,
-      email: event.target.elements.email.value,
-      phoneNumber: event.target.elements.phoneNumber.value,
-      role: event.target.elements.role.value,
-      referral: event.target.elements.refer.value,
+      title: values.title || "",
+      firstName: values.firstName,
+      lastName: values.lastName,
+      email: values.email,
+      phoneNumber: values.phoneNumber,
+      role: values.role,
+      referral: values.referral || "",
       preferredTimes: {
-        morning: event.target.elements.morning.checked,
-        afternoon: event.target.elements.afternoon.checked,
-        evening: event.target.elements.evening.checked,
+        morning: (values.preferredTimes || []).includes("morning"),
+        afternoon: (values.preferredTimes || []).includes("afternoon"),
+        evening: (values.preferredTimes || []).includes("evening"),
       },
+      timestamp: new Date().toISOString(),
     };
 
-    // Push data to the "careers" node in the Firebase Realtime Database
-    database
-      .ref("careers")
-      .push(formData)
-      .then(() => {
-        alert("Data successfully sent to Firebase!");
-      })
-      .catch((error) => {
-        console.error("Error sending data to Firebase:", error);
-        alert("An error occurred while sending your data. Please try again.");
+    try {
+      await db.collection("careers").add(formData);
+      Modal.success({
+        title: "Success",
+        content: "Your application has been successfully submitted! We will review it and get back to you soon.",
+        onOk: () => {
+          form.resetFields();
+          setSubmitting(false);
+        },
       });
+    } catch (error) {
+      console.error("Error sending data to Firestore:", error);
+      Modal.error({
+        title: "Error",
+        content: `An error occurred: ${error.message}. Please check your connection and try again.`,
+        onOk: () => setSubmitting(false),
+      });
+    }
   };
 
-  componentDidMount() {
+  React.useEffect(() => {
     document.title = "Careers";
-  }
+  }, []);
 
-  render() {
-    return (
+  return (
       <section id="careers" className="contact">
         <div className="container-fluid mt-5" data-aos="fade-up">
           <div className="section-title">
@@ -112,66 +121,87 @@ export default class Careers extends Component {
             <div className="col-lg-6">
               {/* Form Section */}
               <div className="info-box1">
-                <form onSubmit={this.handleSubmit} className="php-email-form">
-                  <div className="row">
-                    {/* Title Options */}
-                    <div className="col-md-12 form-group m-2">
-                      <label>
-                        <input type="radio" name="options" value="Ms." /> Ms.
-                      </label>
-                      <label>
-                        <input type="radio" name="options" value="Mr." /> Mr.
-                      </label>
-                      <label>
-                        <input type="radio" name="options" value="Mrs." /> Mrs.
-                      </label>
-                    </div>
+                <Card className="form-card" bordered={false}>
+                  <h3 style={{ textAlign: 'center', marginBottom: 12 }}>Apply Now</h3>
+                  <Form
+                    form={form}
+                    layout="vertical"
+                    onFinish={onFinish}
+                    initialValues={{ preferredTimes: [] }}
+                  >
+                    <Form.Item name="title" label="Title" className="form-field">
+                      <Radio.Group>
+                        <Radio value="Ms.">Ms.</Radio>
+                        <Radio value="Mr.">Mr.</Radio>
+                        <Radio value="Mrs.">Mrs.</Radio>
+                      </Radio.Group>
+                    </Form.Item>
 
-                    {/* Form Inputs */}
-                    {[
-                      { id: "firstname", name: "firstname", placeholder: "First Name" },
-                      { id: "lastname", name: "lastname", placeholder: "Last Name" },
-                      { id: "email", name: "email", placeholder: "Your Email", type: "email" },
-                      { id: "phoneNumber", name: "phoneNumber", placeholder: "Your Phone Number", type: "tel" },
-                      { id: "role", name: "role", placeholder: "Role apply for" },
-                      { id: "refer", name: "refer", placeholder: "Your Referral" },
-                    ].map((input, index) => (
-                      <div className="col-md-6 form-group" key={index}>
-                        <input
-                          type={input.type || "text"}
-                          className="form-control"
-                          name={input.name}
-                          id={input.id}
-                          placeholder={input.placeholder}
-                          required
-                        />
-                      </div>
-                    ))}
-                  </div>
+                    <Form.Item
+                      name="firstName"
+                      rules={[{ required: true, message: 'Please enter your first name' }]}
+                      className="form-field"
+                    >
+                      <Input size="large" placeholder="First Name" />
+                    </Form.Item>
 
-                  {/* Preferred Call Time */}
-                  <div className="col-md-12 form-group m-2">
-                    <h6>Preferred time to call?</h6>
-                    {[
-                      { value: "morning", label: "Morning" },
-                      { value: "afternoon", label: "Afternoon" },
-                      { value: "evening", label: "Evening" },
-                    ].map((time, index) => (
-                      <label key={index}>
-                        <input type="checkbox" name={time.value} value={time.value} /> {time.label}
-                      </label>
-                    ))}
-                  </div>
+                    <Form.Item
+                      name="lastName"
+                      rules={[{ required: true, message: 'Please enter your last name' }]}
+                      className="form-field"
+                    >
+                      <Input size="large" placeholder="Last Name" />
+                    </Form.Item>
 
-                  <div className="text-center">
-                    <button type="submit">Send Message</button>
-                  </div>
-                </form>
+                    <Form.Item
+                      name="email"
+                      rules={[{ required: true, type: 'email', message: 'Please enter a valid email' }]}
+                      className="form-field"
+                    >
+                      <Input size="large" placeholder="Your Email" />
+                    </Form.Item>
+
+                    <Form.Item
+                      name="phoneNumber"
+                      rules={[{ required: true, message: 'Please enter phone number' }]}
+                      className="form-field"
+                    >
+                      <Input size="large" placeholder="Your Phone Number" />
+                    </Form.Item>
+
+                    <Form.Item
+                      name="role"
+                      rules={[{ required: true, message: 'Please enter role you apply for' }]}
+                      className="form-field"
+                    >
+                      <Input size="large" placeholder="Role apply for" />
+                    </Form.Item>
+
+                    <Form.Item name="referral" className="form-field">
+                      <Input size="large" placeholder="Your Referral" />
+                    </Form.Item>
+
+                    <Form.Item name="preferredTimes" label="Preferred time to call?" className="form-field">
+                      <Checkbox.Group>
+                        <Checkbox value="morning">Morning</Checkbox>
+                        <Checkbox value="afternoon">Afternoon</Checkbox>
+                        <Checkbox value="evening">Evening</Checkbox>
+                      </Checkbox.Group>
+                    </Form.Item>
+
+                    <Form.Item>
+                      <Button type="primary" htmlType="submit" block loading={submitting} className="btn-brand">
+                        Send Message
+                      </Button>
+                    </Form.Item>
+                  </Form>
+                </Card>
               </div>
             </div>
           </div>
         </div>
       </section>
     );
-  }
-}
+};
+
+export default Careers;

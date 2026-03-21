@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "./blog.css";
 import { Link } from "react-router-dom";
+import BlogManagement from "./BlogManagement";
 
 export default class Blogs extends Component {
   componentDidMount() {
@@ -16,7 +17,7 @@ export default class Blogs extends Component {
           data-aos="fade-up"
         >
           <div className="row">
-            <div className="col-lg-8 entries">
+            <div className="col-lg-12 entries">
               {/* Blog 2 */}
               <article className="entry">
                 <div className="entry-img">
@@ -40,7 +41,7 @@ export default class Blogs extends Component {
                     <li className="d-flex align-items-center">
                       <i className="bi bi-clock"></i>{" "}
                       <Link to="/">
-                        <time datetime="2024-11-25">Nov 25, 2024</time>
+                        <time dateTime="2024-11-25">Nov 25, 2024</time>
                       </Link>
                     </li>
                     <li className="d-flex align-items-center">
@@ -63,6 +64,7 @@ export default class Blogs extends Component {
                     <a
                       href="https://topmate.io/rajeshwaran_slv/1291172/pay"
                       target="_blank"
+                      rel="noopener noreferrer"
                       className="button"
                     >
                       Apply now
@@ -94,7 +96,7 @@ export default class Blogs extends Component {
                     <li className="d-flex align-items-center">
                       <i className="bi bi-clock"></i>{" "}
                       <Link to="/">
-                        <time datetime="2024-11-25">Nov 25, 2024</time>
+                        <time dateTime="2024-11-25">Nov 25, 2024</time>
                       </Link>
                     </li>
                     <li className="d-flex align-items-center">
@@ -105,8 +107,8 @@ export default class Blogs extends Component {
                 </div>
                 <div className="entry-content">
                   <p align="justify">
-                    Hey! I’ve been using Topmate to connect 1:1 with my
-                    followers. And I’m loving it! I think your followers will
+                    Hey! I've been using Topmate to connect 1:1 with my
+                    followers. And I'm loving it! I think your followers will
                     love to connect with you. You can use my link to signup and
                     get 3 months free!
                   </p>
@@ -114,6 +116,7 @@ export default class Blogs extends Component {
                     <a
                       href="https://topmate.io/join/rajeshwaran_slv"
                       target="_blank"
+                      rel="noopener noreferrer"
                       className="button"
                     >
                       Apply now
@@ -140,7 +143,7 @@ export default class Blogs extends Component {
                     LearnTEKIN offers exciting referral opportunities! Refer
                     your friends, colleagues, or followers to join our
                     fellowship or internship programs and earn rewards. Check
-                    the details below: (For Fellowship & Internship registration link, "Go to Product Section" )
+                    the details below (for fellowship and internship registration links, go to the Products section).
                   </p>
 
                   {/* Fellowship Referral Table */}
@@ -149,7 +152,7 @@ export default class Blogs extends Component {
                     <thead>
                       <tr>
                         <th>Number of Referrals</th>
-                        <th>Reward Amount (₹)</th>
+                        <th>Reward Amount (Rs.)</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -178,7 +181,7 @@ export default class Blogs extends Component {
                     <thead>
                       <tr>
                         <th>Number of Referrals</th>
-                        <th>Reward Amount (₹)</th>
+                        <th>Reward Amount (Rs.)</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -211,7 +214,7 @@ export default class Blogs extends Component {
                     className="img-fluid"
                   />
                 </div>
-                
+
                 <h2 className="entry-title">
                   <a href="/Products">LearnTEKIN Referral Programs</a>
                 </h2>
@@ -219,8 +222,9 @@ export default class Blogs extends Component {
                   <p align="justify">
                     LearnTEKIN offers exciting referral opportunities! Refer
                     your friends, colleagues, or followers to utilize our
-                    projects or services and earn rewards. Check
-                    the details below: (For Services & Projects registration link, "Go to Service Section" )
+                    projects or services and earn rewards. Check the details
+                    below (for services and projects registration links, go to
+                    the Services section).
                   </p>
 
                   {/* Project Referral Table */}
@@ -229,7 +233,7 @@ export default class Blogs extends Component {
                     <thead>
                       <tr>
                         <th>Number of Referrals</th>
-                        <th>Reward Amount (₹)</th>
+                        <th>Reward Amount (Rs.)</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -241,7 +245,7 @@ export default class Blogs extends Component {
                         <td>1 </td>
                         <td>100</td>
                       </tr>
-                 
+
                     </tbody>
                   </table>
 
@@ -251,7 +255,7 @@ export default class Blogs extends Component {
                     <thead>
                       <tr>
                         <th>Number of Referrals</th>
-                        <th>Reward Amount (₹)</th>
+                        <th>Reward Amount (Rs.)</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -267,99 +271,101 @@ export default class Blogs extends Component {
                         <td>2 or more</td>
                         <td>10</td>
                       </tr>
-               
+
                     </tbody>
                   </table>
                 </div>
               </article>
             </div>
-            <div className="col-lg-4">
-  <div className="sidebar">
-    {/* Search */}
-    <h3 className="sidebar-title">Search</h3>
-    <div className="sidebar-item search-form">
-      <form action="">
-        <input type="text" />
-        <button type="submit" className="button">
-          <i className="bi bi-search"></i>
-        </button>
-      </form>
-    </div>
 
-    {/* Categories */}
-    <h3 className="sidebar-title">Categories</h3>
-    <div className="sidebar-item categories">
-      <ul>
-        <li>
-          <a  className="button" href="#">
-            Fellowship <span>(25)</span>
-          </a>
-        </li>
-        <li>
-          <a className="button" href="#">
-            Finance Frenzy <span>(12)</span>
-          </a>
-        </li>
-        <li>
-          <a className="button" href="#">
-            Learn TEK In <span>(5)</span>
-          </a>
-        </li>
-        <li>
-          <a className="button" href="#">
-            Clients <span>(22)</span>
-          </a>
-        </li>
-      </ul>
-    </div>
+            <div className="col-lg-12">
+              <div className="sidebar">
+                {/* Search */}
+                <h3 className="sidebar-title">Search</h3>
+                <div className="sidebar-item search-form">
+                  <form action="">
+                    <input type="text" />
+                    <button type="submit" className="button">
+                      <i className="bi bi-search"></i>
+                    </button>
+                  </form>
+                </div>
 
-    {/* Recent Posts */}
-    <h3 className="sidebar-title">Recent Posts</h3>
-    <div className="sidebar-item recent-posts">
-        <p>No post available</p>
-    </div>
+                {/* Categories */}
+                <h3 className="sidebar-title">Categories</h3>
+                <div className="sidebar-item tags">
+                  <ul>
+                    <li>
+                      <a className="button" href="#">
+                        Fellowship <span>(25)</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a className="button" href="#">
+                        Finance Frenzy <span>(12)</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a className="button" href="#">
+                        Learn TEK In <span>(5)</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a className="button" href="#">
+                        Clients <span>(22)</span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
 
-    {/* Tags */}
-    <h3 className="sidebar-title">Tags</h3>
-    <div className="sidebar-item tags">
-      <ul>
-        <li>
-          <a className="button" href="#">App</a>
-        </li>
-        <li>
-          <a className="button" href="#">IT</a>
-        </li>
-        <li>
-          <a className="button" href="#">Business</a>
-        </li>
-        <li>
-          <a className="button" href="#">Mac</a>
-        </li>
-        <li>
-          <a className="button" href="#">Design</a>
-        </li>
-        <li>
-          <a className="button" href="#">Office</a>
-        </li>
-        <li>
-          <a  className="button" href="#">Creative</a>
-        </li>
-        <li>
-          <a className="button" href="#">Studio</a>
-        </li>
-        <li>
-          <a className="button" href="#">Smart</a>
-        </li>
-        <li>
-          <a className="button" href="#">Tips</a>
-        </li>
-        <li>
-          <a className="button" href="#">Marketing</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</div>
+                {/* Recent Posts */}
+                {/* Blog Management */}
+                <h3 className="sidebar-title">Recent Posts</h3>
+                <div  >
+                  <BlogManagement/>
+                </div>
+
+                {/* Tags */}
+                <h3 className="sidebar-title">Tags</h3>
+                <div className="sidebar-item tags">
+                  <ul>
+                    <li>
+                      <a className="button" href="#">App</a>
+                    </li>
+                    <li>
+                      <a className="button" href="#">IT</a>
+                    </li>
+                    <li>
+                      <a className="button" href="#">Business</a>
+                    </li>
+                    <li>
+                      <a className="button" href="#">Mac</a>
+                    </li>
+                    <li>
+                      <a className="button" href="#">Design</a>
+                    </li>
+                    <li>
+                      <a className="button" href="#">Office</a>
+                    </li>
+                    <li>
+                      <a className="button" href="#">Creative</a>
+                    </li>
+                    <li>
+                      <a className="button" href="#">Studio</a>
+                    </li>
+                    <li>
+                      <a className="button" href="#">Smart</a>
+                    </li>
+                    <li>
+                      <a className="button" href="#">Tips</a>
+                    </li>
+                    <li>
+                      <a className="button" href="#">Marketing</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
 
           </div>
         </div>

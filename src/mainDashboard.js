@@ -1,10 +1,11 @@
 // mainDashboard.js
 import React, { Component } from 'react';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { connect } from 'react-redux'; // Import connect from react-redux
 import Home from './Components/Home';
+import Footer from './Components/Footer/Footer';
 
-import End from './Components/End';
+import End from './Components/Footer/End';
 
 
 class MainDashboard extends Component {

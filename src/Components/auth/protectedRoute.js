@@ -1,19 +1,22 @@
 // ProtectedRoute.js
-import React from 'react';
-import { Redirect, Route } from 'react-router-dom';
-import { useAuth } from './authContext'; // You'll need to create an AuthContext
+import React from "react";
+import { Redirect, Route } from "react-router-dom";
+import { useAuth } from "./authContext";
 
 function ProtectedRoute({ component: Component, ...rest }) {
-  const { currentUser } = useAuth(); // Use your AuthContext to get the current user
+  const { currentUser, loading } = useAuth();
 
   return (
     <Route
       {...rest}
       render={(props) =>
+        loading ? (
+          <div className="route-loader">Checking your session...</div>
+        ) : 
         currentUser ? (
           <Component {...props} />
         ) : (
-          <Redirect to="/login" />
+          <Redirect to="/unauthorized" />
         )
       }
     />

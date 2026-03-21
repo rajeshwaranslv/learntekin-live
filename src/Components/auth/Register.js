@@ -1,139 +1,239 @@
-import React from "react";
-import firebase from "../../firebase";
-import { Link } from "react-router-dom";
-import { Button, Input, Form } from "antd";
-import "./Register.css"; // Optional: for custom styling
+import React, { useMemo, useState } from "react";
+import { Link, useHistory } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { motion } from "framer-motion";
+import { toast } from "react-toastify";
+import firebase, { db } from "../../firebase";
+import AuthLayout from "./ui/AuthLayout";
+import AuthInput from "./ui/AuthInput";
+import AuthButton from "./ui/AuthButton";
 
-class Register extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
+function Register() {
+  const history = useHistory();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors, isValid },
+  } = useForm({
+    mode: "onChange",
+    defaultValues: {
+      fullName: "",
       email: "",
       password: "",
       confirmPassword: "",
-      error: null,
-    };
-  }
+      role: "",
+      termsAccepted: false,
+    },
+  });
 
-  handleInputChange = (e) => {
-    this.setState({ [e.target.name]: e.target.value });
-  };
+  const passwordValue = watch("password");
+  const fullNameValue = watch("fullName");
+  const emailValue = watch("email");
+  const confirmPasswordValue = watch("confirmPassword");
+  const roleValue = watch("role");
 
-  handleRegister = () => {
-    const { email, password, confirmPassword } = this.state;
+  const passwordRules = useMemo(
+    () => ({
+      required: "Password is required.",
+      minLength: {
+        value: 6,
+        message: "Password must be at least 6 characters.",
+      },
+      pattern: {
+        value: /^(?=.*[A-Za-z])(?=.*\d).{6,}$/,
+        message: "Use at least one letter and one number.",
+      },
+    }),
+    []
+  );
 
-    if (password !== confirmPassword) {
-      this.setState({ error: "Passwords do not match!" });
-      return;
+  const handleRegister = async (values) => {
+    setIsSubmitting(true);
+    try {
+      const { fullName, email, password, role } = values;
+      const userCredential = await firebase
+        .auth()
+        .createUserWithEmailAndPassword(email, password);
+
+      if (userCredential.user) {
+        await userCredential.user.updateProfile({ displayName: fullName });
+        await db.collection("users").doc(userCredential.user.uid).set(
+          {
+            fullName,
+            email,
+            role,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          },
+          { merge: true }
+        );
+      }
+
+      toast.success("Registration successful. Welcome to LearnTEK!");
+      history.push("/");
+    } catch (error) {
+      toast.error(error.message || "Registration failed. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    firebase
-      .auth()
-      .createUserWithEmailAndPassword(email, password)
-      .then((userCredential) => {
-        // Registration successful
-        const user = userCredential.user;
-        // Additional logic or database operations
-      })
-      .catch((error) => {
-        // Registration failed
-        const errorMessage = error.message;
-        this.setState({ error: errorMessage });
-      });
   };
 
-  render() {
-    const { email, password, confirmPassword, error } = this.state;
+  return (
+    <AuthLayout
+      formTitle="Create Account"
+      formSubtitle="Start your skill journey with Learn TEK In."
+    >
+      <motion.form
+        onSubmit={handleSubmit(handleRegister)}
+        className="auth-form"
+        initial={{ opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35, ease: "easeOut" }}
+      >
+        <AuthInput
+          id="register-full-name"
+          label="Full Name"
+          type="text"
+          autoComplete="name"
+          ariaLabel="Full name"
+          value={fullNameValue}
+          registration={register("fullName", {
+            required: "Full name is required.",
+            minLength: {
+              value: 3,
+              message: "Full name must be at least 3 characters.",
+            },
+          })}
+          error={errors.fullName}
+        />
 
-    return (
-      <div className="register-container">
-        <div className="register-form">
-          <h2 className="register">Register</h2>
-          <Form
-            layout="vertical"
-            onFinish={this.handleRegister}
-            style={{ maxWidth: 400, margin: "0 auto" }}
-          >
-            <Form.Item
-              label="Email"
-              name="email"
-              rules={[
-                {
-                  required: true,
-                  type: "email",
-                  message: "Please enter a valid email!",
-                },
-              ]}
+        <AuthInput
+          id="register-email"
+          label="Email"
+          type="email"
+          autoComplete="email"
+          ariaLabel="Email address"
+          value={emailValue}
+          registration={register("email", {
+            required: "Email is required.",
+            pattern: {
+              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+              message: "Enter a valid email address.",
+            },
+          })}
+          error={errors.email}
+        />
+
+        <AuthInput
+          id="register-password"
+          label="Password"
+          type="password"
+          autoComplete="new-password"
+          ariaLabel="Password"
+          value={passwordValue}
+          registration={register("password", passwordRules)}
+          error={errors.password}
+        />
+
+        <AuthInput
+          id="register-confirm-password"
+          label="Confirm Password"
+          type="password"
+          autoComplete="new-password"
+          ariaLabel="Confirm password"
+          value={confirmPasswordValue}
+          registration={register("confirmPassword", {
+            required: "Please confirm your password.",
+            validate: (value) =>
+              value === passwordValue || "Passwords do not match.",
+          })}
+          error={errors.confirmPassword}
+        />
+
+        <div>
+          <div className="auth-select-wrap">
+            <select
+              id="register-role"
+              aria-label="Select role"
+              aria-invalid={Boolean(errors.role)}
+              className={`auth-input-field ${
+                errors.role ? "auth-select-error" : "auth-select-field"
+              }`}
+              {...register("role", { required: "Please select your role." })}
             >
-              <Input
-                type="email"
-                name="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={this.handleInputChange}
-              />
-            </Form.Item>
-
-            <Form.Item
-              label="Password"
-              name="password"
-              rules={[
-                {
-                  required: true,
-                  message: "Please enter your password!",
-                },
-              ]}
+              <option value=""></option>
+              <option value="Student">Student</option>
+              <option value="Instructor">Instructor</option>
+            </select>
+            <label
+              htmlFor="register-role"
+              className={`auth-input-label ${
+                roleValue
+                  ? "auth-select-label-float"
+                  : "auth-select-label-default"
+              }`}
             >
-              <Input.Password
-                type="password"
-                name="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={this.handleInputChange}
-              />
-            </Form.Item>
-
-            <Form.Item
-              label="Confirm Password"
-              name="confirmPassword"
-              rules={[
-                {
-                  required: true,
-                  message: "Please confirm your password!",
-                },
-              ]}
-            >
-              <Input.Password
-                type="password"
-                name="confirmPassword"
-                placeholder="Confirm your password"
-                value={confirmPassword}
-                onChange={this.handleInputChange}
-              />
-            </Form.Item>
-
-            {error && <p className="text-danger">{error}</p>}
-
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <Button type="primary" htmlType="submit" style={{      width: "6rem", // Make button width responsive
-                padding: "0px 0px",}}>
-                Register
-              </Button>
-              <Link to="/login">
-                <Button
-                  type="default"
-                  style={{       width: "6rem", // Make button width responsive
-                    padding: "0px 0px",}}
-                >
-                  Login
-                </Button>
-              </Link>
-            </div>
-          </Form>
+              Select Role
+            </label>
+          </div>
+          {errors.role ? (
+            <p className="auth-input-error" role="alert">
+              {errors.role.message}
+            </p>
+          ) : null}
         </div>
-      </div>
-    );
-  }
+
+        <div>
+          <label className="auth-checkbox auth-checkbox-top">
+            <input
+              type="checkbox"
+              aria-label="Accept terms and conditions"
+              className="auth-checkbox-input-top"
+              {...register("termsAccepted", {
+                required: "You must accept the Terms & Conditions.",
+              })}
+            />
+            <span>
+              I agree to the{" "}
+                <a
+                  href="#"
+                  className="auth-text-link"
+                >
+                  Terms & Conditions
+                </a>
+              .
+            </span>
+          </label>
+          {errors.termsAccepted ? (
+            <p className="auth-input-error" role="alert">
+              {errors.termsAccepted.message}
+            </p>
+          ) : null}
+        </div>
+
+        <AuthButton
+          type="submit"
+          loading={isSubmitting}
+          disabled={!isValid || isSubmitting}
+          aria-label="Register"
+        >
+          Register
+        </AuthButton>
+
+        <p className="auth-note">
+          Already have an account?{" "}
+          <Link
+            to="/login"
+            className="auth-text-link"
+          >
+            Login
+          </Link>
+        </p>
+      </motion.form>
+    </AuthLayout>
+  );
 }
 
 export default Register;

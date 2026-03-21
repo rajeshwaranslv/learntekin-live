@@ -1,1 +1,7 @@
 node_modules
+.history
+package-lock.json
+.firebase
+p_build
+build
+

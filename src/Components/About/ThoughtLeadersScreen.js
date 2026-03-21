@@ -1,5 +1,8 @@
-import React from "react";
+﻿import React, { useEffect, useState } from "react";
 import "./ThoughtLeadersScreen.css"; // Styling for the screen
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+const CHARITY_API_URL = `${API_BASE}/api/charities`;
 
 const ThoughtLeadersScreen = () => {
   const leaders = [
@@ -46,78 +49,76 @@ const ThoughtLeadersScreen = () => {
         "Amazon Shop is an online marketplace where customers can buy a wide range of products, from electronics to groceries, with fast delivery options.",
       image: "https://hdqwalls.com/wallpapers/amazon-4k-logo-qhd.jpg", // Replace with an actual image URL
     },
-
- 
-    {
-      companyName: "Amazon Business",
-      link: "https://amzn.to/4icFIQl",
-      description:
-        "Amazon Business is a B2B marketplace that offers businesses access to bulk purchasing, business-only pricing, tax-exempt purchasing, and integration with procurement systems, making it easier for organizations to buy and manage supplies efficiently.",
-      image: "https://hdqwalls.com/wallpapers/amazon-4k-logo-qhd.jpg", // Replace with an actual image URL
-    },
-    {
-      companyName: "Amazon Seller",
-      link: "https://sell.amazon.in/sell-online?ref_=asin_soa_rd&ld=INSOAASSOCIATES&tag=bkart00-21",
-      description:
-        "Amazon Seller refers to individuals or businesses that sell products on Amazon’s marketplace through either the Fulfillment by Amazon (FBA) or Fulfillment by Merchant (FBM) models. Sellers can list products, manage inventory, and reach millions of customers worldwide.",
-      image: "https://hdqwalls.com/wallpapers/amazon-4k-logo-qhd.jpg", // Replace with an actual image URL
-    },
-    {
-      companyName: "Amazon Music",
-      link: "https://amzn.to/41jd21L",
-      description:
-        "Amazon Music is a streaming service that offers millions of songs, curated playlists, and podcasts. It includes Amazon Music Free, Prime Music, Amazon Music Unlimited, and Amazon Music HD, catering to different user needs with ad-supported, subscription-based, and high-definition audio options.",
-      image: "https://hdqwalls.com/wallpapers/amazon-4k-logo-qhd.jpg", // Replace with an actual image URL
-    },
-    {
-      companyName: "Prime Video",
-      link: "https://www.primevideo.com/offers/nonprimehomepage/ref=dv_web_force_root?tag=beekart-prime-21",
-      description:
-        "Prime Video is Amazon’s streaming service that offers a vast library of movies, TV shows, and original content. It is included with an Amazon Prime subscription, but users can also rent or buy movies and subscribe to additional channels.",
-      image: "https://hdqwalls.com/wallpapers/amazon-4k-logo-qhd.jpg", // Replace with an actual image URL
-    },
   ];
 
   const workspace = [
     {
       location: "Chennai",
       link: "https://gccservices.chennaicorporation.gov.in/muthalvarpadaippagam",
-      image:
-        "https://play-lh.googleusercontent.com/p_RR7etL6BYxBTqdE43Uu8V4rcWPHyvKuTuAPmr43vyiDhM8tLQowJD7sw5aHii4CM8",
+
       description:
-        "Learning Centre is a designated space in an educational context where specific knowledge, skills, and competencies are taught and developed. It helps to organize the curriculum, guide teaching strategies, and assess student progress. They also promote a well-rounded education by ensuring that students engage with diverse content and skills essential for their overall development.",
+        "Learning Centre is a designated space in an educational context where specific knowledge, skills, and competencies are taught and developed.  ",
     },
 
     {
       location: "Panruti",
       link: "https://learntek-innovations.web.app/Contact",
-      image:
-        " https://learntek-innovations.web.app/assets/img/apple-touch-icon.png",
+
       description:
-        "Learn TEK In is an organization that provides a comprehensive fellowship program in website development, Android application development, data analytics, and data science. The organization aims to bridge the gap between academia and industry by providing hands-on training in these domains. next one.",
+        "Learn TEK In is an organization that provides a comprehensive fellowship program in website development, Android application development, data analytics, and data science.  ",
     },
   ];
-const charity=[{
-  name: "Preethi R",
-  description: "Organized and led a team of volunteers in the #feedthevoiceless project to feed and care for stray dogs in some parts rural Tamil Nadu.",
-  benefits:"I wanted to reach out about a small but impactful project hashtag #collarthevoiceless we're working on—getting reflective collars for stray dogs to keep them safe at night. ",
-  image:"assets/img/charity.jpeg",
-  link:"https://wa.me/+919941918157"
 
+  const fallbackCharity = [
+    {
+      name: "Preethi R",
+      description:
+        "Organized and led a team of volunteers in the #feedthevoiceless project to feed and care for stray dogs in some parts rural Tamil Nadu.",
+      benefits:
+        "I wanted to reach out about a small but impactful project hashtag #collarthevoiceless we're working on - getting reflective collars for stray dogs to keep them safe at night.",
+      image: "assets/img/charity.jpeg",
+      link: "https://wa.me/+919941918157",
+    },
+  ];
 
+  const [charities, setCharities] = useState([]);
+  const [charityError, setCharityError] = useState("");
 
-},
+  useEffect(() => {
+    let active = true;
 
+    const loadCharities = async () => {
+      try {
+        const response = await fetch(CHARITY_API_URL);
+        if (!response.ok) {
+          throw new Error("Failed to load charities.");
+        }
+        const data = await response.json();
+        if (active) {
+          setCharities(Array.isArray(data) ? data : []);
+          setCharityError("");
+        }
+      } catch (err) {
+        if (active) {
+          setCharityError("Unable to load charity partners right now.");
+        }
+      }
+    };
 
+    loadCharities();
 
+    return () => {
+      active = false;
+    };
+  }, []);
 
+  const displayCharities = charities.length ? charities : fallbackCharity;
 
-]
   const tamilQuotes = [
-    "எண்ணிய முடிதல் வேண்டும்",
-    "இடர்ப்பாடுகள் என்றுமே சுடர் தூண்டும்",
-    "சுதந்திரமே அடிமைத்தனத்தின் மருந்து",
-    "பெரிதெனினும் பெரிது கேள்",
+    "Enniya mudithal vendum.",
+    "Challenges can ignite a brighter future.",
+    "Freedom is the cure for fear and limitation.",
+    "Even if it is great, keep asking for greater goals.",
   ];
 
   return (
@@ -131,7 +132,7 @@ const charity=[{
             <h2>{leader.title}</h2>
             <img
               src={leader.image}
-              style={{ height: "10rem", width: "10rem", margin:"2rem", borderRadius: "15rem" }}
+              style={{ height: "10rem", width: "10rem", margin: "2rem", borderRadius: "2rem" }}
               alt={leader.name}
             />
             <h3>{leader.name}</h3>
@@ -150,7 +151,7 @@ const charity=[{
             src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimg.freepik.com%2Fvector-premium%2Fbharathiyar_764504-155.jpg%3Fw%3D360&f=1&nofb=1&ipt=aa554cd8df9b7bdd27aeef0ddc56ab8ff2172b362e1373fe734cce5e3f362c19&ipo=images" // Replace with an actual image URL
             alt="Bharathiyaar"
             className="leader-image"
-            style={{ height: "10rem", width: "10rem", margin:"2rem", borderRadius: "15rem" }}
+            style={{ height: "10rem", width: "10rem", margin: "2rem", borderRadius: "15rem" }}
           />
           <h3>Bharathiyaar</h3>
           <p align="justify" style={{ fontWeight: "bolder" }}>
@@ -174,14 +175,14 @@ const charity=[{
             <h2>{company.companyName}</h2>
             <img
               src={company.image}
-              style={{ height: "6rem", width: "6rem",  borderRadius: "15rem" }}
+              style={{ height: "6rem", width: "6rem", borderRadius: "2rem" }}
               alt={company.companyName}
             />
 
             <p align="justify" style={{ fontWeight: "bolder" }}>
               {company.description}
             </p>
-            <a href={company.link} target="_blank" class="button">
+            <a href={company.link} target="_blank" rel="noopener noreferrer" className="button">
               CONTACT US
             </a>
           </div>
@@ -192,15 +193,10 @@ const charity=[{
         {/* Render each leader */}
         {workspace.map((work, index) => (
           <div className="leader-card" key={index}>
-            <h2>{work.location}</h2>
-            <img
-              src={work.image}
-              style={{ height: "6rem", width: "6rem",margin:"2rem", borderRadius: "15rem" }}
-              alt={work.location}
-            />
+            <h1>{work.location}</h1>
 
             <h3 align="justify">{work.description}</h3>
-            <a href={work.link} target="_blank" class="button">
+            <a href={work.link} target="_blank" rel="noopener noreferrer" className="button">
               CONTACT US
             </a>
           </div>
@@ -210,22 +206,36 @@ const charity=[{
       <h1 className="m-4">Charity Partner</h1>
       <div className="leaders-container">
         {/* Render each leader */}
-        {charity.map((chars, index) => (
+        {charityError && <p style={{ color: "#b42318" }}>{charityError}</p>}
+        {displayCharities.map((chars, index) => (
           <div className="charity-card" key={index}>
             <h2>{chars.name}</h2>
             <img
-              src={chars.image}
-              style={{ height: "10rem", width: "10rem",margin:"2rem",borderRadius:"3rem" }}
+              src={chars.image || "assets/img/charity.jpeg"}
+              style={{ height: "10rem", width: "10rem", margin: "2rem", borderRadius: "3rem" }}
               alt={chars.name}
             />
-          <ul>
-            <li> <h6 align="justify">{chars.description}</h6></li>
-            <li> <h6 align="justify">{chars.benefits}</h6></li>
-          </ul>
-            
-            <a href={chars.link} target="_blank" class="button">
-              CONTACT US
-            </a>
+            <ul>
+              <li>
+                <h6 align="justify">{chars.description}</h6>
+              </li>
+              {chars.benefits && (
+                <li>
+                  <h6 align="justify">{chars.benefits}</h6>
+                </li>
+              )}
+            </ul>
+
+            {chars.link && (
+              <a
+                href={chars.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="button"
+              >
+                CONTACT US
+              </a>
+            )}
           </div>
         ))}
       </div>

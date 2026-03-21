@@ -1,0 +1,230 @@
+.about-page {
+  position: relative;
+  z-index: 1;
+  padding: clamp(1rem, 2.6vw, 2rem) 0 clamp(1.4rem, 3vw, 2.5rem);
+  background: linear-gradient(180deg, #edf3f1 0%, #f7faf8 45%, #edf4f1 100%);
+  color: #1b3b2f;
+}
+
+.about-shell {
+  max-width: 1240px;
+}
+
+.about-hero {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 1rem;
+  background: #ffffff;
+  border: 1px solid #d8e6df;
+  border-radius: 22px;
+  padding: clamp(1rem, 2.4vw, 1.6rem);
+  box-shadow: 0 16px 36px rgba(12, 49, 32, 0.12);
+}
+
+.about-hero-copy {
+  text-align: left;
+}
+
+.about-kicker {
+  margin: 0;
+  color: #1f6f34;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+}
+
+.about-hero-copy h1 {
+  margin: 0.48rem 0 0;
+  font-size: clamp(1.35rem, 2.7vw, 2.2rem);
+  color: #113927;
+  line-height: 1.25;
+}
+
+.about-hero-copy > p {
+  margin: 0.6rem 0 0;
+  color: #4a6458;
+  line-height: 1.72;
+  max-width: 60ch;
+}
+
+.about-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.62rem;
+  margin-top: 0.9rem;
+}
+
+.about-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.68rem;
+}
+
+.about-stat-card {
+  border: 1px solid #d6e6dd;
+  border-radius: 14px;
+  background: linear-gradient(150deg, #ffffff 0%, #f3faf6 100%);
+  padding: 0.9rem;
+  text-align: left;
+  box-shadow: 0 10px 20px rgba(15, 52, 33, 0.08);
+}
+
+.about-stat-card p {
+  margin: 0;
+  color: #1f6f34;
+  font-weight: 800;
+  font-size: 1.35rem;
+}
+
+.about-stat-card span {
+  display: block;
+  margin-top: 0.22rem;
+  color: #4f6a5d;
+  font-weight: 600;
+  font-size: 0.86rem;
+}
+
+.about-section {
+  margin-top: 1rem;
+  background: #ffffff;
+  border: 1px solid #d8e6df;
+  border-radius: 20px;
+  box-shadow: 0 14px 30px rgba(11, 45, 29, 0.1);
+  padding: clamp(0.9rem, 2.3vw, 1.3rem);
+}
+
+.about-section-head {
+  margin-bottom: 0.8rem;
+  text-align: center;
+}
+
+.about-section-head h2 {
+  margin: 0;
+  font-size: clamp(1.18rem, 2.2vw, 1.72rem);
+  color: #154230;
+}
+
+.about-section-head p {
+  margin: 0.34rem auto 0;
+  color: #4f6b5f;
+  line-height: 1.68;
+  max-width: 66ch;
+}
+
+.about-pillar-card {
+  border: 1px solid #d7e8df;
+  border-radius: 16px;
+  background: linear-gradient(150deg, #ffffff 0%, #f3faf6 100%);
+  padding: 1rem;
+  text-align: left;
+  box-shadow: 0 9px 22px rgba(11, 45, 29, 0.08);
+}
+
+.about-pillar-card h3 {
+  margin: 0;
+  color: #154230;
+  font-size: 1.03rem;
+}
+
+.about-pillar-card p {
+  margin: 0.45rem 0 0;
+  color: #4f6b5f;
+  line-height: 1.65;
+}
+
+.about-program-grid {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.about-program-card {
+  display: grid;
+  grid-template-columns: 165px 1fr;
+  gap: 0.8rem;
+  align-items: center;
+  border: 1px solid #d7e8df;
+  border-radius: 16px;
+  background: linear-gradient(150deg, #ffffff 0%, #f3faf6 100%);
+  padding: 0.8rem;
+  text-align: left;
+}
+
+.about-program-card img {
+  width: 100%;
+  max-width: 155px;
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 0.28rem;
+  box-shadow: 0 8px 18px rgba(11, 45, 29, 0.12);
+}
+
+.about-program-card h3 {
+  margin: 0;
+  color: #154230;
+  font-size: 1.03rem;
+}
+
+.about-program-card p {
+  margin: 0.4rem 0 0;
+  color: #4f6b5f;
+  line-height: 1.66;
+}
+
+.about-leader-card {
+  border: 1px solid #d7e8df;
+  border-radius: 16px;
+  background: linear-gradient(150deg, #ffffff 0%, #f3faf6 100%);
+  padding: 1rem;
+  text-align: left;
+  box-shadow: 0 9px 22px rgba(11, 45, 29, 0.08);
+}
+
+.about-leader-card h4 {
+  margin: 0;
+  color: #154230;
+}
+
+.about-leader-card p {
+  margin: 0.35rem 0 0;
+  color: #4f6b5f;
+  line-height: 1.62;
+}
+
+.about-leader-link {
+  display: inline-flex;
+  margin-top: 0.65rem;
+  color: #1f6f34 !important;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.about-leader-link:hover {
+  color: #15582a !important;
+  text-decoration: underline;
+}
+
+@media (max-width: 992px) {
+  .about-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .about-program-card {
+    grid-template-columns: 1fr;
+  }
+
+  .about-program-card img {
+    max-width: 140px;
+  }
+}
+
+@media (max-width: 576px) {
+  .about-hero,
+  .about-section {
+    border-radius: 14px;
+    padding: 0.85rem;
+  }
+
+  .about-stat-grid {
+    grid-template-columns: 1fr;
+  }
+}

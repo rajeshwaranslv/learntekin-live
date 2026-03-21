@@ -6,13 +6,13 @@ import "../App.css";
 import Footer from '../Footer/Footer'
 import End from "../Footer/End";
 import Hero from "../About/Hero";
-import { Navigate, Redirect } from "react-router";
+import { Redirect } from "react-router-dom";
 
 class Home extends Component {
 render() {
 const { user } = this.props;
 if(!user){
-<Navigate to="/login"/>
+return <Redirect to="/login" />;
 }
 
 return (

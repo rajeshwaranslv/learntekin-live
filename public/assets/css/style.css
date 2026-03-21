@@ -307,15 +307,14 @@ h1, h2, h3, h4, h5, h6 {
 /*--------------------------------------------------------------
 # Hero Section
 --------------------------------------------------------------*/
-.typewriter h1 {
-  overflow: hidden; /* Ensures the content is not revealed until the animation */
-  border-right: .15em solid orange; /* The typwriter cursor */
-  white-space: nowrap; /* Keeps the content on a single line */
-  margin: 0 auto; /* Gives that scrolling effect as the typing happens */
-  letter-spacing: .15em; /* Adjust as needed */
-  animation: 
-    typing 3.5s steps(40, end),
-    blink-caret .75s step-end infinite;
+#hero .typewriter {
+  overflow: visible;
+  border-right: none;
+  white-space: normal;
+  margin: 0 auto;
+  letter-spacing: .03em;
+  line-height: 1.35;
+  animation: none;
 }
 
 /* The typing effect */
@@ -331,11 +330,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 #hero {
   width: 100%;
-  height: 80vh;
+  min-height: 76vh;
   background: url("../img/hero-bg.jpeg") top center no-repeat;
   background-size: cover;
   position: relative;
-  padding-top: 82px;
+  padding-top: 0;
   border-radius: 1rem;
 }
 #hero:before {
@@ -348,10 +347,27 @@ h1, h2, h3, h4, h5, h6 {
   right: 0;
 }
 #hero h1 {
-  margin: 0;
-  font-size: 48px;
+  margin: 0 auto;
+  max-width: 1200px;
+  font-size: clamp(1.6rem, 4.4vw, 3rem);
   font-weight: 700;
   color: #fff;
+}
+#hero .hero-content {
+  min-height: inherit;
+  position: relative;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  padding: 0 1rem;
+}
+#hero h4 {
+  margin: 0 0 0.8rem;
+  color: #ffffff;
+  font-weight: 600;
+}
+#hero .hero-emphasis {
+  font-size: 1.15em;
 }
 #hero h2 {
   color: #fff;
@@ -379,10 +395,17 @@ h1, h2, h3, h4, h5, h6 {
 @media (max-width: 768px) {
   #hero {
     text-align: center;
-    padding-top: 58px;
+    min-height: 64vh;
   }
   #hero h1 {
-    font-size: 28px;
+    font-size: 1.55rem;
+    line-height: 1.45;
+  }
+  #hero .typewriter {
+    white-space: normal;
+    overflow: visible;
+    border-right: none;
+    animation: none;
   }
   #hero h2 {
     font-size: 18px;
@@ -725,6 +748,7 @@ border: 1px solid rgba(255, 255, 255, 0.3);
 }
 .services .icon-box:hover {
   background: #02612e;
+  color: #ffffff !important;
 }
 .services .icon-box i {
   float: left;
@@ -746,14 +770,19 @@ border: 1px solid rgba(255, 255, 255, 0.3);
   text-decoration: underline;
 }
 .services .icon-box .icon-box:hover h4 a {
-  color: rgb(48, 140, 201) ;
+  color: rgb(255, 255, 255) ;
 }
 .services .icon-box p {
   margin-left: 70px;
   line-height: 24px;
   font-size: 14px;
+  color:#fff;
 }
 
+.services .icon-box h2 {
+
+  color:#fff ;
+}
 /*--------------------------------------------------------------
 # Portfolio
 --------------------------------------------------------------*/
@@ -913,8 +942,8 @@ border: 1px solid rgba(255, 255, 255, 0.3);
 .portfolio-details .portfolio-description p {
   padding: 0;
 }
- 
-# Pricing
+/*  
+# Pricing */
 --------------------------------------------------------------*/
 .pricing .box {
   padding: 20px;
@@ -987,9 +1016,6 @@ border: 1px solid rgba(255, 255, 255, 0.3);
 }
 .pricing .featured {
   background: #e03a3c;
-}
-.pricing .icon-box :hover{
- 
 }
 .pricing .icon-box {
   background-color:#000000;

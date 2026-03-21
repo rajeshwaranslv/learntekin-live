@@ -1,0 +1,58 @@
+#hero .hero-content {
+  min-height: inherit;
+  padding: clamp(1rem, 2.2vw, 2rem) 1rem;
+}
+
+#hero .hero-welcome-text {
+  margin: 0 0 0.7rem;
+  font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+#hero .hero-title {
+  margin: 0 auto;
+  max-width: min(94vw, 1100px);
+  color: #ffffff;
+  font-weight: 700;
+  line-height: 1.25;
+  font-size: clamp(1.45rem, 4vw, 3rem);
+  text-wrap: balance;
+}
+
+#hero .hero-title-line {
+  display: block;
+}
+
+#hero .hero-emphasis {
+  color: #d4ffe8;
+  text-shadow: 0 8px 24px rgba(13, 108, 69, 0.35);
+}
+
+@media (max-width: 992px) {
+  #hero {
+    min-height: 68vh;
+  }
+
+  #hero .hero-content {
+    padding: 1.2rem 0.85rem;
+  }
+}
+
+@media (max-width: 576px) {
+  #hero {
+    min-height: 58vh;
+    border-radius: 0.72rem;
+  }
+
+  #hero .hero-welcome-text {
+    margin-bottom: 0.55rem;
+    font-size: 0.82rem;
+  }
+
+  #hero .hero-title {
+    max-width: 95vw;
+    font-size: clamp(1.08rem, 6.2vw, 1.4rem);
+    line-height: 1.35;
+  }
+}

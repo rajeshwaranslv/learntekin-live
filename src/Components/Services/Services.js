@@ -1,261 +1,134 @@
 import React, { Component } from "react";
 import { Icon } from "@iconify/react";
-import { Button } from "@material-ui/core";
 import "./service.css";
+
 export default class Services extends Component {
   componentDidMount() {
     document.title = "Services";
   }
+
+renderServiceCard(icon, title, description, link, imageSrc) {
+  return (
+    <div className="col-lg-4 col-md-6 mb-4 d-flex align-items-stretch">
+      <div className="icon-box" data-aos="fade-up" data-aos-delay="100">
+        <img src={imageSrc} alt={title} className="img-fluid mb-3 service-img" />
+        <div className="icon-title" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <Icon icon={icon} style={{ fontSize: "2rem", marginRight: "0.5rem" }} />
+          <h2 style={{ margin: 0 }}>{title}</h2>
+        </div>
+        <p align="justify">{description}</p>
+        <a href={link} target="_blank" className="button" rel="noopener noreferrer">
+          SUBMIT IDEA
+        </a>
+      </div>
+    </div>
+  );
+}
+
+
   render() {
+    const services = [
+      {
+        icon: "mdi:palette",
+        title: "UI/UX Design",
+        image: "assets/img/uiux.jpeg",
+        description:
+          "We specialize in intuitive and visually appealing interfaces. Prototypes, wireframes, or full design solutions, we've got you covered.",
+        link: "https://forms.gle/Gt77PH7xfLxPjS2P8",
+      },
+      {
+        icon: "mdi:web",
+        title: "Website Development",
+        image: "assets/img/web.jpeg",
+        description:
+          "We create fast, secure, responsive websites of all types including e-commerce, personal, and corporate portals.",
+        link: "https://forms.gle/Gt77PH7xfLxPjS2P8",
+      },
+      {
+        icon: "material-symbols:android-sharp",
+        title: "Android App Development",
+        image: "assets/img/android.jpeg",
+        description:
+          "We develop optimized, user-friendly Android apps tailored to your business needs.",
+        link: "https://forms.gle/Gt77PH7xfLxPjS2P8",
+      },
+      {
+        icon: "mdi:ab-testing",
+        title: "Automation Testing",
+        image: "assets/img/test.jpeg",
+        description:
+          "Save time and reduce errors with our automation testing solutions using latest tools and frameworks.",
+        link: "https://forms.gle/Gt77PH7xfLxPjS2P8",
+      },
+      {
+        icon: "healthicons:virus-research-alt",
+        title: "Research & Development",
+        image: "assets/img/research.jpeg",
+        description:
+          "Our experts conduct product and market R&D using the latest tools and methodologies.",
+        link: "https://forms.gle/Gt77PH7xfLxPjS2P8",
+      },
+      {
+        icon: "ep:data-analysis",
+        title: "Data Analytics & Data Science",
+        image: "assets/img/dads.jpeg",
+        description:
+          "Turn data into insights. We help you analyze, visualize, and act on your data effectively.",
+        link: "https://forms.gle/Gt77PH7xfLxPjS2P8",
+      },
+      {
+        icon: "eos-icons:iot",
+        title: "RPA & IoT Development",
+        image: "assets/img/iot.jpeg",
+        description:
+          "Improve process efficiency with our RPA and IoT development and testing solutions.",
+        link: "https://forms.gle/Gt77PH7xfLxPjS2P8",
+      },
+      {
+        icon: "mdi:web",
+        title: "ML & DL",
+        image: "assets/img/ml.jpeg",
+        description:
+          "Design and deploy ML/DL models for real-world applications with our experts.",
+        link: "https://forms.gle/Gt77PH7xfLxPjS2P8",
+      },
+      {
+        icon: "mdi:bullhorn",
+        title: "Digital Marketing",
+        image: "assets/img/dm.jpeg",
+        description:
+          "Grow your brand with SEO, social media, content strategy, and targeted ads.",
+        link: "https://forms.gle/Gt77PH7xfLxPjS2P8",
+      },
+      {
+        icon: "carbon:machine-learning-model",
+        title: "Online Services",
+        image: "assets/img/online.png",
+        description:
+          "End-to-end online services: Aadhar, PAN, banking, travel bookings, and student counseling.",
+        link: "https://topmate.io/rajeshwaran_slv/1291172/pay",
+      },
+    ];
+
     return (
-      <section id="services" class="services section-bg ">
-        <div class="container-fluid" data-aos="fade-up">
-          <div class="section-title">
+      <section id="services" className="services section-bg">
+        <div className="container-fluid" data-aos="fade-up">
+          <div className="section-title">
             <h2 style={{ color: "black" }}>Services</h2>
             <p align="justify" style={{ fontSize: "22px", color: "black" }}>
-              Welcome to <strong className="st-b">Learn TEK In</strong>, your
-              one-stop destination for a wide range of technical and
-              non-technical services. We are dedicated to providing the best
-              solutions for website development, android app development,
-              automation testing, research and development on all technical and
-              non-technical domains, data analytics and data science-related
-              services, RPA and IoT device development and testing, machine
-              learning and deep learning models.
+              Welcome to <strong className="st-b">Learn TEK In</strong>, your one-stop solution for technical and non-technical services.
             </p>
           </div>
 
-          <div class="row">
-            <div class="col-md-6">
-              <div class="icon-box" data-aos="fade-up" data-aos-delay="100">
-                <i class="bi">
-                  <Icon icon="mdi:palette" />
-                </i>
-                <p align="justify">
-                  <h2>UI/UX Design</h2> We specialize in creating intuitive and
-                  visually appealing user interfaces that enhance user
-                  experience. Our expert designers use the latest tools and
-                  techniques to craft designs that are modern, user-friendly,
-                  and aligned with your brand's identity. Whether you need
-                  prototypes, wireframes, or complete design solutions, we've
-                  got you covered.
-                </p>
-                <a
-                  href="https://forms.gle/Gt77PH7xfLxPjS2P8"
-                  target="_blank"
-                  class="button"
-                >
-                  SHARE YOUR VISION
-                </a>
-              </div>
-            </div>
-
-            {/* Website Development */}
-            <div class="col-md-6">
-              <div class="icon-box" data-aos="fade-up" data-aos-delay="100">
-                <i class="bi">
-                  <Icon icon="mdi:web" />
-                </i>
-                <p align="justify">
-                  <h2>Website Development</h2> We provide top-notch website
-                  development services to our clients. Our team of experienced
-                  developers uses the latest technologies and frameworks to
-                  develop websites that are responsive, fast, and secure. We can
-                  build websites of all types, including e-commerce, corporate,
-                  and personal websites.
-                </p>
-                <a
-                  href="https://forms.gle/Gt77PH7xfLxPjS2P8"
-                  target="_blank"
-                  class="button"
-                >
-                  SUBMIT IDEA
-                </a>
-              </div>
-            </div>
-            {/* Android App Development */}
-            <div class="col-md-6  ">
-              <div class="icon-box" data-aos="fade-up" data-aos-delay="200">
-                <i class="bi">
-                  <Icon icon="mdi:ab-testing" />
-                </i>
-
-                <p align="justify">
-                  <h2>Automation Testing</h2> At LearnTek, we provide automation
-                  testing services to help our clients save time and reduce
-                  errors. Our team of experts uses the latest testing tools and
-                  technologies to automate the testing process, which results in
-                  faster and more accurate testing.
-                </p>
-                <a
-                  href="https://forms.gle/Gt77PH7xfLxPjS2P8"
-                  target="_blank"
-                  class="button"
-                >
-                  SUBMIT IDEA
-                </a>
-              </div>
-            </div>
-
-            {/* Automation Testing */}
-            <div class="col-md-6  ">
-              <div class="icon-box" data-aos="fade-up" data-aos-delay="200">
-                <i class="bi">
-                  <Icon icon="material-symbols:android-sharp" />
-                </i>
-
-                <p align="justify">
-                  <h2>Android Development</h2>Our team of expert developers can
-                  develop Android apps that are engaging, user-friendly, and
-                  functional. We use the latest tools and technologies to build
-                  apps that meet the requirements of our clients. Our team also
-                  ensures that the apps are optimized for performance and can be
-                  easily updated in the future.
-                </p>
-                <a
-                  href="https://forms.gle/Gt77PH7xfLxPjS2P8"
-                  target="_blank"
-                  class="button"
-                >
-                  SUBMIT IDEA
-                </a>
-              </div>
-            </div>
-
-            {/* Research and Development */}
-            <div class="col-md-6  ">
-              <div class="icon-box" data-aos="fade-up" data-aos-delay="200">
-                <i class="bi">
-                  <Icon icon="healthicons:virus-research-alt" />
-                </i>
-
-                <p align="justify">
-                  <h2>Research and Development:</h2>
-                  We provide research and development services on all technical
-                  and non-technical domains. Our team of researchers and
-                  developers can help you with product research and development,
-                  market research, and more. We use the latest research tools
-                  and technologies to deliver results that are accurate and
-                  relevant.
-                </p>
-                <a
-                  href="https://forms.gle/Gt77PH7xfLxPjS2P8"
-                  target="_blank"
-                  class="button"
-                >
-                  SUBMIT IDEA
-                </a>
-              </div>
-            </div>
-            {/* Data Analytics and Data Science */}
-            <div class="col-md-6">
-              <div class="icon-box" data-aos="fade-up" data-aos-delay="200">
-                <i class="bi">
-                  <Icon icon="ep:data-analysis" />
-                </i>
-
-                <p align="justify">
-                  <h2>Data Analytics and Data Science</h2> Our team of data
-                  analysts and data scientists can help you make sense of your
-                  data. We use the latest tools and technologies to analyze and
-                  visualize data, which helps our clients make informed
-                  decisions.
-                </p>
-                <a
-                  href="https://forms.gle/Gt77PH7xfLxPjS2P8"
-                  target="_blank"
-                  class="button"
-                >
-                  SUBMIT IDEA
-                </a>
-              </div>
-            </div>
-            {/* RPA and IOT */}
-            <div class="col-md-6  ">
-              <div class="icon-box" data-aos="fade-up" data-aos-delay="200">
-                <i class="bi">
-                  <Icon icon="eos-icons:iot" />
-                </i>
-
-                <p align="justify">
-                  <h2>RPA & IOT Development and Testing</h2> We provide RPA and
-                  IoT device development and testing services to help our
-                  clients automate their processes and improve efficiency. Our
-                  team of experts uses the latest technologies and tools to
-                  develop and test RPA and IoT devices that are efficient and
-                  secure.
-                </p>
-                <a
-                  href="https://forms.gle/Gt77PH7xfLxPjS2P8"
-                  target="_blank"
-                  class="button"
-                >
-                  SUBMIT IDEA
-                </a>
-              </div>
-            </div>
-            {/* Machine Learning and Deep Learning Model */}
-            <div class="col-md-6">
-              <div class="icon-box" data-aos="fade-up" data-aos-delay="200">
-                <i class="bi">
-                <Icon icon="mdi:web" />
-                </i>
-                <p align="justify">
-                  <h2>ML & DL</h2>Our team of machine learning and deep learning
-                  experts can help you develop and deploy machine learning and
-                  deep learning models that are accurate and efficient. We use
-                  the latest tools and technologies to develop models that can
-                  be easily integrated into your existing systems.
-                </p>
-                <a
-                  href="https://forms.gle/Gt77PH7xfLxPjS2P8"
-                  target="_blank"
-                  class="button"
-                >
-                  SUBMIT IDEA
-                </a>
-              </div>
-            </div>
-            {/* Online Services */}
-            <div class="col-md-6">
-              <div class="icon-box" data-aos="fade-up" data-aos-delay="200">
-                <i class="bi">
-                  <Icon icon="carbon:machine-learning-model" />
-                </i>
-                <p align="justify">
-                  <h2>Online Services</h2>
-                  We offer a comprehensive range of services designed to
-                  simplify your digital and daily needs. Manage essential
-                  documentation like Aadhar updates, PAN card applications, and
-                  passport renewals seamlessly. Simplify travel planning with
-                  intuitive booking for flights and accommodations, and easily
-                  apply or update your Voter ID to keep records accurate. For
-                  students, we provide guidance on Anna University counseling,
-                  ensuring informed decisions throughout the process. Open bank
-                  accounts conveniently with our secure digital banking
-                  solutions, and register for provident funds online to secure
-                  your financial future. Our platform also offers streamlined
-                  insurance services, including claims management and policy
-                  renewals. Additionally, collaborate with our machine learning
-                  experts to develop and deploy advanced, integrable models.
-                </p>
-                <a
-                  href="https://topmate.io/rajeshwaran_slv/1291172/pay"
-                  target="_blank"
-                  class="button"
-                >
-                  CONTACT US
-                </a>
-              </div>
-            </div>
+          <div className="row">
+            {services.map((service) =>
+              this.renderServiceCard(service.icon, service.title, service.description, service.link, service.image)
+            )}
           </div>
-          {/* Note */}
-          <div class="section-title">
+
+          <div className="section-title">
             <p align="justify" style={{ fontSize: "22px", color: "black" }}>
-              At <strong className="st-b">Learn TEK In</strong>, we are
-              committed to providing our clients with the best solutions for
-              their technical and non-technical needs. Contact us today to learn
-              more about our services and how we can help you achieve your
-              goals.
+              At <strong className="st-b">Learn TEK In</strong>, we are committed to helping you meet your goals with excellence.
             </p>
           </div>
         </div>

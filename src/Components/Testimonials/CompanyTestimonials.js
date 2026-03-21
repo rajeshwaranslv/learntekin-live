@@ -44,7 +44,7 @@ export default class CompanyTestimonials extends Component {
       <section id="testimonials" className="testimonials">
         <div className="container-fluid" data-aos="fade-up" style={{ textAlign: "center", color: "black" }}>
           <h2>Our Partner Companies</h2>
-          <p>Here’s what our partner companies are saying about us.</p>
+          <p>Here's what our partner companies are saying about us.</p>
         </div>
 
         <Swiper

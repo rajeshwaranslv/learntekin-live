@@ -1,23 +1,30 @@
-import React, { Component } from "react";
+import React, { useEffect } from "react";
+import "./Hero.css";
 
-export default class Hero extends Component {
-  componentDidMount() {
+function Hero() {
+  useEffect(() => {
     document.title = "Welcome to LearnTEK In";
-  }
-  render() {
-    return (
-      <section id="hero" class="d-flex align-items-center">
-        <div class="container-fluid" data-aos="zoom-out" data-aos-delay="100">
-          <div class="row">
-            <div class="col-xl-12 " align="center">
-              <h4 style={{ color: "white" }}>Welcome, Learn TEK In!</h4>
-              <h1 className="typewriter">
-                We <u>construct</u> your path to <u>the digital world!</u>
-              </h1>
-            </div>
+  }, []);
+
+  return (
+    <section id="hero" className="d-flex align-items-center">
+      <div className="container-fluid hero-content" data-aos="zoom-out" data-aos-delay="100">
+        <div className="row">
+          <div className="col-xl-12 text-center">
+            <h4 className="hero-welcome-text">Welcome, Learn TEK In!</h4>
+            <h1 className="hero-title">
+              <span className="hero-title-line">
+                We <span className="hero-emphasis">Construct</span> your dream path
+              </span>
+              <span className="hero-title-line">
+                to the <span className="hero-emphasis">Digital world!</span>
+              </span>
+            </h1>
           </div>
         </div>
-      </section>
-    );
-  }
+      </div>
+    </section>
+  );
 }
+
+export default Hero;

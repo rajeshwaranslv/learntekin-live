@@ -1,27 +1,66 @@
-/* Login.css */
-body {
-    font-family: Arial, sans-serif;
+.auth-page {
+  min-height: calc(100vh - 90px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  background: radial-gradient(circle at top left, #e8f8ef 0%, #f4f6f8 45%, #edf5ff 100%);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 460px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 14px 40px rgba(3, 70, 36, 0.12);
+  border: 1px solid #e5ece8;
+  padding: 28px;
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.logo-1 {
+  margin: 0;
+  color: #0a6a3f;
+  font-size: 1.9rem;
+  font-weight: 700;
+}
+
+.auth-subtitle {
+  margin-top: 8px;
+  margin-bottom: 0;
+  color: #4f5f56;
+  font-size: 0.95rem;
+}
+
+.auth-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.auth-error {
+  margin: 0;
+  color: #b42318;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .auth-card {
+    padding: 20px;
   }
-  
-  .logo-1 {
-    font-size: 2rem;
-    font-weight: bold;
+
+  .auth-actions {
+    flex-wrap: wrap;
   }
-  
-  .ant-form-item {
-    margin-bottom: 1rem;
+
+  .auth-actions .ant-btn {
+    width: 100%;
   }
-  
-  .ant-btn {
-    font-size: 1rem;
-  }
-  
-  @media (max-width: 768px) {
-    .ant-form-item {
-      padding: 0 15px;
-    }
-    .ant-btn {
-      width: 100%;
-    }
-  }
-  
+}
