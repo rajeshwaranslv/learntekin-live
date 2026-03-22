@@ -21,7 +21,9 @@
       "Bash(xargs grep:*)",
       "Bash(find d:/Production/repos/chatify-master/backend -name *.js -path */routes/*)",
       "Bash(grep -rn \"href.*linkedin\\\\|href.*instagram\\\\|href.*youtube\\\\|href.*twitter\\\\|href.*facebook\\\\|href.*whatsapp\" 'd:/Production/2025/MERN/Learn TEK In/learntekin-live' --include=*.js --include=*.jsx --include=*.html)",
-      "Bash(grep -rn \"social\\\\|linkedin\\\\|instagram\\\\|youtube\" 'd:/Production/2025/MERN/Learn TEK In/learntekin-live/src' --include=*.js --include=*.jsx)"
+      "Bash(grep -rn \"social\\\\|linkedin\\\\|instagram\\\\|youtube\" 'd:/Production/2025/MERN/Learn TEK In/learntekin-live/src' --include=*.js --include=*.jsx)",
+      "Bash(node -e \"require\\(''recharts''\\); console.log\\(''recharts OK''\\)\")",
+      "Bash(firebase deploy:*)"
     ]
   }
 }
