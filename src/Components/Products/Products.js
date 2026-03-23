@@ -2,9 +2,29 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { verifyCertificate } from "../../Components/actions/verifyCertificate";
+import { buildApiUrl } from "../../utils/api";
+import { normalizeInternshipPostings } from "../../utils/internshipPostings";
+import { toDisplayLabel, toPlainText } from "../../utils/text";
 import "./product.css";
 
-const INTERNSHIP_API = "https://lte-node.onrender.com/api/internships";
+const INTERNSHIP_API = buildApiUrl("/api/internships");
+
+const formatCertificateDate = (value) => {
+  if (!value) {
+    return "-";
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return String(value);
+  }
+
+  return date.toLocaleDateString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+};
 
 const learningTracks = [
   {
@@ -117,6 +137,7 @@ class Products extends Component {
     verifyMessage: "",
     verifiedCertificate: null,
     verifyStatus: "idle",
+    autoDownloadRequested: false,
     liveOpportunities: [],
     liveLoading: true,
     liveFilter: "all",
@@ -126,27 +147,48 @@ class Products extends Component {
     document.title = "Products";
     fetch(INTERNSHIP_API)
       .then((r) => r.json())
-      .then((data) => this.setState({ liveOpportunities: Array.isArray(data) ? data : [], liveLoading: false }))
+      .then((data) =>
+        this.setState({
+          liveOpportunities: normalizeInternshipPostings(data),
+          liveLoading: false,
+        })
+      )
       .catch(() => this.setState({ liveOpportunities: [], liveLoading: false }));
+
+    const searchParams = new URLSearchParams(window.location.search);
+    const certificateId = searchParams.get("certificateId")?.trim();
+    const autoDownloadRequested = searchParams.get("download") === "1";
+
+    if (certificateId) {
+      this.setState(
+        {
+          certificateId,
+          autoDownloadRequested,
+        },
+        () => {
+          this.runCertificateVerification(certificateId, {
+            autoDownload: autoDownloadRequested,
+          });
+        }
+      );
+    }
   }
 
   handleCertificateIdChange = (event) => {
     this.setState({ certificateId: event.target.value });
   };
 
-  handleVerifyCertificate = async (event) => {
-    event.preventDefault();
-
+  runCertificateVerification = async (certificateId, options = {}) => {
     const { verifyCertificate } = this.props;
-    const certificateId = this.state.certificateId.trim();
+    const normalizedCertificateId = certificateId.trim();
 
-    if (!certificateId) {
+    if (!normalizedCertificateId) {
       this.setState({
         verifyStatus: "error",
         verifyMessage: "Please enter a certificate ID.",
         verifiedCertificate: null,
       });
-      return;
+      return null;
     }
 
     this.setState({
@@ -156,19 +198,40 @@ class Products extends Component {
     });
 
     try {
-      const certificate = await verifyCertificate(certificateId);
+      const certificate = await verifyCertificate(normalizedCertificateId);
       this.setState({
         verifyStatus: "success",
         verifyMessage: `Certificate found: ${certificate.candidateName}`,
         verifiedCertificate: certificate,
       });
+      if (options.autoDownload && certificate?.pdfDataUri) {
+        this.downloadCertificatePdf(certificate);
+      }
+      return certificate;
     } catch {
       this.setState({
         verifyStatus: "error",
         verifyMessage: "Certificate not found. Please verify the ID and try again.",
         verifiedCertificate: null,
       });
+      return null;
     }
+  };
+
+  handleVerifyCertificate = async (event) => {
+    event.preventDefault();
+    await this.runCertificateVerification(this.state.certificateId);
+  };
+
+  downloadCertificatePdf = (certificate) => {
+    if (!certificate?.pdfDataUri || typeof document === "undefined") {
+      return;
+    }
+
+    const anchor = document.createElement("a");
+    anchor.href = certificate.pdfDataUri;
+    anchor.download = `${certificate.certificateId || "certificate"}.pdf`;
+    anchor.click();
   };
 
   render() {
@@ -179,7 +242,9 @@ class Products extends Component {
 
     const visibleOpps = liveFilter === "all"
       ? liveOpportunities
-      : liveOpportunities.filter((o) => o.type === liveFilter);
+      : liveOpportunities.filter(
+          (o) => String(o.type || "").toLowerCase() === liveFilter
+        );
 
     return (
       <section id="pricing" className="products-page">
@@ -289,17 +354,22 @@ class Products extends Component {
                 {visibleOpps.map((opp) => {
                   const isExpired = new Date(opp.deadline) < new Date();
                   return (
-                    <div className="col-xl-4 col-lg-6" key={opp._id}>
+                    <div
+                      className="col-xl-4 col-lg-6"
+                      key={opp._id || opp.id || `${opp.title}-${opp.deadline}`}
+                    >
                       <article className={`products-opening-card h-100${isExpired ? " expired" : ""}`}>
                         <div className="products-track-head">
-                          <span className={`products-tag ${opp.type}`}>{opp.type}</span>
+                          <span className={`products-tag ${opp.type}`}>
+                            {toDisplayLabel(opp.type)}
+                          </span>
                           {isExpired && <span className="products-tag products-tag-closed">Closed</span>}
                         </div>
                         <h3>{opp.title}</h3>
                         <p className="products-opening-domain">
                           <i className="bi bi-tag-fill" /> {opp.domain}
                         </p>
-                        <p>{opp.description}</p>
+                        <p>{toPlainText(opp.description)}</p>
                         <div className="products-opening-meta">
                           <span><i className="bi bi-clock" /> {opp.duration}</span>
                           <span><i className="bi bi-currency-rupee" /> {opp.stipend || "Unpaid"}</span>
@@ -308,7 +378,9 @@ class Products extends Component {
                         </div>
                         {opp.requirements?.length > 0 && (
                           <ul>
-                            {opp.requirements.slice(0, 3).map((r, i) => <li key={i}>{r}</li>)}
+                            {opp.requirements.slice(0, 3).map((r, i) => (
+                              <li key={i}>{toPlainText(r)}</li>
+                            ))}
                           </ul>
                         )}
                         <div className="products-actions">
@@ -369,6 +441,60 @@ class Products extends Component {
               >
                 {verifyMessage}
               </p>
+            ) : null}
+
+            {verifiedCertificate ? (
+              <div
+                style={{
+                  marginTop: "1rem",
+                  padding: "1rem",
+                  borderRadius: "16px",
+                  border: "1px solid #d8eee1",
+                  background: "linear-gradient(135deg, #f7fcf9, #eef8f1)",
+                }}
+              >
+                <div className="row g-3">
+                  <div className="col-md-6">
+                    <strong>Candidate</strong>
+                    <p style={{ marginBottom: 0 }}>{verifiedCertificate.candidateName}</p>
+                  </div>
+                  <div className="col-md-6">
+                    <strong>Domain</strong>
+                    <p style={{ marginBottom: 0 }}>{verifiedCertificate.domain}</p>
+                  </div>
+                  <div className="col-md-4">
+                    <strong>Start Date</strong>
+                    <p style={{ marginBottom: 0 }}>
+                      {formatCertificateDate(verifiedCertificate.startDate)}
+                    </p>
+                  </div>
+                  <div className="col-md-4">
+                    <strong>End Date</strong>
+                    <p style={{ marginBottom: 0 }}>
+                      {formatCertificateDate(
+                        verifiedCertificate.endDate ||
+                          verifiedCertificate.dateOfCompletion
+                      )}
+                    </p>
+                  </div>
+                  <div className="col-md-4">
+                    <strong>Certificate ID</strong>
+                    <p style={{ marginBottom: 0 }}>{verifiedCertificate.certificateId}</p>
+                  </div>
+                </div>
+
+                {verifiedCertificate.pdfDataUri ? (
+                  <div style={{ marginTop: "1rem" }}>
+                    <button
+                      type="button"
+                      className="gfg-btn"
+                      onClick={() => this.downloadCertificatePdf(verifiedCertificate)}
+                    >
+                      Download Certificate PDF
+                    </button>
+                  </div>
+                ) : null}
+              </div>
             ) : null}
           </section>
 

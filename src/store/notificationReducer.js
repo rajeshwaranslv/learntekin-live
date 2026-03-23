@@ -10,46 +10,58 @@ const initialState = {
   loading: false,
 };
 
+const countUnread = (items = []) =>
+  items.filter((notification) => !notification.read).length;
+
 const notificationReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_NOTIF_LOADING:
       return { ...state, loading: action.payload };
 
-    case FETCH_NOTIFICATIONS:
+    case FETCH_NOTIFICATIONS: {
+      const items = action.payload?.notifications || [];
       return {
         ...state,
-        items: action.payload.notifications,
-        unreadCount: action.payload.unreadCount,
+        items,
+        unreadCount:
+          typeof action.payload?.unreadCount === "number"
+            ? action.payload.unreadCount
+            : countUnread(items),
         loading: false,
-      };
-
-    case MARK_NOTIF_READ: {
-      const wasUnread = state.items.find((n) => n._id === action.payload && !n.read);
-      return {
-        ...state,
-        items: state.items.map((n) =>
-          n._id === action.payload ? { ...n, read: true } : n
-        ),
-        unreadCount: wasUnread ? Math.max(0, state.unreadCount - 1) : state.unreadCount,
       };
     }
 
-    case MARK_ALL_NOTIF_READ:
+    case MARK_NOTIF_READ: {
+      const items = state.items.map((n) =>
+        n._id === action.payload ? { ...n, read: true } : n
+      );
       return {
         ...state,
-        items: state.items.map((n) => ({ ...n, read: true })),
-        unreadCount: 0,
+        items,
+        unreadCount: countUnread(items),
       };
+    }
+
+    case MARK_ALL_NOTIF_READ: {
+      const ids = Array.isArray(action.payload)
+        ? new Set(action.payload)
+        : null;
+      const items = state.items.map((n) =>
+        !ids || ids.has(n._id) ? { ...n, read: true } : n
+      );
+      return {
+        ...state,
+        items,
+        unreadCount: countUnread(items),
+      };
+    }
 
     case DELETE_NOTIF: {
-      const deleted = state.items.find((n) => n._id === action.payload);
+      const items = state.items.filter((n) => n._id !== action.payload);
       return {
         ...state,
-        items: state.items.filter((n) => n._id !== action.payload),
-        unreadCount:
-          deleted && !deleted.read
-            ? Math.max(0, state.unreadCount - 1)
-            : state.unreadCount,
+        items,
+        unreadCount: countUnread(items),
       };
     }
 

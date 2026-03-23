@@ -173,7 +173,7 @@ function AppNavbar() {
                   <NavDropdown.Item
                     as={NavLink}
                     exact
-                    to="/ESeva"
+                    to="/eseva"
                     activeClassName="dropdown-item-active"
                     onClick={closeMenu}
                   >

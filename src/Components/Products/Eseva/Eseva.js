@@ -3,6 +3,21 @@ import Swal from "sweetalert2";
 import { v4 as uuidv4 } from "uuid";
 import firebase, { db } from "../../../firebase";
 
+const normalizeText = (value) => String(value ?? "").trim();
+
+const formatPrice = (value) => {
+  const normalized = normalizeText(value);
+  if (!normalized) {
+    return "On request";
+  }
+
+  if (/^(inr|rs\.?|₹)/i.test(normalized)) {
+    return normalized;
+  }
+
+  return `INR ${normalized}`;
+};
+
 const FALLBACK_SERVICES = [
   {
     serviceCategory: "Dharshan Pre-booking",
@@ -10,8 +25,12 @@ const FALLBACK_SERVICES = [
     packageName: "Sabarimala Pilgrims",
     description: "To book a virtual queue booking",
     chargesPriceInr: 100,
+    price: "100",
     suggestedTimeline: "30 Mins",
+    timeline: "30 Mins",
+    deadline: "Same day",
     notes: "To avoid spot booking during Dharshan",
+    status: "Approved",
   },
   {
     serviceCategory: "GOVT ID Updation",
@@ -19,8 +38,12 @@ const FALLBACK_SERVICES = [
     packageName: "Update Aadhar Address",
     description: "To change of address in Aadhar",
     chargesPriceInr: 200,
+    price: "200",
     suggestedTimeline: "1 Hr",
+    timeline: "1 Hr",
+    deadline: "14 days",
     notes: "Will update within 2 weeks",
+    status: "Approved",
   },
   {
     serviceCategory: "GOVT ID Updation",
@@ -28,8 +51,12 @@ const FALLBACK_SERVICES = [
     packageName: "Update PAN Name, Address",
     description: "To change of address, Name in PAN",
     chargesPriceInr: 200,
+    price: "200",
     suggestedTimeline: "1 Hr",
+    timeline: "1 Hr",
+    deadline: "14 days",
     notes: "Will update within 2 weeks",
+    status: "Approved",
   },
   {
     serviceCategory: "Bill Payments",
@@ -37,8 +64,12 @@ const FALLBACK_SERVICES = [
     packageName: "EB Bills",
     description: "To pay the penalty and bills of EB",
     chargesPriceInr: 100,
+    price: "100",
     suggestedTimeline: "30 Mins",
+    timeline: "30 Mins",
+    deadline: "Same day",
     notes: "Will get an update in an hour",
+    status: "Approved",
   },
   {
     serviceCategory: "Bill Payments",
@@ -46,8 +77,12 @@ const FALLBACK_SERVICES = [
     packageName: "Broadband Bills, Police Fines",
     description: "To pay the Broadband Bills, Police Fines",
     chargesPriceInr: 100,
+    price: "100",
     suggestedTimeline: "30 Mins",
+    timeline: "30 Mins",
+    deadline: "Same day",
     notes: "Will get an update in an hour",
+    status: "Approved",
   },
   {
     serviceCategory: "Toll Recharge",
@@ -55,8 +90,12 @@ const FALLBACK_SERVICES = [
     packageName: "Annual Toll Pass",
     description: "To pay the ATP",
     chargesPriceInr: 100,
+    price: "100",
     suggestedTimeline: "30 Mins",
+    timeline: "30 Mins",
+    deadline: "Same day",
     notes: "Will get an update in an hour",
+    status: "Approved",
   },
   {
     serviceCategory: "Toll Recharge",
@@ -64,27 +103,104 @@ const FALLBACK_SERVICES = [
     packageName: "Toll Recharge",
     description: "To recharge toll wallet",
     chargesPriceInr: 50,
+    price: "50",
     suggestedTimeline: "10 Mins",
+    timeline: "10 Mins",
+    deadline: "Same day",
     notes: "Will get an update in an hour",
+    status: "Approved",
   },
 ];
 
+const normalizeEsevaService = (item, parent = {}, index = 0) => {
+  const serviceCategory = normalizeText(
+    item.serviceCategory || parent.serviceCategory || parent.serviceName
+  );
+  const packageName = normalizeText(
+    item.packageName || item.package || parent.packageName
+  );
+  const serviceId = normalizeText(
+    item.serviceId ||
+      parent.serviceId ||
+      `${serviceCategory || "service"}-${packageName || index + 1}`
+  );
+  const description = normalizeText(
+    item.description || parent.description || item.notes || parent.notes
+  );
+  const timeline = normalizeText(
+    item.suggestedTimeline ||
+      item.timeline ||
+      parent.suggestedTimeline ||
+      parent.timeline
+  );
+  const deadline = normalizeText(item.deadline || parent.deadline || timeline);
+  const rawPrice =
+    item.chargesPriceInr ??
+    item.price ??
+    parent.chargesPriceInr ??
+    parent.price ??
+    "";
+  const price = normalizeText(rawPrice);
+  const status = normalizeText(item.status || parent.status || "Approved");
+  const notes = normalizeText(item.notes || parent.notes);
+
+  return {
+    id: normalizeText(item.id || parent.id || serviceId),
+    serviceCategory,
+    serviceId,
+    packageName,
+    description,
+    chargesPriceInr: price,
+    price,
+    suggestedTimeline: timeline,
+    timeline,
+    deadline,
+    notes,
+    status,
+  };
+};
+
+const normalizeEsevaServices = (items = []) =>
+  items
+    .flatMap((item, index) => {
+      if (Array.isArray(item?.packages) && item.packages.length > 0) {
+        return item.packages.map((pkg, packageIndex) =>
+          normalizeEsevaService(pkg, item, packageIndex)
+        );
+      }
+
+      return [normalizeEsevaService(item, {}, index)];
+    })
+    .filter(
+      (item) => item.serviceCategory && item.packageName && item.serviceId
+    )
+    .filter((item) => {
+      const status = normalizeText(item.status).toLowerCase();
+      return !status || status === "approved";
+    });
+
 const Eseva = () => {
-  const [services, setServices] = useState(FALLBACK_SERVICES);
+  const [services, setServices] = useState(() =>
+    normalizeEsevaServices(FALLBACK_SERVICES)
+  );
   const [servicesLoading, setServicesLoading] = useState(true);
 
   useEffect(() => {
     db.collection("esevaServices")
       .get()
       .then((snapshot) => {
-        if (!snapshot.empty) {
-          const fetched = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-          setServices(fetched);
+        if (snapshot.empty) {
+          setServices(normalizeEsevaServices(FALLBACK_SERVICES));
+          return;
         }
-        // If empty, keep FALLBACK_SERVICES
+
+        const fetched = normalizeEsevaServices(
+          snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+        );
+        setServices(fetched);
       })
       .catch(() => {
-        // On error, keep FALLBACK_SERVICES
+        setServices(normalizeEsevaServices(FALLBACK_SERVICES));
       })
       .finally(() => setServicesLoading(false));
   }, []);
@@ -96,7 +212,12 @@ const Eseva = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
 
   useEffect(() => {
-    if (serviceCategories.length > 0 && !selectedCategory) {
+    if (serviceCategories.length === 0) {
+      setSelectedCategory("");
+      return;
+    }
+
+    if (!serviceCategories.includes(selectedCategory)) {
       setSelectedCategory(serviceCategories[0]);
     }
   }, [serviceCategories, selectedCategory]);
@@ -110,23 +231,25 @@ const Eseva = () => {
   const [selectedPackageId, setSelectedPackageId] = useState("");
 
   useEffect(() => {
-    if (packagesForCategory.length > 0) {
+    if (packagesForCategory.length === 0) {
+      setSelectedPackageId("");
+      return;
+    }
+
+    if (!packagesForCategory.some((item) => item.serviceId === selectedPackageId)) {
       setSelectedPackageId(packagesForCategory[0]?.serviceId || "");
     }
-  }, [packagesForCategory]);
+  }, [packagesForCategory, selectedPackageId]);
 
   const selectedService = useMemo(() => {
     return services.find((item) => item.serviceId === selectedPackageId) || null;
   }, [selectedPackageId, services]);
 
+  const hasServices = serviceCategories.length > 0;
+
   const handleCategoryChange = (event) => {
     const newCategory = event.target.value;
     setSelectedCategory(newCategory);
-
-    const nextPackage = services.find(
-      (item) => item.serviceCategory === newCategory
-    );
-    setSelectedPackageId(nextPackage?.serviceId || "");
   };
 
   const handlePackageChange = (event) => {
@@ -164,7 +287,25 @@ const Eseva = () => {
 
     const payload = {
       trackingId,
+      serviceCategory: selectedService.serviceCategory,
+      package: selectedService.packageName,
+      packageName: selectedService.packageName,
+      serviceId: selectedService.serviceId,
+      price: normalizeText(selectedService.price || selectedService.chargesPriceInr),
+      timeline: normalizeText(
+        selectedService.timeline || selectedService.suggestedTimeline
+      ),
+      deadline: normalizeText(selectedService.deadline || selectedService.timeline),
+      notes: normalizeText(selectedService.notes),
+      status: "Pending",
+      customerName: formData.customerName,
+      phoneNumber: formData.phoneNumber,
+      email: formData.email,
+      address: formData.address,
+      requirement: formData.requirementDetails,
+      requirementDetails: formData.requirementDetails,
       bookingStatus: "Pending",
+      timestamp: new Date().toISOString(),
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       customer: {
         name: formData.customerName,
@@ -178,8 +319,10 @@ const Eseva = () => {
         serviceId: selectedService.serviceId,
         packageName: selectedService.packageName,
         description: selectedService.description,
-        chargesPriceInr: selectedService.chargesPriceInr,
-        suggestedTimeline: selectedService.suggestedTimeline,
+        chargesPriceInr: selectedService.price || selectedService.chargesPriceInr,
+        suggestedTimeline:
+          selectedService.timeline || selectedService.suggestedTimeline,
+        deadline: selectedService.deadline,
         notes: selectedService.notes,
       },
     };
@@ -277,8 +420,14 @@ const Eseva = () => {
                   className="form-control"
                   value={selectedCategory}
                   onChange={handleCategoryChange}
+                  disabled={!hasServices}
                   style={{ borderRadius: "10px" }}
                 >
+                  {!selectedCategory ? (
+                    <option value="" disabled>
+                      {hasServices ? "Select a service category" : "No services available"}
+                    </option>
+                  ) : null}
                   {serviceCategories.map((category) => (
                     <option key={category} value={category}>
                       {category}
@@ -301,8 +450,16 @@ const Eseva = () => {
                   className="form-control"
                   value={selectedPackageId}
                   onChange={handlePackageChange}
+                  disabled={!selectedCategory || packagesForCategory.length === 0}
                   style={{ borderRadius: "10px" }}
                 >
+                  {!selectedPackageId ? (
+                    <option value="" disabled>
+                      {packagesForCategory.length > 0
+                        ? "Select a package"
+                        : "No packages available"}
+                    </option>
+                  ) : null}
                   {packagesForCategory.map((item) => (
                     <option key={item.serviceId} value={item.serviceId}>
                       {item.packageName}
@@ -349,13 +506,21 @@ const Eseva = () => {
                     <div>
                       <small style={{ color: "#6b6b6b" }}>Charges</small>
                       <div style={{ fontWeight: "600" }}>
-                        INR {selectedService.chargesPriceInr}
+                        {formatPrice(
+                          selectedService.price || selectedService.chargesPriceInr
+                        )}
                       </div>
                     </div>
                     <div>
                       <small style={{ color: "#6b6b6b" }}>Notes</small>
                       <div style={{ fontWeight: "600" }}>
                         {selectedService.notes}
+                      </div>
+                    </div>
+                    <div>
+                      <small style={{ color: "#6b6b6b" }}>Deadline</small>
+                      <div style={{ fontWeight: "600" }}>
+                        {selectedService.deadline || "To be confirmed"}
                       </div>
                     </div>
                   </div>
@@ -370,7 +535,9 @@ const Eseva = () => {
                   }}
                 >
                   <p style={{ color: "#4c4c4c" }}>
-                    Please select a package to view details.
+                    {hasServices
+                      ? "Please select a package to view details."
+                      : "No approved services are available right now. Please check back soon."}
                   </p>
                 </div>
               )}
@@ -482,7 +649,7 @@ const Eseva = () => {
               <button
                 type="submit"
                 className="gfg-btn eseva-submit-btn"
-                disabled={isSubmitting || servicesLoading}
+                disabled={isSubmitting || servicesLoading || !selectedService}
               >
                 {isSubmitting ? "Submitting..." : "Submit Booking"}
               </button>

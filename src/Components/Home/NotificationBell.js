@@ -11,12 +11,22 @@ const TYPE_ICON = {
   charity_created: "bi-plus-circle-fill",
   charity_updated: "bi-pencil-fill",
   charity_deleted: "bi-trash-fill",
+  internship_application_submitted: "bi-send-check-fill",
+  internship_status_updated: "bi-arrow-repeat",
+  internship_certificate_ready: "bi-patch-check-fill",
+  internship_certificate_sent: "bi-envelope-check-fill",
+  certificate_new: "bi-patch-check-fill",
 };
 
 const TYPE_COLOR = {
   charity_created: "#1a8745",
   charity_updated: "#e69a00",
   charity_deleted: "#c0392b",
+  internship_application_submitted: "#2563eb",
+  internship_status_updated: "#7c3aed",
+  internship_certificate_ready: "#059669",
+  internship_certificate_sent: "#1d4ed8",
+  certificate_new: "#1a8745",
 };
 
 const timeAgo = (dateStr) => {
@@ -55,12 +65,14 @@ const NotificationBell = () => {
   }, [open]);
 
   const handleItemClick = (id, read) => {
-    if (!read) dispatch(markNotificationRead(id));
+    const item = items.find((notification) => notification._id === id);
+    if (!read) dispatch(markNotificationRead(id, item?.source));
   };
 
   const handleDelete = (e, id) => {
     e.stopPropagation();
-    dispatch(deleteNotificationById(id));
+    const item = items.find((notification) => notification._id === id);
+    dispatch(deleteNotificationById(id, item?.source));
   };
 
   return (

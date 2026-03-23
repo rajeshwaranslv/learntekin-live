@@ -106,7 +106,7 @@ function AppShell({ showWIPPopup, closeWIPPopup, routeFallback }) {
             <Route exact path="/Services" component={Services} />
             <Route exact path="/Careers" component={Careers} />
             <Route exact path="/Contact" component={Contact} />
-            <Route exact path="/ESeva" component={Eseva} />
+            <Route exact path={["/eseva", "/ESeva"]} component={Eseva} />
             <Route exact path="/Products" component={Products} />
             <Route exact path="/courseDetails" component={CourseDetails} />
             <Route exact path="/Blogs" component={Blogs} />
