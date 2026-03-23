@@ -36,6 +36,7 @@ const Blogs = lazy(() => import("./Components/Blogs/Blog"));
 const FAQSection = lazy(() => import("./Components/Blogs/FAQSection"));
 const NotFound = lazy(() => import("./Components/Warnings/NotFound"));
 const Unauthorized = lazy(() => import("./Components/Warnings/Unauthorized"));
+const Internships = lazy(() => import("./Components/Internship/Internships"));
 
 const refreshAos = () => {
   if (!window.AOS) {
@@ -110,6 +111,7 @@ function AppShell({ showWIPPopup, closeWIPPopup, routeFallback }) {
             <Route exact path="/courseDetails" component={CourseDetails} />
             <Route exact path="/Blogs" component={Blogs} />
             <Route exact path="/faq" component={FAQSection} />
+            <Route exact path="/internships" component={Internships} />
             <Route exact path="/unauthorized" component={Unauthorized} />
             <Route path="*" component={NotFound} />
           </Switch>

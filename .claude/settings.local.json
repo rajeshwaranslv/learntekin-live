@@ -23,7 +23,15 @@
       "Bash(grep -rn \"href.*linkedin\\\\|href.*instagram\\\\|href.*youtube\\\\|href.*twitter\\\\|href.*facebook\\\\|href.*whatsapp\" 'd:/Production/2025/MERN/Learn TEK In/learntekin-live' --include=*.js --include=*.jsx --include=*.html)",
       "Bash(grep -rn \"social\\\\|linkedin\\\\|instagram\\\\|youtube\" 'd:/Production/2025/MERN/Learn TEK In/learntekin-live/src' --include=*.js --include=*.jsx)",
       "Bash(node -e \"require\\(''recharts''\\); console.log\\(''recharts OK''\\)\")",
-      "Bash(firebase deploy:*)"
+      "Bash(firebase deploy:*)",
+      "Bash(find 'd:\\\\Production\\\\2025\\\\MERN\\\\Learn TEK In\\\\ltin-admin\\\\src\\\\components' -type f -name *.js -o -name *.jsx -o -name *.css)",
+      "Bash(find d:Productionreposchatify-masterbackendsrc -type f -name *.js)",
+      "Bash(find 'd:/Production/2025/MERN/Learn TEK In/ltin-admin/src' -name *certif* -o -name *cert*)",
+      "Bash(find 'd:/Production/2025/MERN/Learn TEK In/ltin-admin/src' -name firebase*)",
+      "Bash(find 'd:/Production/2025/MERN/Learn TEK In/ltin-admin/src' -name *reducer* -o -name *store*)",
+      "Bash(printf \"VITE_API_PROXY_TARGET=http://localhost:5000\\\\n\")",
+      "Bash(\"d:/Production/2025/MERN/Learn TEK In/ltin-admin/.env.local\")",
+      "Bash(curl -s http://localhost:5000/api/internships/admin/all)"
     ]
   }
 }

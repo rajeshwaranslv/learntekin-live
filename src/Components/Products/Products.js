@@ -4,6 +4,8 @@ import { connect } from "react-redux";
 import { verifyCertificate } from "../../Components/actions/verifyCertificate";
 import "./product.css";
 
+const INTERNSHIP_API = "https://lte-node.onrender.com/api/internships";
+
 const learningTracks = [
   {
     type: "Fellowship",
@@ -115,10 +117,17 @@ class Products extends Component {
     verifyMessage: "",
     verifiedCertificate: null,
     verifyStatus: "idle",
+    liveOpportunities: [],
+    liveLoading: true,
+    liveFilter: "all",
   };
 
   componentDidMount() {
     document.title = "Products";
+    fetch(INTERNSHIP_API)
+      .then((r) => r.json())
+      .then((data) => this.setState({ liveOpportunities: Array.isArray(data) ? data : [], liveLoading: false }))
+      .catch(() => this.setState({ liveOpportunities: [], liveLoading: false }));
   }
 
   handleCertificateIdChange = (event) => {
@@ -163,8 +172,14 @@ class Products extends Component {
   };
 
   render() {
-    const { certificateId, verifyMessage, verifiedCertificate, verifyStatus } =
-      this.state;
+    const {
+      certificateId, verifyMessage, verifiedCertificate, verifyStatus,
+      liveOpportunities, liveLoading, liveFilter,
+    } = this.state;
+
+    const visibleOpps = liveFilter === "all"
+      ? liveOpportunities
+      : liveOpportunities.filter((o) => o.type === liveFilter);
 
     return (
       <section id="pricing" className="products-page">
@@ -235,6 +250,82 @@ class Products extends Component {
                 </div>
               ))}
             </div>
+          </section>
+
+          {/* ── Live Internship / Fellowship Openings ── */}
+          <section className="products-section">
+            <div className="products-section-head">
+              <div className="products-openings-head">
+                <div>
+                  <h2>Current Openings</h2>
+                  <p>Live internship &amp; fellowship positions — apply directly from here.</p>
+                </div>
+                <div className="products-openings-filters">
+                  {["all", "internship", "fellowship"].map((f) => (
+                    <button
+                      key={f}
+                      className={`products-opening-filter${liveFilter === f ? " active" : ""}`}
+                      onClick={() => this.setState({ liveFilter: f })}
+                    >
+                      {f === "all" ? "All" : f.charAt(0).toUpperCase() + f.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {liveLoading ? (
+              <div className="products-openings-loading">
+                <div className="products-openings-spinner" />
+                <span>Loading opportunities…</span>
+              </div>
+            ) : visibleOpps.length === 0 ? (
+              <div className="products-openings-empty">
+                <i className="bi bi-briefcase" />
+                <p>No open positions at the moment — check back soon.</p>
+              </div>
+            ) : (
+              <div className="row g-3">
+                {visibleOpps.map((opp) => {
+                  const isExpired = new Date(opp.deadline) < new Date();
+                  return (
+                    <div className="col-xl-4 col-lg-6" key={opp._id}>
+                      <article className={`products-opening-card h-100${isExpired ? " expired" : ""}`}>
+                        <div className="products-track-head">
+                          <span className={`products-tag ${opp.type}`}>{opp.type}</span>
+                          {isExpired && <span className="products-tag products-tag-closed">Closed</span>}
+                        </div>
+                        <h3>{opp.title}</h3>
+                        <p className="products-opening-domain">
+                          <i className="bi bi-tag-fill" /> {opp.domain}
+                        </p>
+                        <p>{opp.description}</p>
+                        <div className="products-opening-meta">
+                          <span><i className="bi bi-clock" /> {opp.duration}</span>
+                          <span><i className="bi bi-currency-rupee" /> {opp.stipend || "Unpaid"}</span>
+                          <span><i className="bi bi-people" /> {opp.openings} opening{opp.openings !== 1 ? "s" : ""}</span>
+                          <span><i className="bi bi-calendar-event" /> {new Date(opp.deadline).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</span>
+                        </div>
+                        {opp.requirements?.length > 0 && (
+                          <ul>
+                            {opp.requirements.slice(0, 3).map((r, i) => <li key={i}>{r}</li>)}
+                          </ul>
+                        )}
+                        <div className="products-actions">
+                          <Link
+                            to="/internships"
+                            className={`gfg-btn${isExpired ? " gfg-btn-disabled" : ""}`}
+                            style={isExpired ? { pointerEvents: "none", opacity: 0.55 } : {}}
+                          >
+                            {isExpired ? "Closed" : "Apply Now"}
+                          </Link>
+                        </div>
+                      </article>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </section>
 
           <section className="products-section products-verify">

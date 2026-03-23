@@ -1,9 +1,9 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Swal from "sweetalert2";
 import { v4 as uuidv4 } from "uuid";
 import firebase, { db } from "../../../firebase";
 
-const SERVICES = [
+const FALLBACK_SERVICES = [
   {
     serviceCategory: "Dharshan Pre-booking",
     serviceId: "LTINS0001",
@@ -70,33 +70,60 @@ const SERVICES = [
 ];
 
 const Eseva = () => {
-  const serviceCategories = useMemo(() => {
-    return Array.from(new Set(SERVICES.map((item) => item.serviceCategory)));
+  const [services, setServices] = useState(FALLBACK_SERVICES);
+  const [servicesLoading, setServicesLoading] = useState(true);
+
+  useEffect(() => {
+    db.collection("esevaServices")
+      .get()
+      .then((snapshot) => {
+        if (!snapshot.empty) {
+          const fetched = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+          setServices(fetched);
+        }
+        // If empty, keep FALLBACK_SERVICES
+      })
+      .catch(() => {
+        // On error, keep FALLBACK_SERVICES
+      })
+      .finally(() => setServicesLoading(false));
   }, []);
 
-  const [selectedCategory, setSelectedCategory] = useState(
-    serviceCategories[0] || ""
-  );
+  const serviceCategories = useMemo(() => {
+    return Array.from(new Set(services.map((item) => item.serviceCategory)));
+  }, [services]);
+
+  const [selectedCategory, setSelectedCategory] = useState("");
+
+  useEffect(() => {
+    if (serviceCategories.length > 0 && !selectedCategory) {
+      setSelectedCategory(serviceCategories[0]);
+    }
+  }, [serviceCategories, selectedCategory]);
 
   const packagesForCategory = useMemo(() => {
-    return SERVICES.filter(
+    return services.filter(
       (item) => item.serviceCategory === selectedCategory
     );
-  }, [selectedCategory]);
+  }, [selectedCategory, services]);
 
-  const [selectedPackageId, setSelectedPackageId] = useState(
-    packagesForCategory[0]?.serviceId || ""
-  );
+  const [selectedPackageId, setSelectedPackageId] = useState("");
+
+  useEffect(() => {
+    if (packagesForCategory.length > 0) {
+      setSelectedPackageId(packagesForCategory[0]?.serviceId || "");
+    }
+  }, [packagesForCategory]);
 
   const selectedService = useMemo(() => {
-    return SERVICES.find((item) => item.serviceId === selectedPackageId) || null;
-  }, [selectedPackageId]);
+    return services.find((item) => item.serviceId === selectedPackageId) || null;
+  }, [selectedPackageId, services]);
 
   const handleCategoryChange = (event) => {
     const newCategory = event.target.value;
     setSelectedCategory(newCategory);
 
-    const nextPackage = SERVICES.find(
+    const nextPackage = services.find(
       (item) => item.serviceCategory === newCategory
     );
     setSelectedPackageId(nextPackage?.serviceId || "");
@@ -219,6 +246,11 @@ const Eseva = () => {
             className="card-body"
             style={{ padding: "clamp(1.5rem, 3vw, 2.5rem)" }}
           >
+          {servicesLoading ? (
+            <div style={{ textAlign: "center", padding: "2rem", color: "#6b7280" }}>
+              Loading services...
+            </div>
+          ) : (
           <div className="row g-3">
             <div className="col-lg-6">
               <div
@@ -344,6 +376,7 @@ const Eseva = () => {
               )}
             </div>
           </div>
+          )}
 
           <form onSubmit={handleSubmit} style={{ marginTop: "2rem" }}>
             <div className="row g-3">
@@ -449,7 +482,7 @@ const Eseva = () => {
               <button
                 type="submit"
                 className="gfg-btn eseva-submit-btn"
-                disabled={isSubmitting}
+                disabled={isSubmitting || servicesLoading}
               >
                 {isSubmitting ? "Submitting..." : "Submit Booking"}
               </button>

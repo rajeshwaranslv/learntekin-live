@@ -9,7 +9,11 @@
       "Bash(python -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(list\\(d.get\\(''''dependencies'''',{}\\).keys\\(\\)\\)\\)\")",
       "Bash(node -e \"const p=require\\(''./package.json''\\); console.log\\(Object.keys\\(p.dependencies||{}\\).join\\(''\\\\n''\\)\\)\" --cwd \"d:/Production/2025/MERN/Learn TEK In/learntekin-live\")",
       "Bash(node -e \"const p=require\\(''d:/Production/2025/MERN/Learn TEK In/learntekin-live/package.json''\\); console.log\\(Object.keys\\(p.dependencies||{}\\).join\\(''\\\\n''\\)\\)\")",
-      "Bash(node -e \"const p=require\\(''''d:/Production/2025/MERN/Learn TEK In/ltin-admin/node_modules/draft-js/package.json''''\\); console.log\\(''''immutable peer:'''', p.peerDependencies?.immutable || p.dependencies?.immutable\\)\")"
+      "Bash(node -e \"const p=require\\(''''d:/Production/2025/MERN/Learn TEK In/ltin-admin/node_modules/draft-js/package.json''''\\); console.log\\(''''immutable peer:'''', p.peerDependencies?.immutable || p.dependencies?.immutable\\)\")",
+      "Bash(curl -s http://localhost:3000/api/internships/admin/all)",
+      "Bash(curl -s -X POST http://localhost:5000/api/internships -H \"Content-Type: application/json\" -d '{\"\"title\"\":\"\"Test\"\",\"\"type\"\":\"\"internship\"\",\"\"domain\"\":\"\"Web\"\",\"\"description\"\":\"\"desc\"\",\"\"duration\"\":\"\"3 months\"\",\"\"deadline\"\":\"\"2026-06-01T00:00:00.000Z\"\",\"\"openings\"\":1,\"\"isActive\"\":true}')",
+      "Bash(curl -s -X POST http://localhost:3000/api/internships -H \"Content-Type: application/json\" -d '{\"\"title\"\":\"\"T2\"\",\"\"type\"\":\"\"internship\"\",\"\"domain\"\":\"\"Web\"\",\"\"description\"\":\"\"d\"\",\"\"duration\"\":\"\"3m\"\",\"\"deadline\"\":\"\"2026-06-01T00:00:00.000Z\"\",\"\"openings\"\":1,\"\"isActive\"\":true}')",
+      "Bash(curl -s -X POST http://localhost:3000/api/internships -H \"Content-Type: application/json\" -d '{\"\"title\"\":\"\"T3\"\",\"\"type\"\":\"\"internship\"\",\"\"domain\"\":\"\"Web\"\",\"\"description\"\":\"\"<p>desc</p>\"\",\"\"duration\"\":\"\"3m\"\",\"\"deadline\"\":\"\"2026-06-01T00:00:00.000Z\"\",\"\"openings\"\":1,\"\"isActive\"\":true}')"
     ]
   }
 }
