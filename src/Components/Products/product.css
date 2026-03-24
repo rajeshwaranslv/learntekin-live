@@ -367,6 +367,39 @@
   }
 }
 
+/* ── Platform service cards (PC Factory / LMS / Library) ── */
+.products-platform-card {
+  display: flex;
+  flex-direction: column;
+  padding: 1.4rem 1.2rem 1.2rem;
+}
+
+.products-platform-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #1a5b31, #2d8a50);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1.4rem;
+  margin-bottom: 0.85rem;
+  flex-shrink: 0;
+}
+
+.products-platform-card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+.products-platform-card .gfg-btn {
+  margin-top: auto;
+  padding-top: 0.85rem;
+  align-self: flex-start;
+}
+
 @media (max-width: 576px) {
   .products-hero,
   .products-section {

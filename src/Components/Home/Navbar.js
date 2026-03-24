@@ -17,9 +17,14 @@ function AppNavbar() {
   const location = useLocation();
 
   const currentPath = location.pathname.toLowerCase();
-  const isProductsRoute = ["/products", "/eseva", "/coursedetails"].includes(
-    currentPath
-  );
+  const isProductsRoute = [
+    "/products",
+    "/eseva",
+    "/coursedetails",
+    "/products/pc-factory",
+    "/products/lms",
+    "/products/library",
+  ].includes(currentPath);
 
   useEffect(() => {
     setExpanded(false);
@@ -178,6 +183,34 @@ function AppNavbar() {
                     onClick={closeMenu}
                   >
                     ESeva
+                  </NavDropdown.Item>
+                  <NavDropdown.Divider />
+                  <NavDropdown.Item
+                    as={NavLink}
+                    exact
+                    to="/Products/pc-factory"
+                    activeClassName="dropdown-item-active"
+                    onClick={closeMenu}
+                  >
+                    PC Factory
+                  </NavDropdown.Item>
+                  <NavDropdown.Item
+                    as={NavLink}
+                    exact
+                    to="/Products/lms"
+                    activeClassName="dropdown-item-active"
+                    onClick={closeMenu}
+                  >
+                    LMS
+                  </NavDropdown.Item>
+                  <NavDropdown.Item
+                    as={NavLink}
+                    exact
+                    to="/Products/library"
+                    activeClassName="dropdown-item-active"
+                    onClick={closeMenu}
+                  >
+                    Library
                   </NavDropdown.Item>
                 </NavDropdown>
 
