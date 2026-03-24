@@ -17,7 +17,8 @@
       "Read(//d/Production/2025/MERN/Learn/ TEK/ In/ltin-admin/src/components/actions/**)",
       "Read(//d/Production/2025/MERN/Learn/ TEK/ In/ltin-admin/**)",
       "Bash(find 'd:\\\\Production\\\\2025\\\\MERN\\\\Learn TEK In\\\\ltin-admin\\\\src' -type f -name *notification*)",
-      "Bash(grep -r \"createNotification\\\\|createAdminWorkflow\\\\|createLiveWorkflow\" 'd:\\\\Production\\\\2025\\\\MERN\\\\Learn TEK In\\\\ltin-admin\\\\src' --include=*.js)"
+      "Bash(grep -r \"createNotification\\\\|createAdminWorkflow\\\\|createLiveWorkflow\" 'd:\\\\Production\\\\2025\\\\MERN\\\\Learn TEK In\\\\ltin-admin\\\\src' --include=*.js)",
+      "Bash(npm run:*)"
     ]
   }
 }
