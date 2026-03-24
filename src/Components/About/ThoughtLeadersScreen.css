@@ -357,3 +357,63 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ── Admin inline controls ─────────────────────────────────────────────────── */
+.cp-admin-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fef9c3;
+  border: 1px solid #fde68a;
+  border-radius: 8px;
+  padding: 8px 16px;
+  margin-bottom: 16px;
+}
+.cp-admin-badge {
+  background: #f59e0b;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.cp-admin-controls {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+}
+.cp-admin-btn {
+  border: none;
+  border-radius: 5px;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: opacity 0.15s;
+}
+.cp-admin-btn:hover { opacity: 0.85; }
+.cp-admin-btn-edit   { background: #fef9c3; color: #92400e; border: 1px solid #fde68a; }
+.cp-admin-btn-del    { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
+.cp-admin-btn-save   { background: #1a5b31; color: #fff; }
+.cp-admin-btn-cancel { background: #f3f4f6; color: #374151; border: 1px solid #d1d5db; }
+
+.cp-admin-edit {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cp-admin-input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+  resize: vertical;
+  box-sizing: border-box;
+}
+.cp-admin-input:focus { outline: none; border-color: #1a5b31; }
+.cp-admin-actions { display: flex; gap: 8px; }

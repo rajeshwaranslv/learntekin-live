@@ -10,7 +10,8 @@ import { buildApiUrl } from "../utils/api";
 import { normalizeNotificationPayload } from "./notificationScope";
 import firebase, { auth, db } from "../firebase";
 
-const NOTIF_URL = buildApiUrl("/api/notifications");
+const NOTIF_BASE = buildApiUrl("/api/notifications");
+const NOTIF_URL = `${NOTIF_BASE}?app=learntekin-live`;
 
 const normalizeFirestoreNotification = (docSnapshot) => {
   const data = docSnapshot.data() || {};
@@ -111,7 +112,7 @@ export const markNotificationRead = (id, source = "api") => async (dispatch) => 
         { merge: true }
       );
     } else {
-      await axios.patch(`${NOTIF_URL}/${id}/read`);
+      await axios.patch(`${NOTIF_BASE}/${id}/read`);
     }
     dispatch({ type: MARK_NOTIF_READ, payload: id });
   } catch (err) {
@@ -170,7 +171,7 @@ export const deleteNotificationById = (id, source = "api") => async (dispatch) =
     if (source === "firestore") {
       await db.collection("notifications").doc(id).delete();
     } else {
-      await axios.delete(`${NOTIF_URL}/${id}`);
+      await axios.delete(`${NOTIF_BASE}/${id}`);
     }
     dispatch({ type: DELETE_NOTIF, payload: id });
   } catch (err) {

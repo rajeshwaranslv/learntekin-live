@@ -250,17 +250,8 @@ export default function CharityManagement() {
     return <div className="charity-admin-container">Loading...</div>;
   }
 
-  if (!currentUser) {
+  if (!currentUser || !isAdmin) {
     return <Unauthorized />;
-  }
-
-  if (!isAdmin) {
-    return (
-      <div className="charity-admin-container">
-        <h2>Admin Access Only</h2>
-        <p>You do not have permission to manage charities.</p>
-      </div>
-    );
   }
 
   return (

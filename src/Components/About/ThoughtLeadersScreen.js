@@ -1,6 +1,7 @@
 ﻿import React, { useEffect, useState } from "react";
 import parse from "html-react-parser";
-import "./ThoughtLeadersScreen.css"; // Styling for the screen
+import { auth, db } from "../../firebase";
+import "./ThoughtLeadersScreen.css";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://lte-node.onrender.com";
 const CHARITY_API_URL = `${API_BASE}/api/charities`;
@@ -81,17 +82,6 @@ const ThoughtLeadersScreen = () => {
     },
   ];
 
-  const fallbackCharity = [
-    {
-      name: "Preethi R",
-      description:
-        "Organized and led a team of volunteers in the #feedthevoiceless project to feed and care for stray dogs in some parts rural Tamil Nadu.",
-      benefits:
-        "I wanted to reach out about a small but impactful project hashtag #collarthevoiceless we're working on - getting reflective collars for stray dogs to keep them safe at night.",
-      image: "assets/img/charity.jpeg",
-      whatsapp: "https://wa.me/919941918157",
-    },
-  ];
 
   const [expandedCards, setExpandedCards] = useState(new Set());
   const toggleCard = (key) =>
@@ -101,38 +91,77 @@ const ThoughtLeadersScreen = () => {
       return next;
     });
 
-  const [charities, setCharities] = useState([]);
-  const [charityError, setCharityError] = useState("");
+  const [charities, setCharities]         = useState([]);
+  const [charityLoading, setCharityLoading] = useState(true);
+  const [charityError, setCharityError]   = useState("");
+  const [adminUser, setAdminUser]         = useState(null);
+  const [editingCharity, setEditingCharity] = useState(null);
+  const [charityForm, setCharityForm]     = useState({ name: "", image: "", description: "" });
+  const [charitySaving, setCharitySaving] = useState(false);
 
+  /* Check if current user is admin */
   useEffect(() => {
-    let active = true;
-
-    const loadCharities = async () => {
+    const unsub = auth.onAuthStateChanged(async (user) => {
+      if (!user) { setAdminUser(null); return; }
       try {
-        const response = await fetch(CHARITY_API_URL);
-        if (!response.ok) {
-          throw new Error("Failed to load charities.");
-        }
-        const data = await response.json();
-        if (active) {
-          setCharities(Array.isArray(data) ? data : []);
-          setCharityError("");
-        }
-      } catch (err) {
-        if (active) {
-          setCharityError("Unable to load charity partners right now.");
-        }
-      }
-    };
-
-    loadCharities();
-
-    return () => {
-      active = false;
-    };
+        const snap = await db.collection("users").doc(user.uid).get();
+        setAdminUser(snap.exists && snap.data()?.role === "admin" ? user : null);
+      } catch { setAdminUser(null); }
+    });
+    return () => unsub();
   }, []);
 
-  const displayCharities = charities.length ? charities : fallbackCharity;
+  /* Load charities from API */
+  useEffect(() => {
+    let active = true;
+    setCharityLoading(true);
+    const load = async () => {
+      try {
+        const res = await fetch(CHARITY_API_URL);
+        if (!res.ok) throw new Error("Failed to load charities.");
+        const data = await res.json();
+        if (active) { setCharities(Array.isArray(data) ? data : []); setCharityError(""); }
+      } catch (err) {
+        if (active) setCharityError("Unable to load charity partners right now.");
+      } finally {
+        if (active) setCharityLoading(false);
+      }
+    };
+    load();
+    return () => { active = false; };
+  }, []);
+
+  /* Admin inline helpers */
+  const openEditCharity = (c) => {
+    setEditingCharity(c._id);
+    setCharityForm({ name: c.name, image: c.image || "", description: c.description || "" });
+  };
+  const cancelEditCharity = () => { setEditingCharity(null); setCharityForm({ name: "", image: "", description: "" }); };
+
+  const handleCharitySave = async () => {
+    if (!charityForm.name.trim()) return;
+    setCharitySaving(true);
+    try {
+      const res = await fetch(`${CHARITY_API_URL}/${editingCharity}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(charityForm),
+      });
+      if (!res.ok) throw new Error("Save failed");
+      const updated = await res.json();
+      setCharities((prev) => prev.map((c) => c._id === editingCharity ? updated : c));
+      cancelEditCharity();
+    } catch { alert("Failed to save charity."); }
+    finally { setCharitySaving(false); }
+  };
+
+  const handleCharityDelete = async (id) => {
+    if (!window.confirm("Delete this charity?")) return;
+    try {
+      await fetch(`${CHARITY_API_URL}/${id}`, { method: "DELETE" });
+      setCharities((prev) => prev.filter((c) => c._id !== id));
+    } catch { alert("Failed to delete charity."); }
+  };
 
   const tamilQuotes = [
     "Enniya mudithal vendum.",
@@ -258,53 +287,90 @@ const ThoughtLeadersScreen = () => {
           </p>
         </div>
 
-        {charityError && (
-          <p className="cp-error">{charityError}</p>
+        {adminUser && (
+          <div className="cp-admin-bar">
+            <span className="cp-admin-badge">Admin Mode</span>
+            <span style={{ fontSize: 12, color: "#6b7280" }}>You can edit or delete charity cards inline.</span>
+          </div>
+        )}
+
+        {charityError && <p className="cp-error">{charityError}</p>}
+
+        {charityLoading && (
+          <div style={{ textAlign: "center", padding: "32px 0", color: "#9ca3af" }}>Loading charity partners…</div>
+        )}
+
+        {!charityLoading && !charityError && charities.length === 0 && (
+          <div style={{ textAlign: "center", padding: "32px 0", color: "#9ca3af" }}>No charity partners listed yet.</div>
         )}
 
         <div className="cp-grid">
-          {displayCharities.map((chars, index) => (
-            <article className="cp-card" key={index}>
+          {charities.map((chars) => (
+            <article className="cp-card" key={chars._id || chars.name}>
               <div className="cp-card-accent" />
 
-              <div className="cp-card-inner">
-                <div className="cp-avatar-wrap">
-                  <img
-                    src={chars.image || "assets/img/charity.jpeg"}
-                    alt={chars.name}
-                    className="cp-avatar"
-                    onError={(e) => { e.target.src = "assets/img/charity.jpeg"; }}
-                  />
-                  <span className="cp-avatar-ring" />
-                </div>
-
-                <div className="cp-card-body">
-                  <div className="cp-card-meta">
-                    <span className="cp-badge">Charity Partner</span>
+              {/* Admin inline edit form */}
+              {adminUser && editingCharity === chars._id ? (
+                <div className="cp-admin-edit">
+                  <input className="cp-admin-input" value={charityForm.name}
+                    onChange={(e) => setCharityForm((p) => ({ ...p, name: e.target.value }))}
+                    placeholder="Name" />
+                  <input className="cp-admin-input" value={charityForm.image}
+                    onChange={(e) => setCharityForm((p) => ({ ...p, image: e.target.value }))}
+                    placeholder="Image URL" />
+                  <textarea className="cp-admin-input" rows={3} value={charityForm.description}
+                    onChange={(e) => setCharityForm((p) => ({ ...p, description: e.target.value }))}
+                    placeholder="Description" />
+                  <div className="cp-admin-actions">
+                    <button className="cp-admin-btn cp-admin-btn-save" onClick={handleCharitySave} disabled={charitySaving}>
+                      {charitySaving ? "Saving…" : "Save"}
+                    </button>
+                    <button className="cp-admin-btn cp-admin-btn-cancel" onClick={cancelEditCharity}>Cancel</button>
                   </div>
-                  <h3 className="cp-name">{chars.name}</h3>
-
-                  <div className="cp-description">
-                    {renderRichText(chars.description)}
-                    {chars.benefits && (
-                      <p className="cp-benefits">{chars.benefits}</p>
-                    )}
+                </div>
+              ) : (
+                <div className="cp-card-inner">
+                  <div className="cp-avatar-wrap">
+                    <img
+                      src={chars.image || "assets/img/charity.jpeg"}
+                      alt={chars.name}
+                      className="cp-avatar"
+                      onError={(e) => { e.target.src = "assets/img/charity.jpeg"; }}
+                    />
+                    <span className="cp-avatar-ring" />
                   </div>
 
-                  <a
-                    href={chars.whatsapp || chars.link || "https://wa.me/919941918157"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="cp-cta gfg-btn"
-                  >
-                    <span>Connect</span>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="5" y1="12" x2="19" y2="12" />
-                      <polyline points="12 5 19 12 12 19" />
-                    </svg>
-                  </a>
+                  <div className="cp-card-body">
+                    <div className="cp-card-meta">
+                      <span className="cp-badge">Charity Partner</span>
+                      {adminUser && (
+                        <div className="cp-admin-controls">
+                          <button className="cp-admin-btn cp-admin-btn-edit" onClick={() => openEditCharity(chars)}>Edit</button>
+                          <button className="cp-admin-btn cp-admin-btn-del" onClick={() => handleCharityDelete(chars._id)}>Delete</button>
+                        </div>
+                      )}
+                    </div>
+                    <h3 className="cp-name">{chars.name}</h3>
+
+                    <div className="cp-description">
+                      {renderRichText(chars.description)}
+                    </div>
+
+                    <a
+                      href={chars.whatsapp || "https://wa.me/919941918157"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="cp-cta gfg-btn"
+                    >
+                      <span>Connect</span>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                      </svg>
+                    </a>
+                  </div>
                 </div>
-              </div>
+              )}
             </article>
           ))}
         </div>
