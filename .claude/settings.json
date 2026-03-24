@@ -13,7 +13,9 @@
       "Bash(curl -s http://localhost:3000/api/internships/admin/all)",
       "Bash(curl -s -X POST http://localhost:5000/api/internships -H \"Content-Type: application/json\" -d '{\"\"title\"\":\"\"Test\"\",\"\"type\"\":\"\"internship\"\",\"\"domain\"\":\"\"Web\"\",\"\"description\"\":\"\"desc\"\",\"\"duration\"\":\"\"3 months\"\",\"\"deadline\"\":\"\"2026-06-01T00:00:00.000Z\"\",\"\"openings\"\":1,\"\"isActive\"\":true}')",
       "Bash(curl -s -X POST http://localhost:3000/api/internships -H \"Content-Type: application/json\" -d '{\"\"title\"\":\"\"T2\"\",\"\"type\"\":\"\"internship\"\",\"\"domain\"\":\"\"Web\"\",\"\"description\"\":\"\"d\"\",\"\"duration\"\":\"\"3m\"\",\"\"deadline\"\":\"\"2026-06-01T00:00:00.000Z\"\",\"\"openings\"\":1,\"\"isActive\"\":true}')",
-      "Bash(curl -s -X POST http://localhost:3000/api/internships -H \"Content-Type: application/json\" -d '{\"\"title\"\":\"\"T3\"\",\"\"type\"\":\"\"internship\"\",\"\"domain\"\":\"\"Web\"\",\"\"description\"\":\"\"<p>desc</p>\"\",\"\"duration\"\":\"\"3m\"\",\"\"deadline\"\":\"\"2026-06-01T00:00:00.000Z\"\",\"\"openings\"\":1,\"\"isActive\"\":true}')"
+      "Bash(curl -s -X POST http://localhost:3000/api/internships -H \"Content-Type: application/json\" -d '{\"\"title\"\":\"\"T3\"\",\"\"type\"\":\"\"internship\"\",\"\"domain\"\":\"\"Web\"\",\"\"description\"\":\"\"<p>desc</p>\"\",\"\"duration\"\":\"\"3m\"\",\"\"deadline\"\":\"\"2026-06-01T00:00:00.000Z\"\",\"\"openings\"\":1,\"\"isActive\"\":true}')",
+      "Read(//d/Production/2025/MERN/Learn/ TEK/ In/ltin-admin/src/components/actions/**)",
+      "Read(//d/Production/2025/MERN/Learn/ TEK/ In/ltin-admin/**)"
     ]
   }
 }
