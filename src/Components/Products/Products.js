@@ -102,6 +102,57 @@ const learningTracks = [
   },
 ];
 
+const platformServices = [
+  {
+    key: "pc-factory",
+    icon: "bi-pc-display-horizontal",
+    title: "PC Factory",
+    description:
+      "Build your custom PC by choosing from curated CPU, GPU, RAM, storage, motherboard, cabinet and PSU components. Get real-time compatibility checks and pay online.",
+    points: [
+      "Step-by-step component selector",
+      "Automatic compatibility verification",
+      "Live price summary",
+      "Secure Razorpay checkout",
+    ],
+    link: "/Products/pc-factory",
+    cta: "Build Your PC",
+    internal: true,
+  },
+  {
+    key: "lms",
+    icon: "bi-mortarboard-fill",
+    title: "Learning Management",
+    description:
+      "Browse and enroll in courses across Technology, Business, Design, and Data Science. Track your progress and earn certificates on completion.",
+    points: [
+      "Structured course modules",
+      "Beginner to Advanced levels",
+      "Free and paid courses",
+      "Enrollment confirmation by email",
+    ],
+    link: "/Products/lms",
+    cta: "Browse Courses",
+    internal: true,
+  },
+  {
+    key: "library",
+    icon: "bi-book-half",
+    title: "Digital Library",
+    description:
+      "Access our curated collection of physical and digital books. Borrow physical copies or read digital editions instantly online.",
+    points: [
+      "Physical borrow with due-date tracking",
+      "Instant digital access",
+      "Search by title, author, or category",
+      "Borrow history lookup",
+    ],
+    link: "/Products/library",
+    cta: "Explore Library",
+    internal: true,
+  },
+];
+
 const solutions = [
   {
     title: "financeFrenzy",
@@ -496,6 +547,37 @@ class Products extends Component {
                 ) : null}
               </div>
             ) : null}
+          </section>
+
+          {/* ── LTIN Platform Services ── */}
+          <section className="products-section">
+            <div className="products-section-head">
+              <h2>Platform Services</h2>
+              <p>
+                Tools built into the Learn TEK In platform — PC building, courses, and a digital library.
+              </p>
+            </div>
+            <div className="row g-4">
+              {platformServices.map((svc) => (
+                <div className="col-lg-4 col-md-6" key={svc.key}>
+                  <article className="products-solution-card products-platform-card h-100">
+                    <div className="products-platform-icon">
+                      <i className={`bi ${svc.icon}`} aria-hidden="true" />
+                    </div>
+                    <h3>{svc.title}</h3>
+                    <p>{svc.description}</p>
+                    <ul>
+                      {svc.points.map((pt) => (
+                        <li key={pt}>{pt}</li>
+                      ))}
+                    </ul>
+                    <Link to={svc.link} className="gfg-btn">
+                      {svc.cta}
+                    </Link>
+                  </article>
+                </div>
+              ))}
+            </div>
           </section>
 
           <section className="products-section">
