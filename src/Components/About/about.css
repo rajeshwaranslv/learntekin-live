@@ -203,6 +203,401 @@
   text-decoration: underline;
 }
 
+/* ── Mission & Vision ── */
+.about-mv-section { padding: clamp(0.9rem, 2.3vw, 1.3rem); }
+
+.about-mv-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+}
+
+.about-mv-card {
+  border: 1px solid #d7e8df;
+  border-radius: 16px;
+  background: linear-gradient(150deg, #ffffff 0%, #f3faf6 100%);
+  padding: 1.1rem 1.2rem;
+  box-shadow: 0 9px 22px rgba(11, 45, 29, 0.08);
+}
+
+.about-mv-card--vision {
+  background: linear-gradient(150deg, #f3faf6 0%, #e8f5ee 100%);
+  border-color: #b8d9c6;
+}
+
+.about-mv-label {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: #1f6f34;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.about-mv-card p {
+  margin: 0;
+  color: #3a5a4e;
+  line-height: 1.72;
+  font-size: 0.97rem;
+}
+
+/* ── Goals Grid ── */
+.about-goals-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.about-goal-card {
+  border: 1px solid #d7e8df;
+  border-radius: 18px;
+  background: linear-gradient(150deg, #ffffff 0%, #f3faf6 100%);
+  padding: 1.2rem 1.1rem;
+  box-shadow: 0 8px 22px rgba(11, 45, 29, 0.07);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.about-goal-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #1a5b31, #4aca78, #1a5b31);
+  background-size: 200% auto;
+  animation: about-gradient-border 3s linear infinite;
+}
+
+.about-goal-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(11, 45, 29, 0.13);
+}
+
+.about-goal-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1a5b31, #2d8a50);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.2rem;
+}
+
+.about-goal-icon i {
+  font-size: 1.15rem;
+  color: #fff;
+}
+
+.about-goal-target {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #1a5b31;
+  background: #e8f5ee;
+  border: 1px solid #c0ddc8;
+  border-radius: 999px;
+  padding: 0.1rem 0.55rem;
+  align-self: flex-start;
+}
+
+.about-goal-card h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #154230;
+  line-height: 1.3;
+}
+
+.about-goal-card p {
+  margin: 0;
+  font-size: 0.87rem;
+  color: #4f6b5f;
+  line-height: 1.65;
+}
+
+@media (max-width: 900px) {
+  .about-goals-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 576px) {
+  .about-goals-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Success Metrics Dashboard ── */
+.about-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.7rem;
+}
+
+.about-metric-card {
+  border: 1px solid #d7e8df;
+  border-radius: 14px;
+  background: linear-gradient(150deg, #ffffff 0%, #f3faf6 100%);
+  padding: 0.9rem 0.7rem;
+  text-align: center;
+  box-shadow: 0 6px 16px rgba(11, 45, 29, 0.07);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.28rem;
+}
+
+.about-metric-card i {
+  font-size: 1.5rem;
+  color: #1a5b31;
+}
+
+.about-metric-card strong {
+  display: block;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #1f6f34;
+  line-height: 1;
+}
+
+.about-metric-card span {
+  font-size: 0.75rem;
+  color: #4f6b5f;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+@media (max-width: 900px) {
+  .about-metrics-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 576px) {
+  .about-metrics-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ── Technologies ── */
+.about-tech-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.about-tech-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  border: 1px solid #c8dfd2;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #f5fbf7, #eaf5ef);
+  padding: 0.38rem 0.9rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #1a5b31;
+  box-shadow: 0 3px 8px rgba(11, 45, 29, 0.06);
+}
+
+.about-tech-chip i { font-size: 1rem; }
+
+/* ── Placed Learners / Testimonials ── */
+.about-testimonial-card {
+  border: 1px solid #d7e8df;
+  border-radius: 16px;
+  background: linear-gradient(150deg, #ffffff 0%, #f3faf6 100%);
+  padding: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 9px 22px rgba(11, 45, 29, 0.08);
+}
+
+.about-testimonial-quote {
+  margin: 0 0 auto;
+  color: #3a5a4e;
+  line-height: 1.7;
+  font-style: italic;
+  font-size: 0.94rem;
+  padding-bottom: 0.9rem;
+}
+
+.about-testimonial-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid #e2f0e8;
+}
+
+.about-testimonial-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid #c8dfd2;
+  box-shadow: 0 3px 8px rgba(11, 45, 29, 0.12);
+}
+
+.about-testimonial-footer strong {
+  display: block;
+  font-size: 0.93rem;
+  color: #154230;
+}
+
+.about-testimonial-footer span {
+  display: block;
+  font-size: 0.8rem;
+  color: #4f6b5f;
+  margin-top: 0.1rem;
+}
+
+.about-testimonial-footer small {
+  display: block;
+  font-size: 0.72rem;
+  color: #1f6f34;
+  font-weight: 600;
+  margin-top: 0.15rem;
+}
+
+/* ── Clients ticker ── */
+.about-clients-ticker-wrap {
+  overflow: hidden;
+  -webkit-mask: linear-gradient(90deg, transparent, #fff 12%, #fff 88%, transparent);
+  mask: linear-gradient(90deg, transparent, #fff 12%, #fff 88%, transparent);
+}
+
+.about-clients-ticker {
+  display: flex;
+  gap: 0.75rem;
+  width: max-content;
+  animation: about-ticker 28s linear infinite;
+}
+
+.about-clients-ticker:hover { animation-play-state: paused; }
+
+@keyframes about-ticker {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ── Client logo grid ── */
+.about-clients-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.about-client-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 148px;
+  min-height: 88px;
+  border: 1px solid #d7e8df;
+  border-radius: 14px;
+  background: #fff;
+  padding: 0.9rem 0.8rem;
+  box-shadow: 0 4px 12px rgba(11, 45, 29, 0.06);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.2s;
+  cursor: default;
+}
+
+.about-client-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(11, 45, 29, 0.12);
+  border-color: #a8d4b8;
+}
+
+.about-client-card i {
+  font-size: 1.5rem;
+  color: #1a5b31;
+}
+
+.about-client-card span {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #154230;
+  text-align: center;
+  line-height: 1.3;
+}
+
+/* ── Company ticker chips ── */
+.about-company-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid #c8dfd2;
+  border-radius: 12px;
+  background: #f5fbf7;
+  padding: 0.4rem 0.85rem 0.4rem 0.5rem;
+  white-space: nowrap;
+  box-shadow: 0 3px 10px rgba(11, 45, 29, 0.06);
+}
+
+.about-company-chip img {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  object-fit: contain;
+  background: #fff;
+}
+
+.about-company-chip span {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #1a5b31;
+}
+
+/* ── CTA section ── */
+.about-cta-section {
+  text-align: center;
+  padding: clamp(1.4rem, 3vw, 2.2rem) clamp(0.9rem, 2.3vw, 1.3rem);
+  background: linear-gradient(135deg, #1a5b31 0%, #2d8a50 100%);
+  border-color: #1a5b31;
+  color: #fff;
+}
+
+.about-cta-section h2 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(1.3rem, 2.4vw, 1.9rem);
+}
+
+.about-cta-section p {
+  margin: 0.5rem auto 0;
+  color: #c8f0d8;
+  line-height: 1.7;
+  max-width: 58ch;
+}
+
+.about-cta-section .gfg-btn:not(.gfg-btn-outline) {
+  background: #fff !important;
+  color: #1a5b31 !important;
+  border-color: #fff !important;
+}
+
+.about-cta-section .gfg-btn:not(.gfg-btn-outline):hover {
+  background: #e8f5ee !important;
+  border-color: #e8f5ee !important;
+}
+
+.about-cta-section .gfg-btn.gfg-btn-outline {
+  background: transparent !important;
+  color: #fff !important;
+  border: 2px solid rgba(255, 255, 255, 0.7) !important;
+}
+
+.about-cta-section .gfg-btn.gfg-btn-outline:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: #fff !important;
+}
+
 @media (max-width: 992px) {
   .about-hero {
     grid-template-columns: 1fr;
@@ -227,4 +622,306 @@
   .about-stat-grid {
     grid-template-columns: 1fr;
   }
+
+  .about-mv-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .about-tech-grid {
+    gap: 0.45rem;
+  }
+
+  .about-tech-chip {
+    font-size: 0.82rem;
+    padding: 0.32rem 0.7rem;
+  }
+}
+
+/* ═══════════════════════════════════════
+   ANIMATION SYSTEM
+═══════════════════════════════════════ */
+
+/* Base animate state — hidden */
+.about-animate {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--delay, 0s);
+}
+
+.about-animate.from-left  { transform: translateX(-40px); }
+.about-animate.from-right { transform: translateX(40px); }
+.about-animate.scale      { transform: scale(0.85); }
+
+/* Triggered state — visible */
+.about-animate.in-view {
+  opacity: 1;
+  transform: none;
+}
+
+/* Respect reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .about-animate {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ═══════════════════════════════════════
+   ENHANCED CARD HOVER EFFECTS
+═══════════════════════════════════════ */
+
+.about-pillar-card,
+.about-program-card,
+.about-leader-card,
+.about-testimonial-card,
+.about-mv-card,
+.about-metric-card {
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.28s ease;
+}
+
+.about-pillar-card:hover,
+.about-leader-card:hover,
+.about-testimonial-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 44px rgba(11, 45, 29, 0.14);
+}
+
+.about-mv-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 16px 38px rgba(11, 45, 29, 0.13);
+}
+
+.about-metric-card:hover {
+  transform: translateY(-5px) scale(1.03);
+  box-shadow: 0 14px 34px rgba(11, 45, 29, 0.14);
+  border-color: #1a5b31;
+}
+
+.about-metric-card:hover i {
+  transform: scale(1.2) rotate(-8deg);
+  transition: transform 0.25s ease;
+}
+
+.about-metric-card i {
+  transition: transform 0.25s ease;
+}
+
+/* ═══════════════════════════════════════
+   GRADIENT HEADING ACCENT
+═══════════════════════════════════════ */
+
+.about-section-head h2 {
+  position: relative;
+  display: inline-block;
+}
+
+.about-section-head h2::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #1a5b31, #2d8a50, #1a5b31);
+  background-size: 200% auto;
+  animation: about-shimmer-line 3s linear infinite;
+}
+
+@keyframes about-shimmer-line {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+/* ═══════════════════════════════════════
+   HERO ENHANCEMENTS
+═══════════════════════════════════════ */
+
+.about-hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.about-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 70% 40%, rgba(26, 91, 49, 0.06) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.about-hero-copy h1 {
+  background: linear-gradient(135deg, #113927 0%, #1a5b31 50%, #0d6b3b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.about-stat-card {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
+  animation: about-float 5s ease-in-out infinite;
+}
+
+.about-stat-card:nth-child(2) { animation-delay: 1.2s; }
+.about-stat-card:nth-child(3) { animation-delay: 2.4s; }
+.about-stat-card:nth-child(4) { animation-delay: 3.6s; }
+
+@keyframes about-float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-5px); }
+}
+
+.about-stat-card::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  right: -30%;
+  width: 80px;
+  height: 80px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(26, 91, 49, 0.1), transparent);
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════
+   MISSION/VISION GRADIENT BORDER
+═══════════════════════════════════════ */
+
+.about-mv-card {
+  position: relative;
+}
+
+.about-mv-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: 16px 16px 0 0;
+  background: linear-gradient(90deg, #1a5b31, #4aca78, #1a5b31);
+  background-size: 200% auto;
+  animation: about-gradient-border 3s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes about-gradient-border {
+  0%, 100% { background-position: 0% 50%; }
+  50%       { background-position: 100% 50%; }
+}
+
+/* ═══════════════════════════════════════
+   TECH CHIP HOVER
+═══════════════════════════════════════ */
+
+.about-tech-chip {
+  transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+  cursor: default;
+}
+
+.about-tech-chip:hover {
+  transform: translateY(-3px) scale(1.06);
+  background: linear-gradient(135deg, #e8f5ee, #d4f0e0);
+  box-shadow: 0 8px 20px rgba(26, 91, 49, 0.18);
+  border-color: #1a5b31;
+}
+
+/* ═══════════════════════════════════════
+   TESTIMONIAL QUOTE MARK
+═══════════════════════════════════════ */
+
+.about-testimonial-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.about-testimonial-card::before {
+  content: "\201C";
+  position: absolute;
+  top: -10px;
+  left: 12px;
+  font-size: 5rem;
+  color: rgba(26, 91, 49, 0.08);
+  font-family: Georgia, serif;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ═══════════════════════════════════════
+   PROGRAM CARD IMAGE HOVER
+═══════════════════════════════════════ */
+
+.about-program-card {
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.28s ease;
+}
+
+.about-program-card:hover {
+  transform: translateX(6px);
+  box-shadow: 0 14px 34px rgba(11, 45, 29, 0.13);
+}
+
+.about-program-card img {
+  transition: transform 0.35s ease;
+}
+
+.about-program-card:hover img {
+  transform: scale(1.04) rotate(-1deg);
+}
+
+/* ═══════════════════════════════════════
+   LEADER CARD ACCENT LINE
+═══════════════════════════════════════ */
+
+.about-leader-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.about-leader-card::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #1a5b31, #2d8a50);
+  transition: width 0.35s ease;
+}
+
+.about-leader-card:hover::after {
+  width: 100%;
+}
+
+/* ═══════════════════════════════════════
+   CTA SECTION PULSE BUTTON
+═══════════════════════════════════════ */
+
+.about-cta-section .gfg-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.about-cta-section .gfg-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.3), transparent);
+  opacity: 0;
+  transform: scale(0);
+  transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.about-cta-section .gfg-btn:hover::after {
+  opacity: 1;
+  transform: scale(1.5);
 }

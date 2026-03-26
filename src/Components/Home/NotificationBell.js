@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import ReactDOM from "react-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchNotifications,
@@ -45,7 +46,18 @@ const NotificationBell = () => {
   const dispatch = useDispatch();
   const { items, unreadCount } = useSelector((state) => state.notifications);
   const [open, setOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== "undefined" && window.matchMedia("(max-width: 600px)").matches
+  );
   const panelRef = useRef(null);
+  const wrapRef = useRef(null);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 600px)");
+    const handler = (e) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
 
   useEffect(() => {
     dispatch(fetchNotifications());
@@ -54,15 +66,18 @@ const NotificationBell = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open || isMobile) return;
     const handleClick = (e) => {
-      if (panelRef.current && !panelRef.current.contains(e.target)) {
+      if (
+        panelRef.current && !panelRef.current.contains(e.target) &&
+        wrapRef.current && !wrapRef.current.contains(e.target)
+      ) {
         setOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
-  }, [open]);
+  }, [open, isMobile]);
 
   const handleItemClick = (id, read) => {
     const item = items.find((notification) => notification._id === id);
@@ -75,22 +90,16 @@ const NotificationBell = () => {
     dispatch(deleteNotificationById(id, item?.source));
   };
 
-  return (
-    <div className="ltin-notif-wrap" ref={panelRef}>
-      <button
-        className={`ltin-notif-btn${open ? " active" : ""}`}
-        onClick={() => setOpen((v) => !v)}
-        aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ""}`}
-        type="button"
-      >
-        <i className={`bi ${open ? "bi-bell-fill" : "bi-bell"}`} />
-        {unreadCount > 0 && (
-          <span className="ltin-notif-badge">{unreadCount > 99 ? "99+" : unreadCount}</span>
-        )}
-      </button>
-
-      {open && (
-        <div className="ltin-notif-panel">
+  const panel = open ? (
+    <>
+      {isMobile && (
+        <div
+          className="ltin-notif-backdrop"
+          onClick={() => setOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+      <div className="ltin-notif-panel" ref={panelRef}>
           <div className="ltin-notif-header">
             <span className="ltin-notif-title">Notifications</span>
             {unreadCount > 0 && (
@@ -143,8 +152,27 @@ const NotificationBell = () => {
               ))
             )}
           </div>
-        </div>
-      )}
+      </div>
+    </>
+  ) : null;
+
+  return (
+    <div className="ltin-notif-wrap" ref={wrapRef}>
+      <button
+        className={`ltin-notif-btn${open ? " active" : ""}`}
+        onClick={() => setOpen((v) => !v)}
+        aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ""}`}
+        type="button"
+      >
+        <i className={`bi ${open ? "bi-bell-fill" : "bi-bell"}`} />
+        {unreadCount > 0 && (
+          <span className="ltin-notif-badge">{unreadCount > 99 ? "99+" : unreadCount}</span>
+        )}
+      </button>
+
+      {isMobile
+        ? ReactDOM.createPortal(panel, document.body)
+        : panel}
     </div>
   );
 };

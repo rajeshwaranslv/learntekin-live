@@ -536,6 +536,16 @@
 
 .ltin-notif-del:hover { background: #fee2e2; color: #c0392b; }
 
+/* ── Tablet (601px–991px): wider panel, no overflow ── */
+@media (min-width: 601px) and (max-width: 991px) {
+  .ltin-notif-panel {
+    width: 340px;
+    right: 0;
+    left: auto;
+  }
+}
+
+/* ── Mobile (≤600px): full bottom-sheet ── */
 @media (max-width: 600px) {
   .ltin-notif-panel {
     position: fixed;
@@ -544,22 +554,61 @@
     left: 0;
     right: 0;
     width: 100vw;
-    max-height: 65vh;
+    max-height: 70vh;
     border-radius: 18px 18px 0 0;
-    box-shadow: 0 -8px 32px rgba(10, 30, 18, 0.18);
+    box-shadow: 0 -8px 32px rgba(10, 30, 18, 0.22);
     z-index: 9999;
-    animation: ltinNotifUp 0.2s ease;
-  }
-  @keyframes ltinNotifUp {
-    from { transform: translateY(20px); opacity: 0; }
-    to   { transform: translateY(0);    opacity: 1; }
+    animation: ltinNotifUp 0.22s cubic-bezier(0.22, 1, 0.36, 1);
   }
   .ltin-notif-body {
-    max-height: calc(65vh - 90px);
+    max-height: calc(70vh - 52px);
+    -webkit-overflow-scrolling: touch;
   }
   .ltin-notif-item {
     padding: 13px 15px;
+    min-height: 52px;
   }
-  .ltin-notif-item-title { font-size: 0.84rem; }
-  .ltin-notif-item-msg   { font-size: 0.79rem; }
+  .ltin-notif-item-title { font-size: 0.86rem; }
+  .ltin-notif-item-msg   { font-size: 0.8rem;  }
+}
+
+/* bottom-sheet slide-up animation */
+@keyframes ltinNotifUp {
+  from { transform: translateY(24px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+/* ── Backdrop (mobile) ── */
+.ltin-notif-backdrop {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .ltin-notif-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 9998;
+    animation: ltinBackdropIn 0.2s ease;
+  }
+}
+
+@keyframes ltinBackdropIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Handle bar on bottom-sheet ── */
+@media (max-width: 600px) {
+  .ltin-notif-panel::before {
+    content: "";
+    display: block;
+    width: 36px;
+    height: 4px;
+    border-radius: 999px;
+    background: #d0d0d0;
+    margin: 10px auto 0;
+    flex-shrink: 0;
+  }
 }
