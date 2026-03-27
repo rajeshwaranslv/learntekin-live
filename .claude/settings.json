@@ -20,7 +20,10 @@
       "Bash(grep -r \"createNotification\\\\|createAdminWorkflow\\\\|createLiveWorkflow\" 'd:\\\\Production\\\\2025\\\\MERN\\\\Learn TEK In\\\\ltin-admin\\\\src' --include=*.js)",
       "Bash(npm run:*)",
       "Read(//c/Users/HP/.claude/projects/d--Production-2025-MERN-Learn-TEK-In-learntekin-live/ee6689fc-97ee-4423-b8dd-5735d306f75e/subagents/**)",
-      "Bash(find 'd:/Production/2025/MERN/Learn TEK In/learntekin-live/src' -name Clients* -o -name clients*)"
+      "Bash(find 'd:/Production/2025/MERN/Learn TEK In/learntekin-live/src' -name Clients* -o -name clients*)",
+      "Bash(grep -r \"twitter-x\\\\|twitter_x\" 'd:/Production/2025/MERN/Learn TEK In/learntekin-live/node_modules/bootstrap-icons/icons/' --include=*.svg -l)",
+      "Bash(node src/scripts/seedPlacedPeople.js)",
+      "Bash(ls \"d:/Production/2025/MERN/Learn TEK In/learntekin-live/.env\"*)"
     ]
   }
 }

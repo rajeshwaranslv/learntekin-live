@@ -461,6 +461,21 @@
   margin-top: 0.15rem;
 }
 
+.about-testimonial-linkedin {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  color: #0a66c2;
+  margin-top: 0.25rem;
+  text-decoration: none;
+  font-weight: 500;
+}
+.about-testimonial-linkedin:hover {
+  text-decoration: underline;
+  color: #0a66c2;
+}
+
 /* ── Clients ticker ── */
 .about-clients-ticker-wrap {
   overflow: hidden;

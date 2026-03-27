@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import "./service.css";
 
@@ -124,6 +125,24 @@ renderServiceCard(icon, title, description, link, imageSrc) {
             {services.map((service) =>
               this.renderServiceCard(service.icon, service.title, service.description, service.link, service.image)
             )}
+
+            {/* YouTube Promotional Service */}
+            <div className="col-lg-4 col-md-6 mb-4 d-flex align-items-stretch">
+              <div className="icon-box" data-aos="fade-up" data-aos-delay="100" style={{ display: "flex", flexDirection: "column" }}>
+                <img src="assets/img/dm.jpeg" alt="Promotional Services" className="img-fluid mb-3 service-img" />
+                <div className="icon-title" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <Icon icon="mdi:youtube" style={{ fontSize: "2rem", marginRight: "0.5rem", color: "#FF0000" }} />
+                  <h2 style={{ margin: 0 }}>Promotional Services</h2>
+                </div>
+                <p align="justify">
+                  Promote your brand, product, or channel across YouTube, Instagram, LinkedIn and more.
+                  Choose a platform, pick a package, and get started in minutes.
+                </p>
+                <Link to="/Services/youtube-promo" className="button" style={{ marginTop: "auto", textAlign: "center" }}>
+                  GET STARTED
+                </Link>
+              </div>
+            </div>
           </div>
 
           <div className="section-title">

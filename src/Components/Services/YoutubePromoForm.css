@@ -1,0 +1,579 @@
+/* ── Shell ── */
+.yt-promo-section {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #edf3f1 0%, #f7faf8 100%);
+  padding: clamp(80px, 10vw, 130px) 0 clamp(2rem, 4vw, 4rem);
+  color: #1b3b2f;
+}
+
+.yt-promo-shell {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 clamp(1rem, 3vw, 2rem);
+}
+
+/* ── Header ── */
+.yt-promo-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.yt-promo-kicker {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: #1a5b31;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+}
+
+.yt-promo-header h1 {
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-weight: 800;
+  color: #0e2c1c;
+  margin: 0 0 0.6rem;
+}
+
+.yt-promo-header p {
+  font-size: clamp(0.9rem, 1.5vw, 1rem);
+  color: #4a6458;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+/* ── Layout ── */
+.yt-promo-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .yt-promo-layout { grid-template-columns: 1fr; }
+  .yt-promo-aside { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+}
+
+@media (max-width: 560px) {
+  .yt-promo-aside { grid-template-columns: 1fr; }
+}
+
+/* ── Form Card ── */
+.yt-promo-form {
+  background: #fff;
+  border: 1px solid #d8e6df;
+  border-radius: 20px;
+  padding: clamp(1.2rem, 3vw, 2rem);
+  box-shadow: 0 12px 36px rgba(11, 45, 29, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.yt-promo-section-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #1a5b31;
+  border-bottom: 2px solid #e4f0e9;
+  padding-bottom: 0.4rem;
+}
+
+/* ── Platform cards ── */
+.yt-promo-platform-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 0.7rem;
+}
+
+.yt-promo-platform-grid.yt-promo-loading {
+  color: #7ba892;
+  font-size: 0.88rem;
+  padding: 0.5rem 0;
+  display: block;
+}
+
+.yt-promo-platform-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.75rem 0.5rem;
+  border-radius: 12px;
+  border: 2px solid #d8e6df;
+  background: #f7faf8;
+  cursor: pointer;
+  transition: border-color 0.18s, background 0.18s, transform 0.15s, box-shadow 0.18s;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #2d5a43;
+}
+
+.yt-promo-platform-card i {
+  font-size: 1.4rem;
+  color: #1a5b31;
+}
+
+.yt-promo-platform-card:hover {
+  border-color: #1a5b31;
+  background: #edf5f0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(26, 91, 49, 0.12);
+}
+
+.yt-promo-platform-card.active {
+  border-color: #1a5b31;
+  background: #1a5b31;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(26, 91, 49, 0.25);
+}
+
+.yt-promo-platform-card.active i {
+  color: #fff;
+}
+
+/* ── Count input ── */
+.yt-promo-count-row {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+}
+
+.yt-promo-count-wrap {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid #c8dfd2;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f7faf8;
+}
+
+.yt-promo-count-btn {
+  width: 40px;
+  height: 44px;
+  border: none;
+  background: none;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1a5b31;
+  cursor: pointer;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.yt-promo-count-btn:hover {
+  background: #e0f0e7;
+}
+
+.yt-promo-count-input {
+  width: 72px;
+  height: 44px;
+  border: none;
+  border-left: 1px solid #d8e6df;
+  border-right: 1px solid #d8e6df;
+  background: #fff;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1b3b2f;
+  outline: none;
+  -moz-appearance: textfield;
+}
+
+.yt-promo-count-input::-webkit-outer-spin-button,
+.yt-promo-count-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+.yt-promo-price-display {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.yt-promo-price-formula {
+  font-size: 0.8rem;
+  color: #7ba892;
+  font-weight: 500;
+}
+
+.yt-promo-price-total {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #1a5b31;
+  line-height: 1;
+}
+
+/* ── Tier cards (kept for legacy) ── */
+.yt-promo-tier-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.7rem;
+}
+
+.yt-promo-tier-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.9rem 0.6rem;
+  border-radius: 12px;
+  border: 2px solid #d8e6df;
+  background: #f7faf8;
+  cursor: pointer;
+  transition: border-color 0.18s, background 0.18s, transform 0.15s, box-shadow 0.18s;
+}
+
+.yt-promo-tier-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #2d5a43;
+}
+
+.yt-promo-tier-price {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #1a5b31;
+}
+
+.yt-promo-tier-card:hover {
+  border-color: #1a5b31;
+  background: #edf5f0;
+  transform: translateY(-2px);
+}
+
+.yt-promo-tier-card.active {
+  border-color: #1a5b31;
+  background: linear-gradient(135deg, #1a5b31, #2d8a50);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(26, 91, 49, 0.25);
+}
+
+.yt-promo-tier-card.active .yt-promo-tier-label,
+.yt-promo-tier-card.active .yt-promo-tier-price {
+  color: #fff;
+}
+
+/* ── Form fields ── */
+.yt-promo-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 560px) {
+  .yt-promo-field-row { grid-template-columns: 1fr; }
+}
+
+.yt-promo-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.yt-promo-field label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #2d5a43;
+}
+
+.yt-promo-field label span {
+  color: #e53935;
+  margin-left: 2px;
+}
+
+.yt-promo-field input,
+.yt-promo-field textarea {
+  padding: 0.55rem 0.85rem;
+  border: 1.5px solid #c8dfd2;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  color: #1b3b2f;
+  background: #f7faf8;
+  outline: none;
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
+
+.yt-promo-field input:focus,
+.yt-promo-field textarea:focus {
+  border-color: #1a5b31;
+  box-shadow: 0 0 0 3px rgba(26, 91, 49, 0.1);
+  background: #fff;
+}
+
+/* ── Type toggle ── */
+.yt-promo-toggle {
+  display: flex;
+  border-radius: 10px;
+  border: 1.5px solid #c8dfd2;
+  overflow: hidden;
+}
+
+.yt-promo-toggle button {
+  flex: 1;
+  padding: 0.5rem;
+  border: none;
+  background: #f7faf8;
+  color: #4a6458;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+}
+
+.yt-promo-toggle button.active {
+  background: #1a5b31;
+  color: #fff;
+}
+
+/* ── Summary bar ── */
+.yt-promo-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #edf5f0;
+  border: 1px solid #c4ddd0;
+  border-radius: 10px;
+  padding: 0.65rem 1rem;
+  font-size: 0.88rem;
+  color: #2d5a43;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.yt-promo-summary-amount {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #1a5b31;
+}
+
+/* ── URL list ── */
+.yt-promo-url-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.yt-promo-url-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.yt-promo-url-label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 160px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #1a5b31;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.yt-promo-url-label i {
+  font-size: 1rem;
+}
+
+.yt-promo-url-input {
+  flex: 1;
+  padding: 0.52rem 0.85rem;
+  border: 1.5px solid #c8dfd2;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  color: #1b3b2f;
+  background: #f7faf8;
+  outline: none;
+  transition: border-color 0.18s, box-shadow 0.18s;
+  text-align: left;
+}
+
+.yt-promo-url-input:focus {
+  border-color: #1a5b31;
+  box-shadow: 0 0 0 3px rgba(26, 91, 49, 0.1);
+  background: #fff;
+}
+
+/* ── Error ── */
+.yt-promo-error {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.9rem;
+  background: #fff1f0;
+  border: 1px solid #ffa39e;
+  border-radius: 8px;
+  font-size: 0.84rem;
+  color: #cf1322;
+}
+
+/* ── Submit ── */
+.yt-promo-submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #1a5b31, #2d8a50);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.18s, transform 0.15s, box-shadow 0.18s;
+  box-shadow: 0 6px 18px rgba(26, 91, 49, 0.25);
+}
+
+.yt-promo-submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(26, 91, 49, 0.3);
+}
+
+.yt-promo-submit-btn:disabled {
+  background: #a8c5b5;
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── Aside ── */
+.yt-promo-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.yt-promo-aside-card {
+  background: #fff;
+  border: 1px solid #d8e6df;
+  border-radius: 16px;
+  padding: 1.3rem 1.2rem;
+  box-shadow: 0 6px 20px rgba(11, 45, 29, 0.06);
+}
+
+.yt-promo-aside-icon {
+  font-size: 1.8rem;
+  color: #1a5b31;
+  display: block;
+  margin-bottom: 0.6rem;
+}
+
+.yt-promo-aside-card h3 {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #113927;
+  margin: 0 0 0.8rem;
+}
+
+.yt-promo-aside-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.yt-promo-aside-card li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  font-size: 0.84rem;
+  color: #4a6458;
+  line-height: 1.5;
+}
+
+.yt-promo-aside-card li i {
+  color: #1a5b31;
+  font-size: 0.9rem;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.yt-promo-aside-contact p {
+  font-size: 0.84rem;
+  color: #4a6458;
+  margin: 0 0 0.8rem;
+  line-height: 1.6;
+}
+
+.yt-promo-contact-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  width: 100%;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  color: #1a5b31;
+  background: #fff;
+  border-radius: 10px;
+  border: 2px solid #1a5b31;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(26, 91, 49, 0.1);
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.yt-promo-contact-link:hover {
+  background: #1a5b31;
+  color: #fff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(26, 91, 49, 0.25);
+}
+
+/* ── Success screen ── */
+.yt-promo-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+  padding: 2rem;
+  gap: 1rem;
+  color: #1b3b2f;
+}
+
+.yt-promo-success-icon i {
+  font-size: 4rem;
+  color: #1a5b31;
+}
+
+.yt-promo-success h2 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.yt-promo-success p {
+  color: #4a6458;
+  font-size: 1rem;
+  max-width: 400px;
+}
+
+.yt-promo-btn {
+  padding: 0.65rem 1.4rem;
+  border-radius: 10px;
+  border: none;
+  background: #1a5b31;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+
+.yt-promo-btn:hover { background: #134a26; }

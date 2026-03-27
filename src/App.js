@@ -40,6 +40,7 @@ const Internships = lazy(() => import("./Components/Internship/Internships"));
 const PCBuilder = lazy(() => import("./Components/PCFactory/PCBuilder"));
 const LMSPage = lazy(() => import("./Components/LMS/LMSPage"));
 const LibraryPage = lazy(() => import("./Components/Library/LibraryPage"));
+const YoutubePromoForm = lazy(() => import("./Components/Services/YoutubePromoForm"));
 
 const refreshAos = () => {
   if (!window.AOS) {
@@ -118,6 +119,7 @@ function AppShell({ showWIPPopup, closeWIPPopup, routeFallback }) {
             <Route exact path="/Products/pc-factory" component={PCBuilder} />
             <Route exact path="/Products/lms" component={LMSPage} />
             <Route exact path="/Products/library" component={LibraryPage} />
+            <Route exact path="/Services/youtube-promo" component={YoutubePromoForm} />
             <Route exact path="/unauthorized" component={Unauthorized} />
             <Route path="*" component={NotFound} />
           </Switch>

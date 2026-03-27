@@ -26,6 +26,8 @@ function AppNavbar() {
     "/products/library",
   ].includes(currentPath);
 
+  const isServicesRoute = ["/services", "/services/youtube-promo"].includes(currentPath);
+
   useEffect(() => {
     setExpanded(false);
   }, [location.pathname]);
@@ -147,16 +149,34 @@ function AppNavbar() {
                 >
                   <span className="nav-link-label">About</span>
                 </Nav.Link>
-                <Nav.Link
-                  as={NavLink}
-                  exact
-                  to="/Services"
-                  activeClassName="nav-link-active"
-                  onClick={closeMenu}
-                  className="nav-route-link"
+                <NavDropdown
+                  title={<span className="nav-link-label">Services</span>}
+                  id="services-dropdown"
+                  className={`nav-route-link nav-dropdown ${
+                    isServicesRoute ? "nav-link-active" : ""
+                  }`.trim()}
+                  active={isServicesRoute}
                 >
-                  <span className="nav-link-label">Services</span>
-                </Nav.Link>
+                  <NavDropdown.Item
+                    as={NavLink}
+                    exact
+                    to="/Services"
+                    activeClassName="dropdown-item-active"
+                    onClick={closeMenu}
+                  >
+                    All Services
+                  </NavDropdown.Item>
+                  <NavDropdown.Divider />
+                  <NavDropdown.Item
+                    as={NavLink}
+                    exact
+                    to="/Services/youtube-promo"
+                    activeClassName="dropdown-item-active"
+                    onClick={closeMenu}
+                  >
+                    Promotional Services
+                  </NavDropdown.Item>
+                </NavDropdown>
 
                 <NavDropdown
                   title={<span className="nav-link-label">Products</span>}

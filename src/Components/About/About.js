@@ -160,57 +160,43 @@ const technologies = [
   { label: "UI/UX", icon: "bi-palette-fill" },
 ];
 
-const placements = [
-  {
-    name: "Udhaya M",
-    img: "/assets/img/testimonials/testimonials-1.jpg",
-    role: "HR-RM",
-    company: "Koantek",
-    quote: "I got an offer from Koantek.",
-  },
-  {
-    name: "Elamaranvijay T",
-    img: "/assets/img/testimonials/testimonials-2.jpg",
-    role: "SDE",
-    company: "HEPL",
-    quote: "I got an offer from HEPL.",
-  },
-  {
-    name: "Adlin Jukesha J",
-    img: "/assets/img/testimonials/testimonials-3.jpg",
-    role: "SDE",
-    company: "Capgemini",
-    quote: "I got an offer from Capgemini.",
-  },
-  {
-    name: "Rajeshwaran Selvam",
-    img: "/assets/img/testimonials/testimonials-4.png",
-    role: "SDE",
-    company: "Outlier AI",
-    quote: "I got 4+ offers during the internship and fellowship.",
-  },
-  {
-    name: "Ashwadhani S",
-    img: "/assets/img/testimonials/testimonials-5.jpg",
-    role: "Workday Consultant",
-    company: "Document IT LLC",
-    quote: "Amazing results! I'm beyond impressed.",
-  },
-  {
-    name: "Harishini V",
-    img: "/assets/img/testimonials/testimonials-6.jpg",
-    role: "Software Engineer",
-    company: "VEE Technology",
-    quote: "Great attention to detail and excellent execution! I got 4+ offers in my hand.",
-  },
-  {
-    name: "Moniksha M",
-    img: "/assets/img/testimonials/testimonials-7.jpg",
-    role: "PHP Developer",
-    company: "Eventures Company Pvt. Ltd",
-    quote: "They exceeded all expectations. Fantastic experience!",
-  },
+// placements loaded from API — see usePlacements() below
+const FALLBACK_PLACEMENTS = [
+  { name: "Udhaya M", img: "/assets/img/testimonials/testimonials-1.jpg", role: "HR-RM", company: "Koantek", quote: "I got an offer from Koantek." },
+  { name: "Elamaranvijay T", img: "/assets/img/testimonials/testimonials-2.jpg", role: "SDE", company: "HEPL", quote: "I got an offer from HEPL." },
+  { name: "Adlin Jukesha J", img: "/assets/img/testimonials/testimonials-3.jpg", role: "SDE", company: "Capgemini", quote: "I got an offer from Capgemini." },
+  { name: "Rajeshwaran Selvam", img: "/assets/img/testimonials/testimonials-4.png", role: "SDE", company: "Outlier AI", quote: "I got 4+ offers during the internship and fellowship." },
+  { name: "Ashwadhani S", img: "/assets/img/testimonials/testimonials-5.jpg", role: "Workday Consultant", company: "Document IT LLC", quote: "Amazing results! I'm beyond impressed." },
+  { name: "Harishini V", img: "/assets/img/testimonials/testimonials-6.jpg", role: "Software Engineer", company: "VEE Technology", quote: "Great attention to detail and excellent execution! I got 4+ offers in my hand." },
+  { name: "Moniksha M", img: "/assets/img/testimonials/testimonials-7.jpg", role: "PHP Developer", company: "Eventures Company Pvt. Ltd", quote: "They exceeded all expectations. Fantastic experience!" },
 ];
+
+const API_BASE = (import.meta?.env?.VITE_API_BASE_URL || "").trim().replace(/\/$/, "");
+
+async function fetchPlacements() {
+  // In dev: always use local backend via Vite proxy (localhost:5000)
+  // In prod: use the configured API base URL
+  const urls = import.meta.env.DEV
+    ? ["/api/placed-people"]
+    : (API_BASE ? [`${API_BASE}/api/placed-people`] : ["/api/placed-people"]);
+  for (const url of urls) {
+    try {
+      const r = await fetch(url, { cache: "no-store" });
+      if (!r.ok) continue;
+      const data = await r.json();
+      if (Array.isArray(data) && data.length) return data;
+    } catch {}
+  }
+  return null;
+}
+
+function usePlacements() {
+  const [placements, setPlacements] = useState(FALLBACK_PLACEMENTS);
+  useEffect(() => {
+    fetchPlacements().then((data) => { if (data) setPlacements(data); });
+  }, []);
+  return placements;
+}
 
 const clients = [
   { name: "Zoho", icon: "bi-building" },
@@ -275,6 +261,8 @@ const leaders = [
 ];
 
 function About() {
+  const placements = usePlacements();
+
   useEffect(() => {
     document.title = "About";
   }, []);
@@ -483,12 +471,22 @@ function About() {
                       src={p.img}
                       alt={p.name}
                       className="about-testimonial-avatar"
+                      referrerPolicy="no-referrer"
                       loading="lazy"
                     />
                     <div>
                       <strong>{p.name}</strong>
                       <span>{p.role} · {p.company}</span>
-                      <small>{p.track}</small>
+                      {p.linkedIn && (
+                        <a
+                          href={p.linkedIn}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="about-testimonial-linkedin"
+                        >
+                          <i className="bi bi-linkedin" /> LinkedIn
+                        </a>
+                      )}
                     </div>
                   </div>
                 </article>
