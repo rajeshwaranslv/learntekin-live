@@ -335,7 +335,6 @@ h1, h2, h3, h4, h5, h6 {
   background-size: cover;
   position: relative;
   padding-top: 0;
-  border-radius: 0 0 2rem 2rem;
 }
 #hero:before {
   content: "";

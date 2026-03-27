@@ -23,7 +23,8 @@
       "Bash(find 'd:/Production/2025/MERN/Learn TEK In/learntekin-live/src' -name Clients* -o -name clients*)",
       "Bash(grep -r \"twitter-x\\\\|twitter_x\" 'd:/Production/2025/MERN/Learn TEK In/learntekin-live/node_modules/bootstrap-icons/icons/' --include=*.svg -l)",
       "Bash(node src/scripts/seedPlacedPeople.js)",
-      "Bash(ls \"d:/Production/2025/MERN/Learn TEK In/learntekin-live/.env\"*)"
+      "Bash(ls \"d:/Production/2025/MERN/Learn TEK In/learntekin-live/.env\"*)",
+      "Bash(grep -ri \"backend\\\\|frontend\\\\|^BE\\\\|^FE\" 'd:\\\\Production\\\\2025\\\\MERN\\\\Learn TEK In\\\\learntekin-live\\\\src' --include=*.js --include=*.jsx)"
     ]
   }
 }

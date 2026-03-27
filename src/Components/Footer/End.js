@@ -30,7 +30,7 @@ export default class End extends Component {
             className="instagram"
             aria-label="Instagram"
           >
-            <i className="bx bxl-instagram"></i>
+            <i className="bi bi-instagram"></i>
           </a>
 
           <a
@@ -40,7 +40,7 @@ export default class End extends Component {
             className="linkedin"
             aria-label="LinkedIn"
           >
-            <i className="bx bxl-linkedin"></i>
+            <i className="bi bi-linkedin"></i>
           </a>
 
           <a
@@ -50,7 +50,7 @@ export default class End extends Component {
             className="youtube"
             aria-label="YouTube"
           >
-            <i className="bx bxl-youtube"></i>
+            <i className="bi bi-youtube"></i>
           </a>
 
           <a
@@ -60,7 +60,7 @@ export default class End extends Component {
             className="whatsapp"
             aria-label="WhatsApp"
           >
-            <i className="bx bxl-whatsapp"></i>
+            <i className="bi bi-whatsapp"></i>
           </a>
 
           <a
@@ -70,7 +70,7 @@ export default class End extends Component {
             className="twitter"
             aria-label="X (Twitter)"
           >
-            <i className="bx bxl-twitter"></i>
+            <i className="bi bi-twitter"></i>
           </a>
         </div>
       </div>

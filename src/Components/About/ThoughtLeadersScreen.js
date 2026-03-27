@@ -3,6 +3,36 @@ import parse from "html-react-parser";
 import { auth, db } from "../../firebase";
 import "./ThoughtLeadersScreen.css";
 
+/* ── Logo/avatar with letter fallback (same pattern as PlacementAvatar) ── */
+function CompanyLogo({ src, name, style, className }) {
+  const [failed, setFailed] = useState(false);
+  const initial = (name || "?")[0].toUpperCase();
+
+  if (!src || failed) {
+    return (
+      <div
+        className={`tl-logo-fallback${className ? ` ${className}` : ""}`}
+        style={style}
+        aria-label={name}
+        title={name}
+      >
+        {initial}
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={src}
+      alt={name}
+      className={className}
+      style={style}
+      referrerPolicy="no-referrer"
+      onError={() => setFailed(true)}
+    />
+  );
+}
+
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://lte-node.onrender.com";
 const CHARITY_API_URL = `${API_BASE}/api/charities`;
 
@@ -171,6 +201,7 @@ const ThoughtLeadersScreen = () => {
   ];
 
   return (
+    <section className="tls-wrap">
     <div className="thought-leaders-screen">
       <h1>Thought Leaders</h1>
 
@@ -248,10 +279,10 @@ const ThoughtLeadersScreen = () => {
         {companies.map((company, index) => (
           <div className="leader-card" key={index}>
             <h2>{company.companyName}</h2>
-            <img
+            <CompanyLogo
               src={company.image}
+              name={company.companyName}
               style={{ height: "6rem", width: "6rem", borderRadius: "2rem" }}
-              alt={company.companyName}
             />
 
             <p align="justify" style={{ fontWeight: "bolder" }}>
@@ -331,11 +362,10 @@ const ThoughtLeadersScreen = () => {
               ) : (
                 <div className="cp-card-inner">
                   <div className="cp-avatar-wrap">
-                    <img
-                      src={chars.image || "assets/img/charity.jpeg"}
-                      alt={chars.name}
+                    <CompanyLogo
+                      src={chars.image}
+                      name={chars.name}
                       className="cp-avatar"
-                      onError={(e) => { e.target.src = "assets/img/charity.jpeg"; }}
                     />
                     <span className="cp-avatar-ring" />
                   </div>
@@ -376,6 +406,7 @@ const ThoughtLeadersScreen = () => {
         </div>
       </section>
     </div>
+    </section>
   );
 };
 

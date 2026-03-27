@@ -786,6 +786,13 @@
 .about-animate.from-right { transform: translateX(40px); }
 .about-animate.scale      { transform: scale(0.85); }
 
+/* Hero section is always above the fold — skip animation entirely */
+.about-hero .about-animate {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
+
 /* Triggered state — visible */
 .about-animate.in-view {
   opacity: 1;

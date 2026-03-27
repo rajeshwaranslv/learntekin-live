@@ -35,23 +35,23 @@ export default class Footer extends Component {
             <h4>Our Services</h4>
             <ul>
               <li>
-                <i className="bx bx-chevron-right"></i>{" "}
+                <i className="bi bi-chevron-right"></i>{" "}
                 <a href="/Services">Website/App Development</a>
               </li>
               <li>
-                <i className="bx bx-chevron-right"></i>{" "}
+                <i className="bi bi-chevron-right"></i>{" "}
                 <a href="/Services">UI/UX Development & Designing</a>
               </li>
               <li>
-                <i className="bx bx-chevron-right"></i>{" "}
+                <i className="bi bi-chevron-right"></i>{" "}
                 <a href="/Services">Business Development</a>
               </li>
               <li>
-                <i className="bx bx-chevron-right"></i>{" "}
+                <i className="bi bi-chevron-right"></i>{" "}
                 <a href="/Services">Data Analytics | Data Science</a>
               </li>
               <li>
-                <i className="bx bx-chevron-right"></i>{" "}
+                <i className="bi bi-chevron-right"></i>{" "}
                 <a href="/Services">Networking | Testing</a>
               </li>
             </ul>
@@ -61,7 +61,7 @@ export default class Footer extends Component {
             <h4>Our Products</h4>
             <ul>
               <li>
-                <i className="bx bx-chevron-right"></i>{" "}
+                <i className="bi bi-chevron-right"></i>{" "}
                 <a
                   href="https://financefrenzy-biz.web.app/"
                   target="_blank"
@@ -71,7 +71,7 @@ export default class Footer extends Component {
                 </a>
               </li>
               <li>
-                <i className="bx bx-chevron-right"></i>{" "}
+                <i className="bi bi-chevron-right"></i>{" "}
                 <a
                   target="_blank"
                   rel="noopener noreferrer"
@@ -81,7 +81,7 @@ export default class Footer extends Component {
                 </a>
               </li>
               <li>
-                <i className="bx bx-chevron-right"></i>{" "}
+                <i className="bi bi-chevron-right"></i>{" "}
                 <a
                   target="_blank"
                   rel="noopener noreferrer"
@@ -91,7 +91,7 @@ export default class Footer extends Component {
                 </a>
               </li>
               <li>
-                <i className="bx bx-chevron-right"></i>{" "}
+                <i className="bi bi-chevron-right"></i>{" "}
                 <a
                   target="_blank"
                   rel="noopener noreferrer"
@@ -101,7 +101,7 @@ export default class Footer extends Component {
                 </a>
               </li>
               <li>
-                <i className="bx bx-chevron-right"></i>{" "}
+                <i className="bi bi-chevron-right"></i>{" "}
                 <a
                   target="_blank"
                   rel="noopener noreferrer"
