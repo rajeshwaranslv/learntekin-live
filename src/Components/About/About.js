@@ -160,42 +160,55 @@ const technologies = [
   { label: "UI/UX", icon: "bi-palette-fill" },
 ];
 
-// placements loaded from API — see usePlacements() below
-const FALLBACK_PLACEMENTS = [
-  { name: "Udhaya M", img: "/assets/img/testimonials/testimonials-1.jpg", role: "HR-RM", company: "Koantek", quote: "I got an offer from Koantek." },
-  { name: "Elamaranvijay T", img: "/assets/img/testimonials/testimonials-2.jpg", role: "SDE", company: "HEPL", quote: "I got an offer from HEPL." },
-  { name: "Adlin Jukesha J", img: "/assets/img/testimonials/testimonials-3.jpg", role: "SDE", company: "Capgemini", quote: "I got an offer from Capgemini." },
-  { name: "Rajeshwaran Selvam", img: "/assets/img/testimonials/testimonials-4.png", role: "SDE", company: "Outlier AI", quote: "I got 4+ offers during the internship and fellowship." },
-  { name: "Ashwadhani S", img: "/assets/img/testimonials/testimonials-5.jpg", role: "Workday Consultant", company: "Document IT LLC", quote: "Amazing results! I'm beyond impressed." },
-  { name: "Harishini V", img: "/assets/img/testimonials/testimonials-6.jpg", role: "Software Engineer", company: "VEE Technology", quote: "Great attention to detail and excellent execution! I got 4+ offers in my hand." },
-  { name: "Moniksha M", img: "/assets/img/testimonials/testimonials-7.jpg", role: "PHP Developer", company: "Eventures Company Pvt. Ltd", quote: "They exceeded all expectations. Fantastic experience!" },
-];
 
 const API_BASE = (import.meta?.env?.VITE_API_BASE_URL || "").trim().replace(/\/$/, "");
 
-async function fetchPlacements() {
-  // In dev: always use local backend via Vite proxy (localhost:5000)
-  // In prod: use the configured API base URL
-  const urls = import.meta.env.DEV
-    ? ["/api/placed-people"]
-    : (API_BASE ? [`${API_BASE}/api/placed-people`] : ["/api/placed-people"]);
-  for (const url of urls) {
-    try {
-      const r = await fetch(url, { cache: "no-store" });
-      if (!r.ok) continue;
-      const data = await r.json();
-      if (Array.isArray(data) && data.length) return data;
-    } catch {}
+function PlacementAvatar({ img, name }) {
+  const [failed, setFailed] = useState(false);
+  if (!img || failed) {
+    return (
+      <div className="about-testimonial-avatar about-placement-avatar-fallback">
+        {(name || "?")[0].toUpperCase()}
+      </div>
+    );
   }
-  return null;
+  return (
+    <img
+      src={img}
+      alt={name}
+      className="about-testimonial-avatar"
+      referrerPolicy="no-referrer"
+      loading="lazy"
+      onError={() => setFailed(true)}
+    />
+  );
+}
+
+async function fetchPlacements() {
+  // Dev: relative URL → Vite proxy (configured in vite.config.js) → local backend
+  // Prod: absolute URL from VITE_API_BASE_URL env var
+  const url = import.meta.env.DEV
+    ? "/api/placed-people"
+    : (API_BASE ? `${API_BASE}/api/placed-people` : "/api/placed-people");
+  try {
+    const r = await fetch(url);
+    if (!r.ok) return null;
+    const data = await r.json();
+    return Array.isArray(data) && data.length ? data : null;
+  } catch {
+    return null;
+  }
 }
 
 function usePlacements() {
-  const [placements, setPlacements] = useState(FALLBACK_PLACEMENTS);
+  const [placements, setPlacements] = useState([]);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
-    fetchPlacements().then((data) => { if (data) setPlacements(data); });
+    fetchPlacements()
+      .then((data) => { if (data) setPlacements(data); })
+      .finally(() => setLoading(false));
   }, []);
-  return placements;
+  return { placements, loading };
 }
 
 const clients = [
@@ -261,7 +274,7 @@ const leaders = [
 ];
 
 function About() {
-  const placements = usePlacements();
+  const { placements, loading: placementsLoading } = usePlacements();
 
   useEffect(() => {
     document.title = "About";
@@ -279,10 +292,10 @@ function About() {
       },
       { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
     );
-    const els = document.querySelectorAll(".about-animate");
+    const els = document.querySelectorAll(".about-animate:not(.in-view)");
     els.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
-  }, []);
+  }, [placements]);
 
   return (
     <section id="about" className="about-page">
@@ -461,22 +474,62 @@ function About() {
             <h2>Placed Learners</h2>
             <p>Real outcomes from real people who went through our programs.</p>
           </div>
-          <div className="row g-4">
-            {placements.map((p, i) => (
-              <div className="col-lg-4 col-md-6" key={p.name}>
-                <article className="about-testimonial-card h-100 about-animate" style={{ "--delay": `${i * 0.1}s` }}>
-                  <p className="about-testimonial-quote">"{p.quote}"</p>
-                  <div className="about-testimonial-footer">
-                    <img
-                      src={p.img}
-                      alt={p.name}
-                      className="about-testimonial-avatar"
-                      referrerPolicy="no-referrer"
-                      loading="lazy"
-                    />
-                    <div>
-                      <strong>{p.name}</strong>
-                      <span>{p.role} · {p.company}</span>
+          {placementsLoading ? (
+            <div className="about-placements-ticker-wrap">
+              <div className="about-placements-ticker" style={{ animationPlayState: "paused" }}>
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <article className="about-testimonial-card about-placement-slide" key={i} style={{ opacity: 0.35 }}>
+                    <div style={{ height: 56, background: "#e8f0eb", borderRadius: 8, marginBottom: 16 }} />
+                    <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                      <div style={{ width: 46, height: 46, borderRadius: "50%", background: "#e8f0eb", flexShrink: 0 }} />
+                      <div style={{ flex: 1 }}>
+                        <div style={{ height: 14, background: "#e8f0eb", borderRadius: 4, marginBottom: 6, width: "60%" }} />
+                        <div style={{ height: 12, background: "#e8f0eb", borderRadius: 4, width: "80%" }} />
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          ) : placements.length === 0 ? (
+            <p style={{ color: "#999", textAlign: "center", marginTop: "1rem" }}>No placements to show yet.</p>
+          ) : (
+            <div className="about-placements-ticker-wrap">
+              <div className="about-placements-ticker">
+                {[...placements, ...placements].map((p, i) => (
+                  <article className="about-testimonial-card about-placement-slide" key={i}>
+                    {/* Identity header */}
+                    <div className="about-placement-header">
+                      <PlacementAvatar img={p.img} name={p.name} />
+                      <div className="about-placement-identity">
+                        <strong className="about-placement-name">{p.name}</strong>
+                        <span className="about-placement-role">{p.role}</span>
+                        <div className="about-placement-company" title={p.company}>
+                          <i className="bi bi-building-fill" />
+                          <span>{p.company}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Quote */}
+                    <p className="about-testimonial-quote">"{p.quote}"</p>
+
+                    {/* Meta: dates + LinkedIn */}
+                    <div className="about-placement-meta">
+                      <div className="about-testimonial-dates">
+                        {p.placedDate && (
+                          <span className="about-testimonial-date-badge">
+                            <i className="bi bi-briefcase-fill" />
+                            {new Date(p.placedDate).toLocaleDateString("en-IN", { month: "short", year: "numeric" })}
+                          </span>
+                        )}
+                        {p.createdAt && (
+                          <span className="about-testimonial-date-badge about-testimonial-date-posted">
+                            <i className="bi bi-calendar3" />
+                            {new Date(p.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
+                          </span>
+                        )}
+                      </div>
                       {p.linkedIn && (
                         <a
                           href={p.linkedIn}
@@ -488,11 +541,11 @@ function About() {
                         </a>
                       )}
                     </div>
-                  </div>
-                </article>
+                  </article>
+                ))}
               </div>
-            ))}
-          </div>
+            </div>
+          )}
         </section>
 
         {/* ── Clients ── */}

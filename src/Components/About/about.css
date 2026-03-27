@@ -405,60 +405,140 @@
 /* ── Placed Learners / Testimonials ── */
 .about-testimonial-card {
   border: 1px solid #d7e8df;
-  border-radius: 16px;
-  background: linear-gradient(150deg, #ffffff 0%, #f3faf6 100%);
-  padding: 1.1rem;
+  border-radius: 18px;
+  background: #ffffff;
+  padding: 1.2rem;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 9px 22px rgba(11, 45, 29, 0.08);
+  gap: 0.85rem;
+  box-shadow: 0 6px 20px rgba(11, 45, 29, 0.07);
 }
 
-.about-testimonial-quote {
-  margin: 0 0 auto;
-  color: #3a5a4e;
-  line-height: 1.7;
-  font-style: italic;
-  font-size: 0.94rem;
-  padding-bottom: 0.9rem;
-}
-
-.about-testimonial-footer {
+/* ── Card header: avatar + identity ── */
+.about-placement-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.75rem;
-  padding-top: 0.8rem;
-  border-top: 1px solid #e2f0e8;
 }
 
 .about-testimonial-avatar {
-  width: 46px;
-  height: 46px;
+  width: 52px;
+  height: 52px;
   border-radius: 999px;
   object-fit: cover;
   flex-shrink: 0;
-  border: 2px solid #c8dfd2;
-  box-shadow: 0 3px 8px rgba(11, 45, 29, 0.12);
+  border: 2.5px solid #1a5b31;
+  box-shadow: 0 3px 10px rgba(26, 91, 49, 0.18);
 }
 
-.about-testimonial-footer strong {
-  display: block;
-  font-size: 0.93rem;
-  color: #154230;
+.about-placement-avatar-fallback {
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1a5b31, #2d8a50);
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 800;
+  user-select: none;
 }
 
-.about-testimonial-footer span {
+.about-placement-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.about-placement-name {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #0e2c1c;
+  line-height: 1.2;
   display: block;
-  font-size: 0.8rem;
-  color: #4f6b5f;
+}
+
+.about-placement-role {
+  font-size: 0.75rem;
+  color: #7b9a8a;
+  font-weight: 500;
+  display: block;
+}
+
+.about-placement-company {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: #e6f4ec;
+  border: 1px solid #b8d9c5;
+  border-radius: 6px;
+  padding: 0.22rem 0.6rem;
   margin-top: 0.1rem;
+  max-width: 100%;
+  overflow: hidden;
 }
 
-.about-testimonial-footer small {
-  display: block;
+.about-placement-company i {
+  font-size: 0.75rem;
+  color: #1a5b31;
+  flex-shrink: 0;
+}
+
+.about-placement-company span {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #1a5b31;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+/* ── Quote ── */
+.about-testimonial-quote {
+  margin: 0;
+  color: #3a5a4e;
+  line-height: 1.7;
+  font-style: italic;
+  font-size: 0.88rem;
+  border-top: 1px solid #e8f2ec;
+  padding-top: 0.75rem;
+  flex: 1;
+}
+
+/* ── Meta: dates + LinkedIn ── */
+.about-placement-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  border-top: 1px solid #e8f2ec;
+  padding-top: 0.7rem;
+}
+
+.about-testimonial-dates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  flex: 1;
+}
+
+.about-testimonial-dates .about-testimonial-date-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
   font-size: 0.72rem;
-  color: #1f6f34;
   font-weight: 600;
-  margin-top: 0.15rem;
+  color: #fff;
+  background: #1a5b31;
+  border-radius: 20px;
+  padding: 0.2rem 0.6rem;
+  white-space: nowrap;
+}
+
+.about-testimonial-dates .about-testimonial-date-posted {
+  background: transparent;
+  color: #7b9a8a;
+  border: 1px solid #c4d9cc;
 }
 
 .about-testimonial-linkedin {
@@ -467,13 +547,49 @@
   gap: 0.25rem;
   font-size: 0.75rem;
   color: #0a66c2;
-  margin-top: 0.25rem;
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid #c5d9f0;
+  border-radius: 20px;
+  background: #f0f7ff;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
 }
+
 .about-testimonial-linkedin:hover {
-  text-decoration: underline;
-  color: #0a66c2;
+  background: #0a66c2;
+  color: #fff;
+  border-color: #0a66c2;
+}
+
+/* ── Placed Learners ticker ── */
+.about-placements-ticker-wrap {
+  overflow: hidden;
+  -webkit-mask: linear-gradient(90deg, transparent, #fff 8%, #fff 92%, transparent);
+  mask: linear-gradient(90deg, transparent, #fff 8%, #fff 92%, transparent);
+}
+
+.about-placements-ticker {
+  display: flex;
+  gap: 1.2rem;
+  width: max-content;
+  animation: about-placements-scroll 40s linear infinite;
+  cursor: grab;
+}
+
+.about-placements-ticker:hover {
+  animation-play-state: paused;
+}
+
+.about-placement-slide {
+  width: 300px;
+  flex-shrink: 0;
+}
+
+@keyframes about-placements-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
 /* ── Clients ticker ── */
