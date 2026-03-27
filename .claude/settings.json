@@ -24,7 +24,10 @@
       "Bash(grep -r \"twitter-x\\\\|twitter_x\" 'd:/Production/2025/MERN/Learn TEK In/learntekin-live/node_modules/bootstrap-icons/icons/' --include=*.svg -l)",
       "Bash(node src/scripts/seedPlacedPeople.js)",
       "Bash(ls \"d:/Production/2025/MERN/Learn TEK In/learntekin-live/.env\"*)",
-      "Bash(grep -ri \"backend\\\\|frontend\\\\|^BE\\\\|^FE\" 'd:\\\\Production\\\\2025\\\\MERN\\\\Learn TEK In\\\\learntekin-live\\\\src' --include=*.js --include=*.jsx)"
+      "Bash(grep -ri \"backend\\\\|frontend\\\\|^BE\\\\|^FE\" 'd:\\\\Production\\\\2025\\\\MERN\\\\Learn TEK In\\\\learntekin-live\\\\src' --include=*.js --include=*.jsx)",
+      "Bash(__NEW_LINE_9fd7cbcaa00968a9__ echo:*)",
+      "Bash(find 'd:\\\\Production\\\\2025\\\\MERN\\\\Learn TEK In\\\\ltin-admin\\\\src' -type f \\\\\\(-name *notif* -o -name *Notif* \\\\\\))",
+      "Bash(find 'd:\\\\Production\\\\2025\\\\MERN\\\\Learn TEK In\\\\learntekin-live\\\\src' -type f \\\\\\(-name *notif* -o -name *Notif* \\\\\\))"
     ]
   }
 }

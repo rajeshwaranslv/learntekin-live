@@ -9,6 +9,14 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  /* Override legacy style.css: it sets min-height:76vh and a dark ::before overlay */
+  min-height: 0 !important;
+  background: none !important;
+}
+
+/* Remove the legacy dark overlay that causes the gap */
+#hero::before {
+  display: none !important;
 }
 
 /* ── Background layers ── */

@@ -18,6 +18,7 @@ import End from "./Components/Footer/End";
 import { AuthProvider } from "./Components/auth/authContext";
 // warning popup
 import WIPPopup from "./Components/Warnings/WIPPopup";
+import PublicSplash from "./Components/Warnings/PublicSplash";
 
 const Hero = lazy(() => import("./Components/About/Hero"));
 const ThoughtLeadersScreen = lazy(() =>
@@ -152,7 +153,7 @@ function App() {
     setShowWIPPopup(false);
   };
 
-  const routeFallback = <div className="route-loader">Loading page...</div>;
+  const routeFallback = <PublicSplash />;
 
   useEffect(() => {
     let attempts = 0;

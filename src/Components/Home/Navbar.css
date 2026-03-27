@@ -612,3 +612,33 @@
     flex-shrink: 0;
   }
 }
+
+.ltin-notif-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ltin-notif-icon-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  color: #9ca3af;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.ltin-notif-icon-btn:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.ltin-notif-icon-btn.active {
+  color: #1a5b31;
+}

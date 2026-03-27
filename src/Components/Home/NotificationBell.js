@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -7,27 +7,30 @@ import {
   markAllNotificationsRead,
   deleteNotificationById,
 } from "../../store/notificationActions";
+import { useNotifStream } from "../../utils/useNotifStream";
+import { playNotifSound } from "../../utils/notifSound";
+import { showBrowserNotif, requestBrowserNotifPermission } from "../../utils/browserNotif";
 
 const TYPE_ICON = {
-  charity_created: "bi-plus-circle-fill",
-  charity_updated: "bi-pencil-fill",
-  charity_deleted: "bi-trash-fill",
+  charity_created:                  "bi-plus-circle-fill",
+  charity_updated:                  "bi-pencil-fill",
+  charity_deleted:                  "bi-trash-fill",
   internship_application_submitted: "bi-send-check-fill",
-  internship_status_updated: "bi-arrow-repeat",
-  internship_certificate_ready: "bi-patch-check-fill",
-  internship_certificate_sent: "bi-envelope-check-fill",
-  certificate_new: "bi-patch-check-fill",
+  internship_status_updated:        "bi-arrow-repeat",
+  internship_certificate_ready:     "bi-patch-check-fill",
+  internship_certificate_sent:      "bi-envelope-check-fill",
+  certificate_new:                  "bi-patch-check-fill",
 };
 
 const TYPE_COLOR = {
-  charity_created: "#1a8745",
-  charity_updated: "#e69a00",
-  charity_deleted: "#c0392b",
+  charity_created:                  "#1a8745",
+  charity_updated:                  "#e69a00",
+  charity_deleted:                  "#c0392b",
   internship_application_submitted: "#2563eb",
-  internship_status_updated: "#7c3aed",
-  internship_certificate_ready: "#059669",
-  internship_certificate_sent: "#1d4ed8",
-  certificate_new: "#1a8745",
+  internship_status_updated:        "#7c3aed",
+  internship_certificate_ready:     "#059669",
+  internship_certificate_sent:      "#1d4ed8",
+  certificate_new:                  "#1a8745",
 };
 
 const timeAgo = (dateStr) => {
@@ -40,17 +43,23 @@ const timeAgo = (dateStr) => {
   return `${Math.floor(hrs / 24)}d ago`;
 };
 
-const POLL_INTERVAL = 30000;
+const FALLBACK_POLL = 5 * 60 * 1000;
 
 const NotificationBell = () => {
   const dispatch = useDispatch();
   const { items, unreadCount } = useSelector((state) => state.notifications);
   const [open, setOpen] = useState(false);
+  const [soundOn, setSoundOn] = useState(() => {
+    try { return localStorage.getItem("ltin_notif_sound") !== "off"; } catch { return true; }
+  });
+  const [browserNotifOn, setBrowserNotifOn] = useState(() => {
+    try { return localStorage.getItem("ltin_browser_notif") === "on"; } catch { return false; }
+  });
   const [isMobile, setIsMobile] = useState(() =>
     typeof window !== "undefined" && window.matchMedia("(max-width: 600px)").matches
   );
   const panelRef = useRef(null);
-  const wrapRef = useRef(null);
+  const wrapRef  = useRef(null);
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 600px)");
@@ -59,49 +68,92 @@ const NotificationBell = () => {
     return () => mq.removeEventListener("change", handler);
   }, []);
 
+  // Initial fetch + fallback polling
   useEffect(() => {
     dispatch(fetchNotifications());
-    const interval = setInterval(() => dispatch(fetchNotifications()), POLL_INTERVAL);
+    const interval = setInterval(() => dispatch(fetchNotifications()), FALLBACK_POLL);
     return () => clearInterval(interval);
   }, [dispatch]);
 
+  // SSE real-time handler
+  const handleNewNotif = useCallback((notif) => {
+    dispatch(fetchNotifications());
+    if (soundOn) playNotifSound(notif.type);
+    if (browserNotifOn) showBrowserNotif(notif.title, notif.message, { tag: `ltin-live-${notif.type}` });
+  }, [dispatch, soundOn, browserNotifOn]);
+
+  useNotifStream("learntekin-live", handleNewNotif);
+
+  // Toggle browser notification permission
+  const toggleBrowserNotif = async () => {
+    if (!browserNotifOn) {
+      const perm = await requestBrowserNotifPermission();
+      if (perm !== "granted") return;
+    }
+    const next = !browserNotifOn;
+    setBrowserNotifOn(next);
+    try { localStorage.setItem("ltin_browser_notif", next ? "on" : "off"); } catch {}
+  };
+
+  const toggleSound = () => {
+    const next = !soundOn;
+    setSoundOn(next);
+    try { localStorage.setItem("ltin_notif_sound", next ? "on" : "off"); } catch {}
+  };
+
+  // Close on outside click (desktop only)
   useEffect(() => {
     if (!open || isMobile) return;
-    const handleClick = (e) => {
+    const handler = (e) => {
       if (
         panelRef.current && !panelRef.current.contains(e.target) &&
         wrapRef.current && !wrapRef.current.contains(e.target)
-      ) {
-        setOpen(false);
-      }
+      ) setOpen(false);
     };
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
   }, [open, isMobile]);
 
   const handleItemClick = (id, read) => {
-    const item = items.find((notification) => notification._id === id);
+    const item = items.find((n) => n._id === id);
     if (!read) dispatch(markNotificationRead(id, item?.source));
   };
 
   const handleDelete = (e, id) => {
     e.stopPropagation();
-    const item = items.find((notification) => notification._id === id);
+    const item = items.find((n) => n._id === id);
     dispatch(deleteNotificationById(id, item?.source));
   };
 
   const panel = open ? (
     <>
       {isMobile && (
-        <div
-          className="ltin-notif-backdrop"
-          onClick={() => setOpen(false)}
-          aria-hidden="true"
-        />
+        <div className="ltin-notif-backdrop" onClick={() => setOpen(false)} aria-hidden="true" />
       )}
       <div className="ltin-notif-panel" ref={panelRef}>
-          <div className="ltin-notif-header">
-            <span className="ltin-notif-title">Notifications</span>
+        <div className="ltin-notif-header">
+          <span className="ltin-notif-title">Notifications</span>
+          <div className="ltin-notif-header-actions">
+            {/* Sound toggle */}
+            <button
+              className={`ltin-notif-icon-btn${soundOn ? " active" : ""}`}
+              onClick={toggleSound}
+              title={soundOn ? "Sound on" : "Sound off"}
+              type="button"
+              aria-label="Toggle notification sound"
+            >
+              <i className={`bi ${soundOn ? "bi-volume-up-fill" : "bi-volume-mute-fill"}`} />
+            </button>
+            {/* Browser notification toggle */}
+            <button
+              className={`ltin-notif-icon-btn${browserNotifOn ? " active" : ""}`}
+              onClick={toggleBrowserNotif}
+              title={browserNotifOn ? "Browser alerts on" : "Browser alerts off"}
+              type="button"
+              aria-label="Toggle browser notifications"
+            >
+              <i className={`bi ${browserNotifOn ? "bi-bell-fill" : "bi-bell-slash"}`} />
+            </button>
             {unreadCount > 0 && (
               <button
                 className="ltin-notif-markall"
@@ -112,46 +164,44 @@ const NotificationBell = () => {
               </button>
             )}
           </div>
+        </div>
 
-          <div className="ltin-notif-body">
-            {items.length === 0 ? (
-              <div className="ltin-notif-empty">
-                <i className="bi bi-bell-slash" />
-                <p>No notifications yet</p>
-              </div>
-            ) : (
-              items.map((n) => (
-                <div
-                  key={n._id}
-                  className={`ltin-notif-item${n.read ? "" : " unread"}`}
-                  onClick={() => handleItemClick(n._id, n.read)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => e.key === "Enter" && handleItemClick(n._id, n.read)}
-                >
-                  <span
-                    className="ltin-notif-icon"
-                    style={{ color: TYPE_COLOR[n.type] || "#555" }}
-                  >
-                    <i className={`bi ${TYPE_ICON[n.type] || "bi-bell"}`} />
-                  </span>
-                  <div className="ltin-notif-content">
-                    <p className="ltin-notif-item-title">{n.title}</p>
-                    <p className="ltin-notif-item-msg">{n.message}</p>
-                    <span className="ltin-notif-time">{timeAgo(n.createdAt)}</span>
-                  </div>
-                  <button
-                    className="ltin-notif-del"
-                    onClick={(e) => handleDelete(e, n._id)}
-                    aria-label="Delete"
-                    type="button"
-                  >
-                    <i className="bi bi-x" />
-                  </button>
+        <div className="ltin-notif-body">
+          {items.length === 0 ? (
+            <div className="ltin-notif-empty">
+              <i className="bi bi-bell-slash" />
+              <p>No notifications yet</p>
+            </div>
+          ) : (
+            items.map((n) => (
+              <div
+                key={n._id}
+                className={`ltin-notif-item${n.read ? "" : " unread"}`}
+                onClick={() => handleItemClick(n._id, n.read)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => e.key === "Enter" && handleItemClick(n._id, n.read)}
+              >
+                <span className="ltin-notif-icon" style={{ color: TYPE_COLOR[n.type] || "#555" }}>
+                  <i className={`bi ${TYPE_ICON[n.type] || "bi-bell"}`} />
+                </span>
+                <div className="ltin-notif-content">
+                  <p className="ltin-notif-item-title">{n.title}</p>
+                  <p className="ltin-notif-item-msg">{n.message}</p>
+                  <span className="ltin-notif-time">{timeAgo(n.createdAt)}</span>
                 </div>
-              ))
-            )}
-          </div>
+                <button
+                  className="ltin-notif-del"
+                  onClick={(e) => handleDelete(e, n._id)}
+                  aria-label="Delete"
+                  type="button"
+                >
+                  <i className="bi bi-x" />
+                </button>
+              </div>
+            ))
+          )}
+        </div>
       </div>
     </>
   ) : null;
@@ -169,10 +219,7 @@ const NotificationBell = () => {
           <span className="ltin-notif-badge">{unreadCount > 99 ? "99+" : unreadCount}</span>
         )}
       </button>
-
-      {isMobile
-        ? ReactDOM.createPortal(panel, document.body)
-        : panel}
+      {isMobile ? ReactDOM.createPortal(panel, document.body) : panel}
     </div>
   );
 };
