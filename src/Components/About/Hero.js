@@ -209,13 +209,7 @@ export default function Hero() {
         <span>Scroll</span>
       </div>
 
-      {/* ── bottom wave ── */}
-      <div className="hero-wave" aria-hidden="true">
-        <svg viewBox="0 0 1440 60" preserveAspectRatio="none">
-          <rect width="1440" height="60" fill="#2d7a4f" />
-          <path d="M0,30 C360,60 1080,0 1440,30 L1440,60 L0,60 Z" fill="#f5f8f7" />
-        </svg>
-      </div>
+ 
     </section>
   );
 }

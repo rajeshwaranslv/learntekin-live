@@ -14,7 +14,7 @@
 
 /* ── Header ── */
 .yt-promo-header {
-  text-align: center;
+  text-align: left;
   margin-bottom: 2.5rem;
 }
 
@@ -39,7 +39,7 @@
   font-size: clamp(0.9rem, 1.5vw, 1rem);
   color: #4a6458;
   max-width: 600px;
-  margin: 0 auto;
+  margin: 0;
   line-height: 1.7;
 }
 
@@ -373,7 +373,7 @@
   display: flex;
   align-items: center;
   gap: 0.35rem;
-  min-width: 160px;
+  min-width: 140px;
   font-size: 0.82rem;
   font-weight: 700;
   color: #1a5b31;
@@ -577,3 +577,54 @@
 }
 
 .yt-promo-btn:hover { background: #134a26; }
+
+/* ── Small device overrides ── */
+@media (max-width: 560px) {
+  .yt-promo-url-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .yt-promo-url-label {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .yt-promo-url-input {
+    width: 100%;
+  }
+
+  .yt-promo-count-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .yt-promo-summary {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 400px) {
+  .yt-promo-shell {
+    padding: 0 0.75rem;
+  }
+
+  .yt-promo-form {
+    padding: 1rem;
+    border-radius: 14px;
+  }
+
+  .yt-promo-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .yt-promo-platform-grid {
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .yt-promo-submit-btn {
+    width: 100%;
+  }
+}
