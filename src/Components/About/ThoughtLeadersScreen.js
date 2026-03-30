@@ -57,15 +57,6 @@ const ThoughtLeadersScreen = () => {
         "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2F736x%2Ff7%2Ff8%2Ff9%2Ff7f8f965c3bab2227d4962d9f338ed8f.jpg&f=1&nofb=1&ipt=1aaf375431edd11bfd89515dd38964a77cb9a62e065525a67f732a702fbc8540&ipo=images", // Replace with an actual image URL
     },
     {
-      title: "Rules and People",
-      name: " Social Secular Justice Ideology",
-      description:
-        "It stands for a balanced and secular approach to justice and rules that uplift society as a whole.",
-      image:
-        "https://upload.wikimedia.org/wikipedia/commons/f/fe/TVK_Official_Flag.jpg",
-      imgStyle: { height: "7rem", width: "12rem", borderRadius: "0.75rem" },
-    },
-    {
       title: "R&D Tech",
       name: "Dr. APJ Abdul Kalam",
       description:
