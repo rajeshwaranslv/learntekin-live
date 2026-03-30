@@ -145,7 +145,7 @@ export const markAllNotificationsRead = () => async (dispatch, getState) => {
               },
               { merge: true }
             )
-          : axios.patch(`${NOTIF_URL}/${notification.id}/read`)
+          : axios.patch(`${NOTIF_BASE}/${notification.id}/read`)
       )
     );
     const successfulIds = unreadItems

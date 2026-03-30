@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Modal, Card, Row, Col, Space, Typography, Divider } from "antd";
+import { Form, Input, Button, Modal, Card, Row, Col, Typography, Divider } from "antd";
 import {
   MailOutlined, PhoneOutlined, ClockCircleOutlined,
   EnvironmentOutlined, LinkedinOutlined, InstagramOutlined,
   YoutubeOutlined, UserOutlined, SendOutlined, TwitterOutlined,
   WhatsAppOutlined,
 } from "@ant-design/icons";
+import { buildApiUrl } from "../../utils/api";
 import 'antd/dist/reset.css';
 import './formStyles.css';
 
 const { Title, Text, Paragraph } = Typography;
 
-const API_BASE = (import.meta.env.VITE_API_BASE_URL || "https://lte-node.onrender.com").trim().replace(/\/$/, "");
-const CONTACT_URL = `${API_BASE}/api/contacts`;
+const CONTACT_URL = buildApiUrl("/api/contacts");
 
 const infoItems = [
   { icon: <MailOutlined />,        title: "Email Us",    content: <a href="mailto:learntekin@gmail.com">learntekin@gmail.com</a> },

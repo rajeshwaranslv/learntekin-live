@@ -44,6 +44,14 @@ const timeAgo = (dateStr) => {
 };
 
 const FALLBACK_POLL = 5 * 60 * 1000;
+const REALTIME_REFRESH_DELAY = 500;
+const persistNotifPreference = (key, value) => {
+  try {
+    localStorage.setItem(key, value);
+  } catch (_error) {
+    // Ignore storage failures in restricted browser contexts.
+  }
+};
 
 const NotificationBell = () => {
   const dispatch = useDispatch();
@@ -60,6 +68,7 @@ const NotificationBell = () => {
   );
   const panelRef = useRef(null);
   const wrapRef  = useRef(null);
+  const refreshTimerRef = useRef(null);
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 600px)");
@@ -72,15 +81,29 @@ const NotificationBell = () => {
   useEffect(() => {
     dispatch(fetchNotifications());
     const interval = setInterval(() => dispatch(fetchNotifications()), FALLBACK_POLL);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(refreshTimerRef.current);
+    };
+  }, [dispatch]);
+
+  const scheduleRefresh = useCallback(() => {
+    clearTimeout(refreshTimerRef.current);
+    refreshTimerRef.current = setTimeout(() => {
+      dispatch(fetchNotifications());
+    }, REALTIME_REFRESH_DELAY);
   }, [dispatch]);
 
   // SSE real-time handler
   const handleNewNotif = useCallback((notif) => {
-    dispatch(fetchNotifications());
+    scheduleRefresh();
     if (soundOn) playNotifSound(notif.type);
-    if (browserNotifOn) showBrowserNotif(notif.title, notif.message, { tag: `ltin-live-${notif.type}` });
-  }, [dispatch, soundOn, browserNotifOn]);
+    if (browserNotifOn) {
+      void showBrowserNotif(notif.title, notif.message, {
+        tag: `ltin-live-${notif.type}`,
+      });
+    }
+  }, [browserNotifOn, scheduleRefresh, soundOn]);
 
   useNotifStream("learntekin-live", handleNewNotif);
 
@@ -92,13 +115,13 @@ const NotificationBell = () => {
     }
     const next = !browserNotifOn;
     setBrowserNotifOn(next);
-    try { localStorage.setItem("ltin_browser_notif", next ? "on" : "off"); } catch {}
+    persistNotifPreference("ltin_browser_notif", next ? "on" : "off");
   };
 
   const toggleSound = () => {
     const next = !soundOn;
     setSoundOn(next);
-    try { localStorage.setItem("ltin_notif_sound", next ? "on" : "off"); } catch {}
+    persistNotifPreference("ltin_notif_sound", next ? "on" : "off");
   };
 
   // Close on outside click (desktop only)

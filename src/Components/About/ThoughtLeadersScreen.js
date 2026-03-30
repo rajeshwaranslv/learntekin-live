@@ -1,6 +1,7 @@
 ﻿import React, { useEffect, useState } from "react";
 import parse from "html-react-parser";
 import { auth, db } from "../../firebase";
+import { buildApiUrl } from "../../utils/api";
 import "./ThoughtLeadersScreen.css";
 
 /* ── Logo/avatar with letter fallback (same pattern as PlacementAvatar) ── */
@@ -33,8 +34,7 @@ function CompanyLogo({ src, name, style, className }) {
   );
 }
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://lte-node.onrender.com";
-const CHARITY_API_URL = `${API_BASE}/api/charities`;
+const CHARITY_API_URL = buildApiUrl("/api/charities");
 
 const ThoughtLeadersScreen = () => {
   const renderRichText = (value) => {

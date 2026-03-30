@@ -33,8 +33,6 @@ const formatINR = (amount) =>
     maximumFractionDigits: 0,
   }).format(amount || 0);
 
-const clamp = (n, lo, hi) => Math.min(Math.max(n, lo), hi);
-
 // ─── Skeleton card ─────────────────────────────────────────────────────────────
 function SkeletonCourseCard() {
   return (

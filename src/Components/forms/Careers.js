@@ -4,13 +4,13 @@ import { Modal, Form, Input, Radio, Checkbox, Button, Card, Row, Col, Typography
 import {
   MailOutlined, PhoneOutlined, UserOutlined, TeamOutlined,
 } from "@ant-design/icons";
+import { buildApiUrl } from "../../utils/api";
 import 'antd/dist/reset.css';
 import './formStyles.css';
 
 const { Title, Text, Paragraph } = Typography;
 
-const API_BASE = (import.meta.env.VITE_API_BASE_URL || "https://lte-node.onrender.com").trim().replace(/\/$/, "");
-const CAREER_URL = `${API_BASE}/api/careers`;
+const CAREER_URL = buildApiUrl("/api/careers");
 
 const aboutItems = [
   {

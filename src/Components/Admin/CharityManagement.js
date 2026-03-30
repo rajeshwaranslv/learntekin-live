@@ -1,9 +1,9 @@
-﻿import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { message } from "antd";
-import { useRef } from "react";
 import { auth, db } from "../../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import Unauthorized from "../Warnings/Unauthorized";
+import { buildApiUrl, resolveApiAssetUrl } from "../../utils/api";
 import "./CharityManagement.css";
 
 const EMPTY_FORM = {
@@ -12,45 +12,35 @@ const EMPTY_FORM = {
   description: "",
 };
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://lte-node.onrender.com";
-const API_URL = `${API_BASE}/api/charities`;
-const MAX_IMAGE_SIZE = 2 * 1024 * 1024;
+const API_URL = buildApiUrl("/api/charities");
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 
 const safeString = (value) => (typeof value === "string" ? value : "");
 
-function readFileAsDataUrl(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
+const normalizeCharity = (value) => ({
+  _id: safeString(value?._id),
+  name: safeString(value?.name),
+  image: safeString(value?.image),
+  description: safeString(value?.description),
+  imageStorage: safeString(value?.imageStorage),
+});
 
-    reader.onload = () =>
-      resolve(typeof reader.result === "string" ? reader.result : "");
-    reader.onerror = () =>
-      reject(new Error("Failed to read the selected image."));
-    reader.readAsDataURL(file);
-  });
-}
-
-async function requestJson(url, options = {}) {
-  const response = await fetch(url, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    ...options,
-  });
-
+async function requestData(url, options = {}) {
+  const response = await fetch(url, options);
   const text = await response.text();
   let payload = null;
 
   if (text) {
     try {
       payload = JSON.parse(text);
-    } catch (err) {
+    } catch (_) {
       payload = text;
     }
   }
 
   if (!response.ok) {
-    const messageText = payload?.message || `Request failed (${response.status})`;
+    const messageText =
+      payload?.message || payload || `Request failed (${response.status})`;
     throw new Error(messageText);
   }
 
@@ -66,11 +56,25 @@ export default function CharityManagement() {
   const [error, setError] = useState("");
   const [form, setForm] = useState(EMPTY_FORM);
   const [editingId, setEditingId] = useState(null);
-  const [uploadingImage, setUploadingImage] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
   const [selectedImageName, setSelectedImageName] = useState("");
+  const [imagePreview, setImagePreview] = useState("");
+  const [initialImageValue, setInitialImageValue] = useState("");
+  const [imageClearedExplicitly, setImageClearedExplicitly] = useState(false);
   const fileInputRef = useRef(null);
+  const objectUrlRef = useRef("");
 
   const isAdmin = useMemo(() => currentUser?.role === "admin", [currentUser]);
+
+  const clearObjectPreview = useCallback(() => {
+    if (!objectUrlRef.current) {
+      return;
+    }
+    URL.revokeObjectURL(objectUrlRef.current);
+    objectUrlRef.current = "";
+  }, []);
+
+  useEffect(() => () => clearObjectPreview(), [clearObjectPreview]);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -95,12 +99,21 @@ export default function CharityManagement() {
     return () => unsubscribe();
   }, []);
 
+  const syncPreview = useCallback(
+    (value) => {
+      clearObjectPreview();
+      setImagePreview(resolveApiAssetUrl(value));
+    },
+    [clearObjectPreview]
+  );
+
   const loadCharities = useCallback(async () => {
     setLoading(true);
     setError("");
+
     try {
-      const data = await requestJson(API_URL);
-      setCharities(Array.isArray(data) ? data : []);
+      const data = await requestData(API_URL);
+      setCharities(Array.isArray(data) ? data.map(normalizeCharity) : []);
     } catch (err) {
       const messageText = err.message || "Failed to load charities.";
       setError(messageText);
@@ -119,16 +132,26 @@ export default function CharityManagement() {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm((previous) => ({ ...previous, [name]: value }));
 
     if (name === "image") {
+      setSelectedFile(null);
       setSelectedImageName("");
+      setImageClearedExplicitly(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+      syncPreview(value);
     }
   };
 
   const clearSelectedImage = () => {
-    setForm((prev) => ({ ...prev, image: "" }));
+    clearObjectPreview();
+    setSelectedFile(null);
     setSelectedImageName("");
+    setImagePreview("");
+    setImageClearedExplicitly(true);
+    setForm((previous) => ({ ...previous, image: "" }));
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -149,70 +172,79 @@ export default function CharityManagement() {
     }
 
     if (file.size > MAX_IMAGE_SIZE) {
-      message.error("Image size should be under 2 MB.");
+      message.error("Image size should be under 5 MB.");
       event.target.value = "";
       return;
     }
 
-    setUploadingImage(true);
+    clearObjectPreview();
+    const previewUrl = URL.createObjectURL(file);
+    objectUrlRef.current = previewUrl;
 
-    try {
-      const imageDataUrl = await readFileAsDataUrl(file);
-      setForm((prev) => ({ ...prev, image: imageDataUrl }));
-      setSelectedImageName(file.name);
-      message.success("Image ready for upload.");
-    } catch (err) {
-      message.error(err.message || "Unable to process the selected image.");
-      event.target.value = "";
-    } finally {
-      setUploadingImage(false);
-    }
+    setSelectedFile(file);
+    setSelectedImageName(file.name);
+    setImagePreview(previewUrl);
+    setImageClearedExplicitly(false);
+    setForm((previous) => ({ ...previous, image: "" }));
+    message.success("Image ready for upload.");
   };
 
-  const resetForm = () => {
+  const resetForm = useCallback(() => {
+    clearObjectPreview();
     setForm(EMPTY_FORM);
     setEditingId(null);
+    setSelectedFile(null);
     setSelectedImageName("");
+    setImagePreview("");
+    setInitialImageValue("");
+    setImageClearedExplicitly(false);
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
-  };
+  }, [clearObjectPreview]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const payload = {
-      name: safeString(form.name).trim(),
-      image: safeString(form.image).trim(),
-      description: safeString(form.description).trim(),
-    };
+    const name = safeString(form.name).trim();
+    const description = safeString(form.description).trim();
+    const image = safeString(form.image).trim();
 
-    if (!payload.name) {
+    if (!name) {
       message.error("Name is required.");
       return;
     }
 
+    const payload = new FormData();
+    payload.append("name", name);
+    payload.append("description", description);
+
+    if (selectedFile) {
+      payload.append("imageFile", selectedFile);
+    } else if (imageClearedExplicitly) {
+      payload.append("image", "");
+    } else if (image && image !== initialImageValue) {
+      payload.append("image", image);
+    }
+
     setSaving(true);
     try {
-      if (editingId) {
-        const updated = await requestJson(`${API_URL}/${editingId}`, {
-          method: "PUT",
-          body: JSON.stringify(payload),
-        });
-        setCharities((prev) =>
-          prev.map((item) => (item._id === updated._id ? updated : item))
-        );
-        message.success("Charity updated.");
-      } else {
-        const created = await requestJson(API_URL, {
-          method: "POST",
-          body: JSON.stringify(payload),
-        });
-        setCharities((prev) => [created, ...prev]);
-        message.success("Charity created.");
-      }
+      const targetUrl = editingId ? `${API_URL}/${editingId}` : API_URL;
+      const method = editingId ? "PUT" : "POST";
+      const saved = normalizeCharity(
+        await requestData(targetUrl, {
+          method,
+          body: payload,
+        })
+      );
 
+      setCharities((previous) =>
+        editingId
+          ? previous.map((item) => (item._id === saved._id ? saved : item))
+          : [saved, ...previous]
+      );
+      message.success(editingId ? "Charity updated." : "Charity created.");
       resetForm();
     } catch (err) {
       message.error(err.message || "Failed to save charity.");
@@ -222,13 +254,26 @@ export default function CharityManagement() {
   };
 
   const handleEdit = (charity) => {
-    setEditingId(charity._id);
+    const normalizedCharity = normalizeCharity(charity);
+    setEditingId(normalizedCharity._id);
     setForm({
-      name: safeString(charity.name),
-      image: safeString(charity.image),
-      description: safeString(charity.description),
+      name: normalizedCharity.name,
+      image:
+        normalizedCharity.imageStorage === "mongodb"
+          ? ""
+          : normalizedCharity.image,
+      description: normalizedCharity.description,
     });
+    setInitialImageValue(normalizedCharity.image);
+    setSelectedFile(null);
     setSelectedImageName("");
+    setImageClearedExplicitly(false);
+    syncPreview(normalizedCharity.image);
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -238,8 +283,10 @@ export default function CharityManagement() {
     }
 
     try {
-      await requestJson(`${API_URL}/${charity._id}`, { method: "DELETE" });
-      setCharities((prev) => prev.filter((item) => item._id !== charity._id));
+      await requestData(`${API_URL}/${charity._id}`, { method: "DELETE" });
+      setCharities((previous) =>
+        previous.filter((item) => item._id !== charity._id)
+      );
       message.success("Charity deleted.");
     } catch (err) {
       message.error(err.message || "Failed to delete charity.");
@@ -290,10 +337,10 @@ export default function CharityManagement() {
             <input
               id="charity-image"
               name="image"
-              type="url"
+              type="text"
               value={form.image}
               onChange={handleChange}
-              placeholder="https://..."
+              placeholder="https://... or /uploads/..."
             />
           </div>
         </div>
@@ -309,26 +356,26 @@ export default function CharityManagement() {
             onChange={handleImageUpload}
           />
           <small className="charity-helper-text">
-            Upload JPG, PNG, or WEBP up to 2 MB. The selected file is stored in the same image field used by the charity cards.
+            Upload JPG, PNG, WEBP, GIF, or SVG up to 5 MB. The backend will store uploaded files and keep the returned reference.
           </small>
-          {(selectedImageName || form.image) && (
+          {(selectedImageName || imagePreview) && (
             <div className="charity-image-preview">
               <div className="charity-image-preview-thumb">
-                <img src={form.image} alt={form.name || "Charity preview"} />
+                <img src={imagePreview} alt={form.name || "Charity preview"} />
               </div>
               <div className="charity-image-preview-copy">
                 <strong>{selectedImageName || "Current image selected"}</strong>
                 <span>
-                  {uploadingImage
-                    ? "Processing image..."
-                    : "This image will be saved when you submit the form."}
+                  {selectedFile
+                    ? "This uploaded image will be stored by the backend when you submit."
+                    : "This image reference will be processed by the backend when you submit."}
                 </span>
               </div>
               <button
                 type="button"
                 className="button charity-secondary"
                 onClick={clearSelectedImage}
-                disabled={uploadingImage || saving}
+                disabled={saving}
               >
                 Remove
               </button>
@@ -349,25 +396,19 @@ export default function CharityManagement() {
         </div>
 
         <div className="charity-form-actions">
-          <button
-            type="submit"
-            className="button"
-            disabled={saving || uploadingImage}
-          >
+          <button type="submit" className="button" disabled={saving}>
             {saving
               ? "Saving..."
-              : uploadingImage
-                ? "Preparing image..."
-                : editingId
-                  ? "Update Charity"
-                  : "Create Charity"}
+              : editingId
+                ? "Update Charity"
+                : "Create Charity"}
           </button>
           {editingId && (
             <button
               type="button"
               className="button charity-secondary"
               onClick={resetForm}
-              disabled={saving || uploadingImage}
+              disabled={saving}
             >
               Cancel
             </button>
@@ -387,7 +428,10 @@ export default function CharityManagement() {
             <div className="charity-card-info">
               <div className="charity-avatar">
                 {charity.image ? (
-                  <img src={charity.image} alt={charity.name} />
+                  <img
+                    src={resolveApiAssetUrl(charity.image)}
+                    alt={charity.name}
+                  />
                 ) : (
                   <span>{charity.name?.slice(0, 1)?.toUpperCase() || "C"}</span>
                 )}
