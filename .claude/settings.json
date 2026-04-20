@@ -27,7 +27,13 @@
       "Bash(grep -ri \"backend\\\\|frontend\\\\|^BE\\\\|^FE\" 'd:\\\\Production\\\\2025\\\\MERN\\\\Learn TEK In\\\\learntekin-live\\\\src' --include=*.js --include=*.jsx)",
       "Bash(__NEW_LINE_9fd7cbcaa00968a9__ echo:*)",
       "Bash(find 'd:\\\\Production\\\\2025\\\\MERN\\\\Learn TEK In\\\\ltin-admin\\\\src' -type f \\\\\\(-name *notif* -o -name *Notif* \\\\\\))",
-      "Bash(find 'd:\\\\Production\\\\2025\\\\MERN\\\\Learn TEK In\\\\learntekin-live\\\\src' -type f \\\\\\(-name *notif* -o -name *Notif* \\\\\\))"
+      "Bash(find 'd:\\\\Production\\\\2025\\\\MERN\\\\Learn TEK In\\\\learntekin-live\\\\src' -type f \\\\\\(-name *notif* -o -name *Notif* \\\\\\))",
+      "Bash(curl -s -X POST http://localhost:5000/api/placed-people/migrate-lpa)",
+      "Bash(python -m json.tool)",
+      "Bash(curl -s \"http://localhost:5000/api/placed-people?all=true\")",
+      "Bash(python -c \"import sys,json; data=json.load\\(sys.stdin\\); [print\\(p['name'], '|', repr\\(p.get\\('lpa','MISSING'\\)\\)\\) for p in data]\")",
+      "Bash(node -e \"const d=require\\('fs'\\).readFileSync\\('/dev/stdin','utf8'\\); const data=JSON.parse\\(d\\); data.forEach\\(p=>console.log\\(p.name,'|',JSON.stringify\\(p.lpa\\)\\)\\)\")",
+      "Bash(node -e \"const data=require\\('/tmp/pp.json'\\); data.forEach\\(p=>console.log\\(p.name,'|',JSON.stringify\\(p.lpa\\)\\)\\)\")"
     ]
   }
 }

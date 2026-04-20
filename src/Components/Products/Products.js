@@ -368,13 +368,13 @@ class Products extends Component {
             </div>
           </section>
 
-          {/* ── Live Internship / Fellowship Openings ── */}
+          {/* Live Internship / Fellowship Openings */}
           <section className="products-section">
             <div className="products-section-head">
               <div className="products-openings-head">
                 <div>
                   <h2>Current Openings</h2>
-                  <p>Live internship &amp; fellowship positions — apply directly from here.</p>
+                  <p>Live internship &amp; fellowship positions - apply directly from here.</p>
                 </div>
                 <div className="products-openings-filters">
                   {["all", "internship", "fellowship"].map((f) => (
@@ -393,12 +393,12 @@ class Products extends Component {
             {liveLoading ? (
               <div className="products-openings-loading">
                 <div className="products-openings-spinner" />
-                <span>Loading opportunities…</span>
+                <span>Loading opportunities...</span>
               </div>
             ) : visibleOpps.length === 0 ? (
               <div className="products-openings-empty">
                 <i className="bi bi-briefcase" />
-                <p>No open positions at the moment — check back soon.</p>
+                <p>No open positions at the moment - check back soon.</p>
               </div>
             ) : (
               <div className="row g-3">
@@ -549,12 +549,12 @@ class Products extends Component {
             ) : null}
           </section>
 
-          {/* ── LTIN Platform Services ── */}
+          {/* LTIN Platform Services */}
           <section className="products-section">
             <div className="products-section-head">
               <h2>Platform Services</h2>
               <p>
-                Tools built into the Learn TEK In platform — PC building, courses, and a digital library.
+                Tools built into the Learn TEK In platform - PC building, courses, and a digital library.
               </p>
             </div>
             <div className="row g-4">
