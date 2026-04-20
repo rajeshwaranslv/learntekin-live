@@ -16,7 +16,7 @@ const CONTACT_URL = buildApiUrl("/api/contacts");
 
 const infoItems = [
   { icon: <MailOutlined />,        title: "Email Us",    content: <a href="mailto:learntekin@gmail.com">learntekin@gmail.com</a> },
-  { icon: <PhoneOutlined />,       title: "Call Us",     content: <a href="tel:+916382422474">+91-638-242-2474</a> },
+  { icon: <PhoneOutlined />,       title: "Call Us",     content: <a href="tel:+914142218974">+91-4142-21-8974</a> },
   { icon: <ClockCircleOutlined />, title: "Open Hours",  content: "Mon – Fri: 9 AM – 5 PM" },
   { icon: <EnvironmentOutlined />, title: "Location",    content: "Panruti, Tamil Nadu, India" },
 ];

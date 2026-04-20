@@ -97,7 +97,7 @@ const pathways = [
 
 const mission = {
   mission:
-    "To make industry-relevant tech education accessible, structured, and outcome-driven for every learner — regardless of background.",
+    "To make industry-relevant tech education accessible, structured, and outcome-driven for every learner - regardless of background.",
   vision:
     "To build the most trusted practical learning ecosystem in India, where every graduate is job-ready from day one.",
 };
@@ -160,8 +160,64 @@ const technologies = [
   { label: "UI/UX", icon: "bi-palette-fill" },
 ];
 
-
 const API_BASE = (import.meta?.env?.VITE_API_BASE_URL || "").trim().replace(/\/$/, "");
+const FE_ROLE_PATTERN = /\b(front\s*end|frontend|fe)\b/i;
+const BE_ROLE_PATTERN = /\b(back\s*end|backend|be)\b/i;
+const SE_ROLE_PATTERN = /\b(se|sde|software\s*engineer|system\s*engineer)\b/i;
+
+const toTrimmedString = (value) => String(value ?? "").trim();
+
+const getPlacementTrack = (role) => {
+  if (FE_ROLE_PATTERN.test(role)) {
+    return "fe";
+  }
+  if (BE_ROLE_PATTERN.test(role)) {
+    return "be";
+  }
+  if (SE_ROLE_PATTERN.test(role)) {
+    return "se";
+  }
+  return "";
+};
+
+const formatPlacementPackage = (value) => {
+  const text = toTrimmedString(value);
+  if (!text) {
+    return "";
+  }
+  if (/\blpa\b/i.test(text)) {
+    return text.replace(/\blpa\b/i, "LPA");
+  }
+  if (/^\d+(\.\d+)?$/.test(text)) {
+    return `${text} LPA`;
+  }
+  return text;
+};
+
+const getPlacementPackageLabel = (placement) => {
+  const track = getPlacementTrack(toTrimmedString(placement?.role));
+  const roleSpecificKeys = track === "fe"
+    ? ["frontendLpa", "frontEndLpa", "feLpa", "frontendPackage", "fePackage"]
+    : track === "be"
+      ? ["backendLpa", "backEndLpa", "beLpa", "backendPackage", "bePackage"]
+      : track === "se"
+        ? ["softwareEngineerLpa", "softwareEngineerPackage", "seLpa", "sePackage", "sdeLpa", "sdePackage"]
+        : [];
+
+  const packageValue = [
+    ...roleSpecificKeys,
+    "lpa",
+    "packageLpa",
+    "package",
+    "ctc",
+    "salary",
+    "compensation",
+  ]
+    .map((key) => placement?.[key])
+    .find((value) => toTrimmedString(value));
+
+  return formatPlacementPackage(packageValue);
+};
 
 function PlacementAvatar({ img, name }) {
   const [failed, setFailed] = useState(false);
@@ -185,7 +241,7 @@ function PlacementAvatar({ img, name }) {
 }
 
 async function fetchPlacements() {
-  // Dev: relative URL → Vite proxy (configured in vite.config.js) → local backend
+  // Dev: relative URL -> Vite proxy (configured in vite.config.js) -> local backend
   // Prod: absolute URL from VITE_API_BASE_URL env var
   const url = import.meta.env.DEV
     ? "/api/placed-people"
@@ -205,7 +261,9 @@ function usePlacements() {
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     fetchPlacements()
-      .then((data) => { if (data) setPlacements(data); })
+      .then((data) => {
+        if (data) setPlacements(data);
+      })
       .finally(() => setLoading(false));
   }, []);
   return { placements, loading };
@@ -329,7 +387,7 @@ function About() {
           </div>
         </header>
 
-        {/* ── Mission & Vision ── */}
+        {/* Mission & Vision */}
         <section className="about-section about-mv-section">
           <div className="about-mv-grid">
             <article className="about-mv-card about-animate from-left">
@@ -343,11 +401,11 @@ function About() {
           </div>
         </section>
 
-        {/* ── Goals ── */}
+        {/* Goals */}
         <section className="about-section">
           <div className="about-section-head about-animate">
             <h2>Our Goals</h2>
-            <p>The milestones we are working toward — measurable, meaningful, and mission-aligned.</p>
+            <p>The milestones we are working toward - measurable, meaningful, and mission-aligned.</p>
           </div>
           <div className="about-goals-grid">
             {goals.map((goal, i) => (
@@ -387,7 +445,7 @@ function About() {
           </div>
         </section>
 
-        {/* ── Success Metrics Dashboard ── */}
+        {/* Success Metrics Dashboard */}
         <section className="about-section">
           <div className="about-section-head about-animate">
             <h2>Our Success Metrics</h2>
@@ -404,7 +462,7 @@ function About() {
           </div>
         </section>
 
-        {/* ── Technologies ── */}
+        {/* Technologies */}
         <section className="about-section">
           <div className="about-section-head about-animate">
             <h2>Technologies We Teach</h2>
@@ -468,25 +526,29 @@ function About() {
             ))}
           </div>
         </section>
-        {/* ── Placed Learners ── */}
+
+        {/* Placed Learners */}
         <section className="about-section">
           <div className="about-section-head about-animate">
             <h2>Placed Learners</h2>
             <p>Real outcomes from real people who went through our programs.</p>
+            {!placementsLoading && placements.length > 0 && (
+              <div className="about-placements-stats">
+                <span className="about-placements-stat-chip">
+                  <i className="bi bi-people-fill" /> {placements.length}+ Learners Placed
+                </span>
+                <span className="about-placements-stat-chip about-placements-stat-chip--alt">
+                  <i className="bi bi-buildings-fill" /> Top Companies
+                </span>
+              </div>
+            )}
           </div>
           {placementsLoading ? (
             <div className="about-placements-ticker-wrap">
               <div className="about-placements-ticker" style={{ animationPlayState: "paused" }}>
                 {Array.from({ length: 4 }).map((_, i) => (
-                  <article className="about-testimonial-card about-placement-slide" key={i} style={{ opacity: 0.35 }}>
-                    <div style={{ height: 56, background: "#e8f0eb", borderRadius: 8, marginBottom: 16 }} />
-                    <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-                      <div style={{ width: 46, height: 46, borderRadius: "50%", background: "#e8f0eb", flexShrink: 0 }} />
-                      <div style={{ flex: 1 }}>
-                        <div style={{ height: 14, background: "#e8f0eb", borderRadius: 4, marginBottom: 6, width: "60%" }} />
-                        <div style={{ height: 12, background: "#e8f0eb", borderRadius: 4, width: "80%" }} />
-                      </div>
-                    </div>
+                  <article className="about-placement-card about-placement-slide" key={i}>
+                    <div className="about-placement-card-skeleton" />
                   </article>
                 ))}
               </div>
@@ -496,59 +558,69 @@ function About() {
           ) : (
             <div className="about-placements-ticker-wrap">
               <div className="about-placements-ticker">
-                {[...placements, ...placements].map((p, i) => (
-                  <article className="about-testimonial-card about-placement-slide" key={i}>
-                    {/* Identity header */}
-                    <div className="about-placement-header">
-                      <PlacementAvatar img={p.img} name={p.name} />
-                      <div className="about-placement-identity">
-                        <strong className="about-placement-name">{p.name}</strong>
-                        <span className="about-placement-role">{p.role}</span>
-                        <div className="about-placement-company" title={p.company}>
-                          <i className="bi bi-building-fill" />
-                          <span>{p.company}</span>
+                {[...placements, ...placements].map((p, i) => {
+                  const roleLabel = toTrimmedString(p.role) || "Role";
+                  const packageLabel = getPlacementPackageLabel(p);
+
+                  return (
+                    <article className="about-placement-card about-placement-slide" key={i}>
+                      {/* Top accent */}
+                      <div className="about-placement-card-accent" />
+
+                      {/* Header: avatar + name + LPA */}
+                      <div className="about-placement-header">
+                        <PlacementAvatar img={p.img} name={p.name} />
+                        <div className="about-placement-identity">
+                          <strong className="about-placement-name">{p.name}</strong>
+                          <span className="about-placement-role">{roleLabel}</span>
                         </div>
-                      </div>
-                    </div>
-
-                    {/* Quote */}
-                    <p className="about-testimonial-quote">"{p.quote}"</p>
-
-                    {/* Meta: dates + LinkedIn */}
-                    <div className="about-placement-meta">
-                      <div className="about-testimonial-dates">
-                        {p.placedDate && (
-                          <span className="about-testimonial-date-badge">
-                            <i className="bi bi-briefcase-fill" />
-                            {new Date(p.placedDate).toLocaleDateString("en-IN", { month: "short", year: "numeric" })}
-                          </span>
-                        )}
-                        {p.createdAt && (
-                          <span className="about-testimonial-date-badge about-testimonial-date-posted">
-                            <i className="bi bi-calendar3" />
-                            {new Date(p.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
-                          </span>
+                        {packageLabel && (
+                          <div className="about-placement-lpa-badge">
+                            <span className="about-placement-lpa-value">{packageLabel}</span>
+                            <span className="about-placement-lpa-label">Package</span>
+                          </div>
                         )}
                       </div>
-                      {p.linkedIn && (
-                        <a
-                          href={p.linkedIn}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="about-testimonial-linkedin"
-                        >
-                          <i className="bi bi-linkedin" /> LinkedIn
-                        </a>
+
+                      {/* Company */}
+                      <div className="about-placement-company" title={p.company}>
+                        <i className="bi bi-building-fill" />
+                        <span>{p.company}</span>
+                      </div>
+
+                      {/* Quote */}
+                      {p.quote && (
+                        <p className="about-placement-quote">
+                          <i className="bi bi-quote about-placement-quote-icon" />
+                          {p.quote}
+                        </p>
                       )}
-                    </div>
-                  </article>
-                ))}
+
+                      {/* Footer */}
+                      <div className="about-placement-footer">
+                        <div className="about-placement-dates">
+                          {p.placedDate && (
+                            <span className="about-placement-date-badge">
+                              <i className="bi bi-briefcase-fill" />
+                              {new Date(p.placedDate).toLocaleDateString("en-IN", { month: "short", year: "numeric" })}
+                            </span>
+                          )}
+                        </div>
+                        {p.linkedIn && (
+                          <a href={p.linkedIn} target="_blank" rel="noopener noreferrer" className="about-placement-linkedin">
+                            <i className="bi bi-linkedin" /> LinkedIn
+                          </a>
+                        )}
+                      </div>
+                    </article>
+                  );
+                })}
               </div>
             </div>
           )}
         </section>
 
-        {/* ── Clients ── */}
+        {/* Clients */}
         <section className="about-section">
           <div className="about-section-head about-animate">
             <h2>Our Partnerships</h2>
@@ -564,7 +636,7 @@ function About() {
           </div>
         </section>
 
-        {/* ── Where Our Learners Work ── */}
+        {/* Where Our Learners Work */}
         <section className="about-section">
           <div className="about-section-head about-animate">
             <h2>Where Our Learners Work</h2>
@@ -582,16 +654,15 @@ function About() {
           </div>
         </section>
 
-        {/* ── CTA ── */}
+        {/* CTA */}
         <section className="about-section about-cta-section about-animate">
           <h2>Ready to start your journey?</h2>
-          <p>Join a program, talk to a mentor, or explore our learning tracks — take the first step today.</p>
+          <p>Join a program, talk to a mentor, or explore our learning tracks - take the first step today.</p>
           <div className="about-hero-actions" style={{ justifyContent: "center" }}>
             <Link to="/Products" className="gfg-btn">Explore Programs</Link>
             <Link to="/Contact" className="gfg-btn gfg-btn-outline">Talk to Team</Link>
           </div>
         </section>
-
       </div>
     </section>
   );
