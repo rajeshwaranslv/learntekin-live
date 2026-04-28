@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "./YoutubePromoForm.css";
 
-const API_BASE = (import.meta?.env?.VITE_API_BASE_URL || "").trim().replace(/\/$/, "");
-const CONFIG_URL = API_BASE ? `${API_BASE}/api/youtube-promo/configs` : "/api/youtube-promo/configs";
-const REQUEST_URL = API_BASE ? `${API_BASE}/api/youtube-promo/requests` : "/api/youtube-promo/requests";
+import { API_BASE } from "../../utils/api";
+const CONFIG_URL = `${API_BASE}/api/youtube-promo/configs`;
+const REQUEST_URL = `${API_BASE}/api/youtube-promo/requests`;
 
 const PLATFORM_ICONS = {
   YouTube: "bi-youtube",

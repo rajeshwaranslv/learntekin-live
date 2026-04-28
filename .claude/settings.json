@@ -35,7 +35,24 @@
       "Bash(node -e \"const d=require\\('fs'\\).readFileSync\\('/dev/stdin','utf8'\\); const data=JSON.parse\\(d\\); data.forEach\\(p=>console.log\\(p.name,'|',JSON.stringify\\(p.lpa\\)\\)\\)\")",
       "Bash(node -e \"const data=require\\('/tmp/pp.json'\\); data.forEach\\(p=>console.log\\(p.name,'|',JSON.stringify\\(p.lpa\\)\\)\\)\")",
       "Bash(node -e ':*)",
-      "Bash(grep -E \".js$\")"
+      "Bash(grep -E \".js$\")",
+      "Bash(ls \"d:/Production/2025/MERN/Learn TEK In/ltin-admin/.env\"*)",
+      "Bash(ls -la \"D:/Production/2025/MERN/Learn TEK In/learntekin-live/.env\"*)",
+      "Bash(ls -la \"D:/Production/2025/MERN/Learn TEK In/ltin-admin/.env\"*)",
+      "Bash(timeout 15 node src/server.js)",
+      "Bash(curl -s http://localhost:5000/api/charities)",
+      "Bash(curl -s http://localhost:5000/api/courses)",
+      "Bash(curl -s -X POST http://localhost:5000/api/courses/admin/seed)",
+      "Bash(curl -s -X POST http://localhost:5000/api/pc/admin/seed)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f'{len\\(d\\)} courses: ' + ', '.join\\(c['title'] for c in d\\)\\)\")",
+      "Bash(curl -s \"http://localhost:5000/api/pc/components\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f'{len\\(d\\)} components'\\); [print\\(f' {t}: {sum\\(1 for c in d if c[\\\\\"type\\\\\"]==t\\)}'\\) for t in sorted\\(set\\(c['type'] for c in d\\)\\)]\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f'{len\\(d\\)} charities'\\)\")",
+      "Bash(node -e \"const d=JSON.parse\\(require\\('fs'\\).readFileSync\\(0,'utf8'\\)\\); console.log\\(d.length+' courses:', d.map\\(c=>c.title\\).join\\(', '\\)\\)\")",
+      "Bash(node -e \"const d=JSON.parse\\(require\\('fs'\\).readFileSync\\(0,'utf8'\\)\\); console.log\\(d.length+' components'\\)\")",
+      "Bash(node -e \"const d=JSON.parse\\(require\\('fs'\\).readFileSync\\(0,'utf8'\\)\\); console.log\\(d.length+' charities'\\)\")",
+      "Bash(curl -s \"http://localhost:5000/api/pc/components?type=cpu&active=true\")",
+      "Bash(node -e \"const d=JSON.parse\\(require\\('fs'\\).readFileSync\\(0,'utf8'\\)\\); console.log\\(typeof d[0].specs, JSON.stringify\\(d[0].specs\\)\\)\")"
     ]
   }
 }

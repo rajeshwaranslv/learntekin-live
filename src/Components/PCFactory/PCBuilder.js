@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { buildApiUrl } from "../../utils/api";
+import { API_FALLBACK_BASE, buildApiUrl } from "../../utils/api";
 import "./PCBuilder.css";
 
 // ─── API endpoints ────────────────────────────────────────────────────────────
 const API_COMPONENTS   = (type) => buildApiUrl(`/api/pc/components?type=${type}&active=true`);
 const API_COMPAT_CHECK = buildApiUrl("/api/pc/components/check");
+const API_COMPAT_FALLBACK_CHECK = `${API_FALLBACK_BASE}/api/pc/components/check`;
 const API_ORDERS       = buildApiUrl("/api/pc/orders");
 const API_PAY_CONFIG   = buildApiUrl("/api/pc/payment/config");
 const API_PAY_CREATE   = buildApiUrl("/api/pc/payment/create-order");
@@ -28,6 +29,282 @@ const formatINR = (amount) =>
     currency: "INR",
     maximumFractionDigits: 0,
   }).format(amount || 0);
+
+const COMPAT_REQUEST_BUILDERS = [
+  (selectedIds) => ({ components: selectedIds }),
+  (selectedIds) => ({ componentIds: Object.values(selectedIds) }),
+  (selectedIds) => ({ components: Object.values(selectedIds) }),
+  (selectedIds) => selectedIds,
+];
+
+const SOCKET_PATTERNS = [
+  ["am5", [/\bam\s*5\b/i]],
+  ["am4", [/\bam\s*4\b/i]],
+  ["lga1851", [/\blga\s*1851\b/i]],
+  ["lga1700", [/\blga\s*1700\b/i]],
+  ["lga1200", [/\blga\s*1200\b/i]],
+  ["lga1151", [/\blga\s*1151\b/i]],
+  ["lga1150", [/\blga\s*1150\b/i]],
+  ["lga2066", [/\blga\s*2066\b/i]],
+  ["tr4", [/\btr4\b/i, /\bthreadripper\b/i]],
+];
+
+const RAM_PATTERNS = [
+  ["ddr5", [/\bddr\s*5\b/i]],
+  ["ddr4", [/\bddr\s*4\b/i]],
+  ["ddr3", [/\bddr\s*3\b/i]],
+];
+
+const FORM_FACTOR_PATTERNS = [
+  ["e-atx", [/\be[\s-]?atx\b/i, /\beatx\b/i, /extended\s+atx/i]],
+  ["micro-atx", [/\bmicro[\s-]?atx\b/i, /\bm[\s-]?atx\b/i, /\bmatx\b/i]],
+  ["mini-itx", [/\bmini[\s-]?itx\b/i]],
+  ["atx", [/\batx\b/i]],
+];
+
+const DEFAULT_POWER_DRAW = {
+  cpu: 95,
+  gpu: 200,
+  motherboard: 55,
+  ram: 10,
+  storage: 8,
+  cabinet: 5,
+};
+
+const dedupeStrings = (items = []) =>
+  Array.from(
+    new Set(
+      items
+        .map((item) => String(item || "").trim())
+        .filter(Boolean)
+    )
+  );
+
+const stringifyComponent = (component) => {
+  try {
+    return JSON.stringify(component || {}).toLowerCase();
+  } catch {
+    return "";
+  }
+};
+
+const extractGroupedValue = (text, groups) => {
+  for (const [value, patterns] of groups) {
+    if (patterns.some((pattern) => pattern.test(text))) {
+      return value;
+    }
+  }
+  return null;
+};
+
+const extractFormFactorSet = (text) => {
+  let remaining = text;
+  const matches = new Set();
+
+  if (/\be[\s-]?atx\b/i.test(remaining) || /\beatx\b/i.test(remaining) || /extended\s+atx/i.test(remaining)) {
+    matches.add("e-atx");
+    remaining = remaining.replace(/\be[\s-]?atx\b/gi, " ");
+    remaining = remaining.replace(/\beatx\b/gi, " ");
+    remaining = remaining.replace(/extended\s+atx/gi, " ");
+  }
+
+  if (/\bmicro[\s-]?atx\b/i.test(remaining) || /\bm[\s-]?atx\b/i.test(remaining) || /\bmatx\b/i.test(remaining)) {
+    matches.add("micro-atx");
+    remaining = remaining.replace(/\bmicro[\s-]?atx\b/gi, " ");
+    remaining = remaining.replace(/\bm[\s-]?atx\b/gi, " ");
+    remaining = remaining.replace(/\bmatx\b/gi, " ");
+  }
+
+  if (/\bmini[\s-]?itx\b/i.test(remaining)) {
+    matches.add("mini-itx");
+    remaining = remaining.replace(/\bmini[\s-]?itx\b/gi, " ");
+  }
+
+  if (/\batx\b/i.test(remaining)) {
+    matches.add("atx");
+  }
+
+  return matches;
+};
+
+const extractWattageMatches = (text) =>
+  Array.from(text.matchAll(/(\d{2,4})\s*w(?:att)?\b/gi))
+    .map((match) => Number(match[1]))
+    .filter((value) => Number.isFinite(value));
+
+const extractPsuWattage = (component) => {
+  const wattages = extractWattageMatches(stringifyComponent(component)).filter(
+    (value) => value >= 200 && value <= 2000
+  );
+  return wattages.length > 0 ? Math.max(...wattages) : null;
+};
+
+const extractPowerDraw = (component, type) => {
+  const text = stringifyComponent(component);
+  const explicit = Array.from(
+    text.matchAll(
+      /(?:tdp|tbp|tgp|max(?:imum)?\s+power|power(?:\s+draw)?|power\s+consumption|wattage)[^0-9]{0,16}(\d{2,4})\s*w(?:att)?\b/gi
+    )
+  )
+    .map((match) => Number(match[1]))
+    .filter((value) => Number.isFinite(value));
+
+  if (explicit.length > 0) {
+    return Math.max(...explicit);
+  }
+
+  return DEFAULT_POWER_DRAW[type] || 0;
+};
+
+const flattenCompatStrings = (value, fieldName = "") => {
+  if (value == null || value === false) return [];
+
+  if (Array.isArray(value)) {
+    return value.flatMap((item) => flattenCompatStrings(item, fieldName));
+  }
+
+  if (typeof value === "object") {
+    return Object.entries(value).flatMap(([key, nestedValue]) =>
+      flattenCompatStrings(nestedValue, key)
+    );
+  }
+
+  if (typeof value === "boolean") {
+    return [];
+  }
+
+  const text = String(value).trim();
+  if (!text) return [];
+  return fieldName ? [`${fieldName}: ${text}`] : [text];
+};
+
+const parseCompatResponse = (payload) => {
+  if (Array.isArray(payload) || typeof payload === "string") {
+    return {
+      compatible: null,
+      issues: dedupeStrings(flattenCompatStrings(payload)),
+      message: "",
+    };
+  }
+
+  const issues = dedupeStrings([
+    ...flattenCompatStrings(payload?.issues),
+    ...flattenCompatStrings(payload?.warnings),
+    ...flattenCompatStrings(payload?.errors),
+    ...flattenCompatStrings(payload?.details),
+  ]);
+
+  const message =
+    typeof payload?.message === "string" ? payload.message.trim() : "";
+  const compatible =
+    typeof payload?.compatible === "boolean" ? payload.compatible : null;
+
+  if (compatible === false && message && issues.length === 0) {
+    issues.push(message);
+  }
+
+  return {
+    compatible,
+    issues: dedupeStrings(issues),
+    message,
+  };
+};
+
+const buildCompatibilityIssues = (selections) => {
+  const issues = [];
+  const cpuText = stringifyComponent(selections.cpu);
+  const motherboardText = stringifyComponent(selections.motherboard);
+  const ramText = stringifyComponent(selections.ram);
+  const cabinetText = stringifyComponent(selections.cabinet);
+
+  const cpuSocket = extractGroupedValue(cpuText, SOCKET_PATTERNS);
+  const motherboardSocket = extractGroupedValue(motherboardText, SOCKET_PATTERNS);
+
+  if (cpuSocket && motherboardSocket && cpuSocket !== motherboardSocket) {
+    issues.push(
+      `CPU socket ${cpuSocket.toUpperCase()} does not match motherboard socket ${motherboardSocket.toUpperCase()}.`
+    );
+  }
+
+  const ramType = extractGroupedValue(ramText, RAM_PATTERNS);
+  const motherboardRamType = extractGroupedValue(motherboardText, RAM_PATTERNS);
+
+  if (ramType && motherboardRamType && ramType !== motherboardRamType) {
+    issues.push(
+      `RAM type ${ramType.toUpperCase()} is not supported by the selected motherboard (${motherboardRamType.toUpperCase()}).`
+    );
+  }
+
+  const motherboardFormFactor = extractGroupedValue(
+    motherboardText,
+    FORM_FACTOR_PATTERNS
+  );
+  const cabinetSupport = extractFormFactorSet(cabinetText);
+
+  if (
+    motherboardFormFactor &&
+    cabinetSupport.size > 0 &&
+    !cabinetSupport.has(motherboardFormFactor)
+  ) {
+    issues.push(
+      `Motherboard form factor ${motherboardFormFactor.toUpperCase()} is not listed as supported by the selected cabinet.`
+    );
+  }
+
+  const psuWattage = extractPsuWattage(selections.psu);
+  if (psuWattage) {
+    const estimatedDraw = Object.entries(selections).reduce(
+      (totalDraw, [type, component]) =>
+        component ? totalDraw + extractPowerDraw(component, type) : totalDraw,
+      0
+    );
+    const recommendedPsu = Math.ceil(estimatedDraw * 1.15);
+
+    if (recommendedPsu > psuWattage) {
+      issues.push(
+        `Estimated power draw is about ${recommendedPsu}W with headroom, which exceeds the selected PSU capacity of ${psuWattage}W.`
+      );
+    }
+  }
+
+  return dedupeStrings(issues);
+};
+
+const runCompatibilityRequest = async (selectedIds) => {
+  const urls = dedupeStrings([API_COMPAT_CHECK, API_COMPAT_FALLBACK_CHECK]);
+  const requestErrors = [];
+
+  for (const url of urls) {
+    for (const buildPayload of COMPAT_REQUEST_BUILDERS) {
+      const payload = buildPayload(selectedIds);
+
+      try {
+        const res = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json().catch(() => ({}));
+        const parsed = parseCompatResponse(data);
+
+        if (res.ok) {
+          return parsed;
+        }
+
+        requestErrors.push(parsed.message || `HTTP ${res.status}`);
+      } catch (error) {
+        requestErrors.push(error?.message || "Compatibility check request failed.");
+      }
+    }
+  }
+
+  return {
+    compatible: null,
+    issues: [],
+    message: dedupeStrings(requestErrors)[0] || "",
+  };
+};
 
 // ─── Skeleton card ────────────────────────────────────────────────────────────
 function SkeletonCard() {
@@ -72,7 +349,13 @@ function ComponentCard({ component, isSelected, onSelect, onRemove }) {
             {[brand, model].filter(Boolean).join(" · ")}
           </p>
         )}
-        {specs && <span className="pcb-comp-specs-chip">{specs}</span>}
+        {specs && (
+          <span className="pcb-comp-specs-chip">
+            {typeof specs === "string"
+              ? specs
+              : Object.entries(specs).map(([k, v]) => `${v}`).join(" | ")}
+          </span>
+        )}
         <p className="pcb-comp-price">{formatINR(price)}</p>
 
         {isSelected ? (
@@ -206,6 +489,8 @@ function PriceSummary({
   selections,
   total,
   compatibilityIssues,
+  compatStatus,
+  compatMessage,
   compatChecking,
   onCheckCompat,
   onProceed,
@@ -266,6 +551,16 @@ function PriceSummary({
           <span>Total</span>
           <strong>{formatINR(total)}</strong>
         </div>
+
+        {compatStatus === "success" && compatMessage && (
+          <div className="pcb-compat-ok">
+            <p className="pcb-compat-ok-title">
+              <i className="bi bi-shield-check" aria-hidden="true" />
+              Compatibility Checked
+            </p>
+            <p className="pcb-compat-ok-text">{compatMessage}</p>
+          </div>
+        )}
 
         {compatibilityIssues.length > 0 && (
           <div className="pcb-compat-warnings">
@@ -742,6 +1037,8 @@ export default function PCBuilder() {
   const [selections, setSelections]           = useState({});
   const [summaryOpen, setSummaryOpen]         = useState(false);
   const [compatIssues, setCompatIssues]       = useState([]);
+  const [compatStatus, setCompatStatus]       = useState("idle");
+  const [compatMessage, setCompatMessage]     = useState("");
   const [compatChecking, setCompatChecking]   = useState(false);
   const [view, setView]                       = useState("builder"); // "builder" | "checkout"
   const [payConfig, setPayConfig]             = useState(null);
@@ -763,6 +1060,8 @@ export default function PCBuilder() {
   const handleSelect = useCallback((typeKey, component) => {
     setSelections((prev) => ({ ...prev, [typeKey]: component }));
     setCompatIssues([]);
+    setCompatStatus("idle");
+    setCompatMessage("");
   }, []);
 
   const handleRemove = useCallback((typeKey) => {
@@ -772,6 +1071,8 @@ export default function PCBuilder() {
       return next;
     });
     setCompatIssues([]);
+    setCompatStatus("idle");
+    setCompatMessage("");
   }, []);
 
   const handleCheckCompat = async () => {
@@ -784,17 +1085,43 @@ export default function PCBuilder() {
     if (Object.keys(selectedIds).length === 0) return;
 
     setCompatChecking(true);
+    setCompatIssues([]);
+    setCompatStatus("idle");
+    setCompatMessage("");
     try {
-      const res = await fetch(API_COMPAT_CHECK, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ components: selectedIds }),
-      });
-      const data = await res.json();
-      const issues = data.issues || data.warnings || data.errors || [];
-      setCompatIssues(Array.isArray(issues) ? issues : [String(issues)]);
+      const apiResult = await runCompatibilityRequest(selectedIds);
+
+      if (apiResult.compatible !== null || apiResult.issues.length > 0) {
+        setCompatIssues(apiResult.issues);
+        if (apiResult.issues.length > 0) {
+          setCompatStatus("warning");
+          setCompatMessage("");
+        } else {
+          setCompatStatus("success");
+          setCompatMessage(
+            apiResult.message || "No compatibility issues were reported for the selected parts."
+          );
+        }
+        return;
+      }
+
+      const localIssues = buildCompatibilityIssues(selections);
+      setCompatIssues(localIssues);
+      if (localIssues.length > 0) {
+        setCompatStatus("warning");
+      } else {
+        setCompatStatus("success");
+        setCompatMessage("No obvious compatibility issues were found from the selected specs.");
+      }
     } catch {
-      setCompatIssues(["Could not complete compatibility check. Please try again."]);
+      const localIssues = buildCompatibilityIssues(selections);
+      setCompatIssues(localIssues);
+      if (localIssues.length > 0) {
+        setCompatStatus("warning");
+      } else {
+        setCompatStatus("success");
+        setCompatMessage("No obvious compatibility issues were found from the selected specs.");
+      }
     } finally {
       setCompatChecking(false);
     }
@@ -814,6 +1141,8 @@ export default function PCBuilder() {
     setView("builder");
     setSelections({});
     setCompatIssues([]);
+    setCompatStatus("idle");
+    setCompatMessage("");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -944,6 +1273,8 @@ export default function PCBuilder() {
               selections={selections}
               total={total}
               compatibilityIssues={compatIssues}
+              compatStatus={compatStatus}
+              compatMessage={compatMessage}
               compatChecking={compatChecking}
               onCheckCompat={handleCheckCompat}
               onProceed={handleProceed}

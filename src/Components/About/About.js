@@ -160,7 +160,7 @@ const technologies = [
   { label: "UI/UX", icon: "bi-palette-fill" },
 ];
 
-const API_BASE = (import.meta?.env?.VITE_API_BASE_URL || "").trim().replace(/\/$/, "");
+import { API_BASE } from "../../utils/api";
 const FE_ROLE_PATTERN = /\b(front\s*end|frontend|fe)\b/i;
 const BE_ROLE_PATTERN = /\b(back\s*end|backend|be)\b/i;
 const SE_ROLE_PATTERN = /\b(se|sde|software\s*engineer|system\s*engineer)\b/i;
@@ -241,11 +241,7 @@ function PlacementAvatar({ img, name }) {
 }
 
 async function fetchPlacements() {
-  // Dev: relative URL -> Vite proxy (configured in vite.config.js) -> local backend
-  // Prod: absolute URL from VITE_API_BASE_URL env var
-  const url = import.meta.env.DEV
-    ? "/api/placed-people"
-    : (API_BASE ? `${API_BASE}/api/placed-people` : "/api/placed-people");
+  const url = `${API_BASE}/api/placed-people`;
   try {
     const r = await fetch(url);
     if (!r.ok) return null;
