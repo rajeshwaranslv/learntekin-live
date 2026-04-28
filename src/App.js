@@ -19,6 +19,7 @@ import { AuthProvider } from "./Components/auth/authContext";
 // warning popup
 import WIPPopup from "./Components/Warnings/WIPPopup";
 import PublicSplash from "./Components/Warnings/PublicSplash";
+import Chatbot from "./Components/Chatbot/Chatbot";
 
 const Hero = lazy(() => import("./Components/About/Hero"));
 const ThoughtLeadersScreen = lazy(() =>
@@ -135,6 +136,8 @@ function AppShell({ showWIPPopup, closeWIPPopup, routeFallback }) {
         </div>
         <End />
       </footer>
+
+      <Chatbot />
 
       <a
         href="#"

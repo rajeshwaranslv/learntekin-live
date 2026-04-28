@@ -2,21 +2,27 @@ import React, { useEffect, useMemo, useState } from "react";
 import Swal from "sweetalert2";
 import { v4 as uuidv4 } from "uuid";
 import firebase, { db } from "../../../firebase";
+import "./Eseva.css";
 
 const normalizeText = (value) => String(value ?? "").trim();
 
 const formatPrice = (value) => {
   const normalized = normalizeText(value);
-  if (!normalized) {
-    return "On request";
-  }
-
-  if (/^(inr|rs\.?|₹)/i.test(normalized)) {
-    return normalized;
-  }
-
-  return `INR ${normalized}`;
+  if (!normalized) return "On request";
+  if (/^(inr|rs\.?|₹)/i.test(normalized)) return normalized;
+  return `₹${normalized}`;
 };
+
+const CATEGORY_ICONS = {
+  "Dharshan Pre-booking": "🛕",
+  "GOVT ID Updation": "🪪",
+  "Bill Payments": "🧾",
+  "Toll Recharge": "🛣️",
+  "Passport": "🛂",
+  "Ration Card": "🏷️",
+  "Income Tax": "📋",
+};
+const getCategoryIcon = (cat) => CATEGORY_ICONS[cat] || "📄";
 
 const FALLBACK_SERVICES = [
   {
@@ -168,7 +174,6 @@ const normalizeEsevaServices = (items = []) =>
           normalizeEsevaService(pkg, item, packageIndex)
         );
       }
-
       return [normalizeEsevaService(item, {}, index)];
     })
     .filter(
@@ -193,7 +198,6 @@ const Eseva = () => {
           setServices(normalizeEsevaServices(FALLBACK_SERVICES));
           return;
         }
-
         const fetched = normalizeEsevaServices(
           snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
         );
@@ -216,7 +220,6 @@ const Eseva = () => {
       setSelectedCategory("");
       return;
     }
-
     if (!serviceCategories.includes(selectedCategory)) {
       setSelectedCategory(serviceCategories[0]);
     }
@@ -235,7 +238,6 @@ const Eseva = () => {
       setSelectedPackageId("");
       return;
     }
-
     if (!packagesForCategory.some((item) => item.serviceId === selectedPackageId)) {
       setSelectedPackageId(packagesForCategory[0]?.serviceId || "");
     }
@@ -247,14 +249,8 @@ const Eseva = () => {
 
   const hasServices = serviceCategories.length > 0;
 
-  const handleCategoryChange = (event) => {
-    const newCategory = event.target.value;
-    setSelectedCategory(newCategory);
-  };
-
-  const handlePackageChange = (event) => {
-    setSelectedPackageId(event.target.value);
-  };
+  // Determine active step
+  const activeStep = !selectedCategory ? 1 : !selectedPackageId ? 2 : 3;
 
   const [formData, setFormData] = useState({
     customerName: "",
@@ -331,9 +327,10 @@ const Eseva = () => {
       await db.collection("esevaBookings").doc(trackingId).set(payload);
       Swal.fire({
         icon: "success",
-        title: "Booking Submitted",
-        html: `Your tracking ID is <strong>${trackingId}</strong>`,
+        title: "Booking Submitted!",
+        html: `Your tracking ID is <strong>${trackingId}</strong>.<br/><small>We will contact you shortly.</small>`,
         confirmButtonText: "Got it",
+        confirmButtonColor: "#1a5b31",
       });
       setFormData({
         customerName: "",
@@ -353,313 +350,234 @@ const Eseva = () => {
     }
   };
 
+  const steps = [
+    { num: 1, label: "Choose Service" },
+    { num: 2, label: "Select Package" },
+    { num: 3, label: "Fill Details" },
+    { num: 4, label: "Submit" },
+  ];
+
   return (
-    <section
-      className="container-fluid"
-      style={{
-        padding: "2.5rem 1rem",
-        marginTop: "6rem",
-        background:
-          "linear-gradient(135deg, rgba(240, 248, 255, 0.9), rgba(255, 245, 235, 0.85))",
-      }}
-    >
-      <div
-        className="section-title text-center"
-        style={{ maxWidth: "1100px", margin: "0 auto" }}
-      >
-        <h2 style={{ color: "#1b1b1b", fontWeight: "700" }}>eSeva Services</h2>
-        <p style={{ fontSize: "18px", color: "#333" }}>
-          Select a service category and package, then submit your request in a
-          single streamlined form.
+    <div className="eseva-page">
+      {/* Tricolor stripe */}
+      <div className="eseva-tricolor" />
+
+      {/* Hero */}
+      <div className="eseva-hero">
+        <h1 className="eseva-hero-tamil">இ-சேவை</h1>
+        <h2 className="eseva-hero-english">eSeva Digital Services</h2>
+        <p className="eseva-hero-sub">
+          Government services, bill payments, and document updates — all under one roof.
+          எங்கள் சேவைகளை எளிதாகப் பெறுங்கள்.
         </p>
       </div>
 
-      <div className="container" style={{ maxWidth: "1100px" }}>
-        <div
-          className="card"
-          style={{
-            marginTop: "2rem",
-            borderRadius: "18px",
-            border: "1px solid rgba(0,0,0,0.05)",
-            boxShadow: "0 18px 45px rgba(0,0,0,0.08)",
-            overflow: "hidden",
-          }}
-        >
-          <div
-            className="card-body"
-            style={{ padding: "clamp(1.5rem, 3vw, 2.5rem)" }}
-          >
-          {servicesLoading ? (
-            <div style={{ textAlign: "center", padding: "2rem", color: "#6b7280" }}>
-              Loading services...
+      {/* Steps indicator */}
+      <div className="eseva-steps">
+        {steps.map((s, i) => (
+          <React.Fragment key={s.num}>
+            {i > 0 && <span className="eseva-step-arrow">›</span>}
+            <div className={`eseva-step ${activeStep >= s.num ? "eseva-step--active" : ""} ${activeStep > s.num ? "eseva-step--done" : ""}`}>
+              <span className="eseva-step-num">
+                {activeStep > s.num ? "✓" : s.num}
+              </span>
+              <span>{s.label}</span>
             </div>
-          ) : (
-          <div className="row g-3">
-            <div className="col-lg-6">
-              <div
-                style={{
-                  background: "rgba(27, 27, 27, 0.04)",
-                  borderRadius: "14px",
-                  padding: "1.5rem",
-                }}
-              >
-                <h5 style={{ color: "#1b1b1b", fontWeight: "600" }}>
-                  Choose Service
-                </h5>
-                <p style={{ color: "#4c4c4c", marginBottom: "1rem" }}>
-                  Pick a category to see available packages instantly.
-                </p>
-                <label
-                  htmlFor="eseva-category"
-                  style={{ fontWeight: "600", color: "#1b1b1b" }}
-                >
-                  Service Category
-                </label>
-                <select
-                  id="eseva-category"
-                  className="form-control"
-                  value={selectedCategory}
-                  onChange={handleCategoryChange}
-                  disabled={!hasServices}
-                  style={{ borderRadius: "10px" }}
-                >
-                  {!selectedCategory ? (
-                    <option value="" disabled>
-                      {hasServices ? "Select a service category" : "No services available"}
-                    </option>
-                  ) : null}
-                  {serviceCategories.map((category) => (
-                    <option key={category} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </select>
-
-                <label
-                  htmlFor="eseva-package"
-                  style={{
-                    fontWeight: "600",
-                    color: "#1b1b1b",
-                    marginTop: "1rem",
-                  }}
-                >
-                  Package
-                </label>
-                <select
-                  id="eseva-package"
-                  className="form-control"
-                  value={selectedPackageId}
-                  onChange={handlePackageChange}
-                  disabled={!selectedCategory || packagesForCategory.length === 0}
-                  style={{ borderRadius: "10px" }}
-                >
-                  {!selectedPackageId ? (
-                    <option value="" disabled>
-                      {packagesForCategory.length > 0
-                        ? "Select a package"
-                        : "No packages available"}
-                    </option>
-                  ) : null}
-                  {packagesForCategory.map((item) => (
-                    <option key={item.serviceId} value={item.serviceId}>
-                      {item.packageName}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div className="col-lg-6">
-              {selectedService ? (
-                <div
-                  style={{
-                    background: "linear-gradient(135deg, #fff6ee, #f5fbff)",
-                    borderRadius: "14px",
-                    padding: "1.5rem",
-                  }}
-                >
-                  <h5 style={{ color: "#1b1b1b", fontWeight: "600" }}>
-                    Package Snapshot
-                  </h5>
-                  <p style={{ color: "#4c4c4c", marginBottom: "1rem" }}>
-                    {selectedService.description}
-                  </p>
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
-                      gap: "0.75rem",
-                    }}
-                  >
-                    <div>
-                      <small style={{ color: "#6b6b6b" }}>Service ID</small>
-                      <div style={{ fontWeight: "600" }}>
-                        {selectedService.serviceId}
-                      </div>
-                    </div>
-                    <div>
-                      <small style={{ color: "#6b6b6b" }}>Timeline</small>
-                      <div style={{ fontWeight: "600" }}>
-                        {selectedService.suggestedTimeline}
-                      </div>
-                    </div>
-                    <div>
-                      <small style={{ color: "#6b6b6b" }}>Charges</small>
-                      <div style={{ fontWeight: "600" }}>
-                        {formatPrice(
-                          selectedService.price || selectedService.chargesPriceInr
-                        )}
-                      </div>
-                    </div>
-                    <div>
-                      <small style={{ color: "#6b6b6b" }}>Notes</small>
-                      <div style={{ fontWeight: "600" }}>
-                        {selectedService.notes}
-                      </div>
-                    </div>
-                    <div>
-                      <small style={{ color: "#6b6b6b" }}>Deadline</small>
-                      <div style={{ fontWeight: "600" }}>
-                        {selectedService.deadline || "To be confirmed"}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div
-                  style={{
-                    background: "rgba(0,0,0,0.04)",
-                    borderRadius: "14px",
-                    padding: "1.5rem",
-                    height: "100%",
-                  }}
-                >
-                  <p style={{ color: "#4c4c4c" }}>
-                    {hasServices
-                      ? "Please select a package to view details."
-                      : "No approved services are available right now. Please check back soon."}
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-          )}
-
-          <form onSubmit={handleSubmit} style={{ marginTop: "2rem" }}>
-            <div className="row g-3">
-              <div className="col-md-4">
-                <label
-                  htmlFor="customerName"
-                  style={{ fontWeight: "600", color: "#1b1b1b" }}
-                >
-                  Customer Name
-                </label>
-                <input
-                  id="customerName"
-                  name="customerName"
-                  type="text"
-                  className="form-control"
-                  value={formData.customerName}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="col-md-4">
-                <label
-                  htmlFor="phoneNumber"
-                  style={{ fontWeight: "600", color: "#1b1b1b" }}
-                >
-                  Phone Number
-                </label>
-                <input
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  type="tel"
-                  className="form-control"
-                  value={formData.phoneNumber}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="col-md-4">
-                <label
-                  htmlFor="email"
-                  style={{ fontWeight: "600", color: "#1b1b1b" }}
-                >
-                  Email
-                </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  className="form-control"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="row g-3" style={{ marginTop: "0.5rem" }}>
-              <div className="col-md-6">
-                <label
-                  htmlFor="address"
-                  style={{ fontWeight: "600", color: "#1b1b1b" }}
-                >
-                  Address
-                </label>
-                <input
-                  id="address"
-                  name="address"
-                  type="text"
-                  className="form-control"
-                  value={formData.address}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="col-md-6">
-                <label
-                  htmlFor="requirementDetails"
-                  style={{ fontWeight: "600", color: "#1b1b1b" }}
-                >
-                  Requirement Details
-                </label>
-                <textarea
-                  id="requirementDetails"
-                  name="requirementDetails"
-                  rows="2"
-                  className="form-control"
-                  value={formData.requirementDetails}
-                  onChange={handleInputChange}
-                  placeholder="Briefly describe the requirement (1-2 lines)"
-                  required
-                />
-              </div>
-            </div>
-
-            <div
-              className="d-flex flex-column flex-md-row align-items-md-center justify-content-between"
-              style={{ marginTop: "1.5rem", gap: "1rem" }}
-            >
-              <div style={{ color: "#4c4c4c" }}>
-                Status will be set to <strong>Pending</strong> and updated after
-                review.
-              </div>
-              <button
-                type="submit"
-                className="gfg-btn eseva-submit-btn"
-                disabled={isSubmitting || servicesLoading || !selectedService}
-              >
-                {isSubmitting ? "Submitting..." : "Submit Booking"}
-              </button>
-            </div>
-          </form>
-          </div>
-        </div>
+          </React.Fragment>
+        ))}
       </div>
 
-    </section>
+      {/* Content */}
+      <div className="eseva-content">
+        {servicesLoading ? (
+          <div className="eseva-loading">Loading services...</div>
+        ) : (
+          <>
+            {/* Step 1: Category cards */}
+            <div className="eseva-section-title">
+              <span className="eseva-section-title-icon eseva-section-title-icon--green">①</span>
+              Choose a Service Category
+            </div>
+            {hasServices ? (
+              <div className="eseva-categories">
+                {serviceCategories.map((cat) => (
+                  <div
+                    key={cat}
+                    className={`eseva-cat-card ${selectedCategory === cat ? "eseva-cat-card--active" : ""}`}
+                    onClick={() => setSelectedCategory(cat)}
+                  >
+                    <span className="eseva-cat-icon">{getCategoryIcon(cat)}</span>
+                    <div className="eseva-cat-name">{cat}</div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="eseva-empty">
+                No approved services are available right now. Please check back soon.
+              </div>
+            )}
+
+            {/* Step 2: Package cards */}
+            {selectedCategory && (
+              <>
+                <div className="eseva-section-title">
+                  <span className="eseva-section-title-icon eseva-section-title-icon--saffron">②</span>
+                  Select a Package
+                </div>
+                {packagesForCategory.length > 0 ? (
+                  <div className="eseva-packages">
+                    {packagesForCategory.map((pkg) => (
+                      <div
+                        key={pkg.serviceId}
+                        className={`eseva-pkg-card ${selectedPackageId === pkg.serviceId ? "eseva-pkg-card--active" : ""}`}
+                        onClick={() => setSelectedPackageId(pkg.serviceId)}
+                      >
+                        <div className="eseva-pkg-name">{pkg.packageName}</div>
+                        <div className="eseva-pkg-desc">{pkg.description}</div>
+                        <div className="eseva-pkg-meta">
+                          <span className="eseva-pkg-tag eseva-pkg-tag--price">
+                            {formatPrice(pkg.price || pkg.chargesPriceInr)}
+                          </span>
+                          <span className="eseva-pkg-tag eseva-pkg-tag--time">
+                            {pkg.suggestedTimeline || pkg.timeline}
+                          </span>
+                          {pkg.deadline && (
+                            <span className="eseva-pkg-tag eseva-pkg-tag--deadline">
+                              {pkg.deadline}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="eseva-empty">No packages available for this category.</div>
+                )}
+              </>
+            )}
+
+            {/* Package details */}
+            {selectedService && (
+              <div className="eseva-details">
+                <div className="eseva-details-title">
+                  {selectedService.packageName} — Details
+                </div>
+                <div className="eseva-details-grid">
+                  <div className="eseva-detail-item">
+                    <label>Service ID</label>
+                    <span>{selectedService.serviceId}</span>
+                  </div>
+                  <div className="eseva-detail-item">
+                    <label>Timeline</label>
+                    <span>{selectedService.suggestedTimeline || selectedService.timeline}</span>
+                  </div>
+                  <div className="eseva-detail-item">
+                    <label>Charges</label>
+                    <span>{formatPrice(selectedService.price || selectedService.chargesPriceInr)}</span>
+                  </div>
+                  <div className="eseva-detail-item">
+                    <label>Deadline</label>
+                    <span>{selectedService.deadline || "To be confirmed"}</span>
+                  </div>
+                  {selectedService.notes && (
+                    <div className="eseva-detail-item">
+                      <label>Notes</label>
+                      <span>{selectedService.notes}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Step 3: Form */}
+            <div className="eseva-section-title">
+              <span className="eseva-section-title-icon eseva-section-title-icon--blue">③</span>
+              Fill Your Details
+            </div>
+            <form className="eseva-form" onSubmit={handleSubmit}>
+              <div className="eseva-form-grid">
+                <div className="eseva-form-group">
+                  <label htmlFor="customerName">Customer Name</label>
+                  <input
+                    id="customerName"
+                    name="customerName"
+                    type="text"
+                    value={formData.customerName}
+                    onChange={handleInputChange}
+                    placeholder="Enter your full name"
+                    required
+                  />
+                </div>
+                <div className="eseva-form-group">
+                  <label htmlFor="phoneNumber">Phone Number</label>
+                  <input
+                    id="phoneNumber"
+                    name="phoneNumber"
+                    type="tel"
+                    value={formData.phoneNumber}
+                    onChange={handleInputChange}
+                    placeholder="e.g. 98765 43210"
+                    required
+                  />
+                </div>
+                <div className="eseva-form-group">
+                  <label htmlFor="email">Email</label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    placeholder="you@example.com"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="eseva-form-grid-2">
+                <div className="eseva-form-group">
+                  <label htmlFor="address">Address</label>
+                  <input
+                    id="address"
+                    name="address"
+                    type="text"
+                    value={formData.address}
+                    onChange={handleInputChange}
+                    placeholder="Your address"
+                    required
+                  />
+                </div>
+                <div className="eseva-form-group">
+                  <label htmlFor="requirementDetails">Requirement Details</label>
+                  <textarea
+                    id="requirementDetails"
+                    name="requirementDetails"
+                    rows="2"
+                    value={formData.requirementDetails}
+                    onChange={handleInputChange}
+                    placeholder="Briefly describe your requirement"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="eseva-submit-bar">
+                <div className="eseva-submit-note">
+                  Status will be set to <strong>Pending</strong> and updated after review.
+                </div>
+                <button
+                  type="submit"
+                  className="eseva-submit-btn"
+                  disabled={isSubmitting || servicesLoading || !selectedService}
+                >
+                  {isSubmitting ? "Submitting..." : "Submit Booking →"}
+                </button>
+              </div>
+            </form>
+          </>
+        )}
+      </div>
+    </div>
   );
 };
 

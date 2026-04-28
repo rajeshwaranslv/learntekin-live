@@ -1,0 +1,460 @@
+/* ═══════════════════════════════════════════════════════════════
+   eSeva — Bilingual Tamil+English Design
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Page wrapper ── */
+.eseva-page {
+  min-height: 100vh;
+  background: #fdf6ec;
+  padding-top: 6rem;
+}
+
+/* ── Tricolor accent stripe ── */
+.eseva-tricolor {
+  height: 6px;
+  background: linear-gradient(90deg, #ff9933 33.3%, #ffffff 33.3%, #ffffff 66.6%, #138808 66.6%);
+}
+
+/* ── Hero section ── */
+.eseva-hero {
+  position: relative;
+  background: linear-gradient(135deg, #0b3d2e 0%, #1a5b31 50%, #2d8a4e 100%);
+  padding: 48px 24px 44px;
+  text-align: center;
+  overflow: hidden;
+}
+
+/* Kolam-inspired corner dots */
+.eseva-hero::before,
+.eseva-hero::after {
+  content: "";
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,0.15) 2px, transparent 2px);
+  background-size: 12px 12px;
+}
+.eseva-hero::before {
+  top: 12px;
+  left: 12px;
+}
+.eseva-hero::after {
+  bottom: 12px;
+  right: 12px;
+}
+
+.eseva-hero-tamil {
+  font-size: 36px;
+  font-weight: 800;
+  color: #fff;
+  margin: 0 0 4px;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.eseva-hero-english {
+  font-size: 18px;
+  font-weight: 600;
+  color: #bbf7d0;
+  margin: 0 0 8px;
+  letter-spacing: 0.5px;
+}
+.eseva-hero-sub {
+  font-size: 14px;
+  color: rgba(255,255,255,0.8);
+  max-width: 500px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+/* ── Steps indicator ── */
+.eseva-steps {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  padding: 20px 16px;
+  background: #fff;
+  border-bottom: 1px solid #e8e0d4;
+  flex-wrap: wrap;
+}
+.eseva-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
+  color: #9ca3af;
+  font-weight: 600;
+  transition: color 0.2s;
+  white-space: nowrap;
+}
+.eseva-step--active {
+  color: #1a5b31;
+}
+.eseva-step-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  background: #e5e7eb;
+  color: #6b7280;
+  flex-shrink: 0;
+}
+.eseva-step--active .eseva-step-num {
+  background: #1a5b31;
+  color: #fff;
+}
+.eseva-step--done .eseva-step-num {
+  background: #bbf7d0;
+  color: #0b3d2e;
+}
+.eseva-step-arrow {
+  color: #d1d5db;
+  font-size: 16px;
+  padding: 0 4px;
+}
+
+/* ── Content area ── */
+.eseva-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 16px 40px;
+}
+
+/* ── Section heading ── */
+.eseva-section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a3a28;
+  margin: 0 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.eseva-section-title-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.eseva-section-title-icon--green {
+  background: #e8f5ed;
+  color: #1a5b31;
+}
+.eseva-section-title-icon--saffron {
+  background: #fff3e0;
+  color: #e65100;
+}
+.eseva-section-title-icon--blue {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+/* ── Category cards ── */
+.eseva-categories {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.eseva-cat-card {
+  background: #fff;
+  border: 2px solid #e8e0d4;
+  border-radius: 12px;
+  padding: 16px 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+.eseva-cat-card:hover {
+  border-color: #1a5b31;
+  box-shadow: 0 4px 12px rgba(26, 91, 49, 0.1);
+  transform: translateY(-2px);
+}
+.eseva-cat-card--active {
+  border-color: #1a5b31;
+  background: linear-gradient(135deg, #f0faf4, #e8f5ed);
+  box-shadow: 0 4px 16px rgba(26, 91, 49, 0.15);
+}
+.eseva-cat-icon {
+  font-size: 28px;
+  margin-bottom: 6px;
+  display: block;
+}
+.eseva-cat-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1a3a28;
+  line-height: 1.3;
+}
+
+/* ── Package cards ── */
+.eseva-packages {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.eseva-pkg-card {
+  background: #fff;
+  border: 2px solid #e8e0d4;
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+.eseva-pkg-card:hover {
+  border-color: #ff9933;
+  box-shadow: 0 4px 12px rgba(255, 153, 51, 0.12);
+}
+.eseva-pkg-card--active {
+  border-color: #ff9933;
+  background: linear-gradient(135deg, #fffaf0, #fff3e0);
+  box-shadow: 0 4px 16px rgba(255, 153, 51, 0.18);
+}
+.eseva-pkg-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a3a28;
+  margin: 0 0 4px;
+}
+.eseva-pkg-desc {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 0 0 10px;
+  line-height: 1.4;
+}
+.eseva-pkg-meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.eseva-pkg-tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.eseva-pkg-tag--price {
+  background: #e8f5ed;
+  color: #1a5b31;
+}
+.eseva-pkg-tag--time {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+.eseva-pkg-tag--deadline {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+/* ── Package details panel ── */
+.eseva-details {
+  background: #fff;
+  border: 1px solid #e8e0d4;
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 28px;
+  border-left: 4px solid #ff9933;
+}
+.eseva-details-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a3a28;
+  margin: 0 0 12px;
+}
+.eseva-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+.eseva-detail-item label {
+  display: block;
+  font-size: 11px;
+  color: #9ca3af;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+.eseva-detail-item span {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a3a28;
+}
+
+/* ── Form ── */
+.eseva-form {
+  background: #fff;
+  border: 1px solid #e8e0d4;
+  border-radius: 14px;
+  padding: 24px 20px;
+}
+.eseva-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.eseva-form-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+}
+.eseva-form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a3a28;
+  margin-bottom: 6px;
+}
+.eseva-form-group input,
+.eseva-form-group textarea {
+  width: 100%;
+  border: 1.5px solid #d4c9b8;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: #1a3a28;
+  background: #fefcf9;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+  box-sizing: border-box;
+}
+.eseva-form-group input:focus,
+.eseva-form-group textarea:focus {
+  border-color: #1a5b31;
+  box-shadow: 0 0 0 3px rgba(26, 91, 49, 0.1);
+}
+.eseva-form-group input::placeholder,
+.eseva-form-group textarea::placeholder {
+  color: #b5a99a;
+}
+
+/* ── Submit bar ── */
+.eseva-submit-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.eseva-submit-note {
+  font-size: 13px;
+  color: #6b7280;
+}
+.eseva-submit-btn {
+  padding: 12px 32px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #1a5b31 0%, #2d8a4e 100%);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(26, 91, 49, 0.25);
+  white-space: nowrap;
+}
+.eseva-submit-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(26, 91, 49, 0.35);
+}
+.eseva-submit-btn:disabled {
+  background: #9ca3af;
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── Loading state ── */
+.eseva-loading {
+  text-align: center;
+  padding: 48px 16px;
+  color: #6b7280;
+  font-size: 15px;
+}
+
+/* ── Empty state ── */
+.eseva-empty {
+  background: #fff;
+  border: 2px dashed #e8e0d4;
+  border-radius: 14px;
+  padding: 32px 16px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 14px;
+  margin-bottom: 28px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Responsive
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .eseva-hero {
+    padding: 36px 16px 32px;
+  }
+  .eseva-hero-tamil {
+    font-size: 28px;
+  }
+  .eseva-hero-english {
+    font-size: 15px;
+  }
+  .eseva-form-grid {
+    grid-template-columns: 1fr;
+  }
+  .eseva-form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+  .eseva-categories {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+  .eseva-packages {
+    grid-template-columns: 1fr;
+  }
+  .eseva-step span {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .eseva-hero-tamil {
+    font-size: 24px;
+  }
+  .eseva-hero-english {
+    font-size: 14px;
+  }
+  .eseva-hero::before,
+  .eseva-hero::after {
+    width: 50px;
+    height: 50px;
+  }
+  .eseva-categories {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .eseva-cat-card {
+    padding: 12px 10px;
+  }
+  .eseva-cat-icon {
+    font-size: 24px;
+  }
+  .eseva-submit-bar {
+    flex-direction: column;
+    text-align: center;
+  }
+  .eseva-submit-btn {
+    width: 100%;
+  }
+}
