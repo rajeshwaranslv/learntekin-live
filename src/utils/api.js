@@ -1,8 +1,8 @@
-const DEFAULT_API_BASE = "https://lte-node-production.up.railway.app";
-const LEGACY_API_BASE = "https://lte-node.onrender.com";
+const DEFAULT_API_BASE_URL = "https://lte-node.onrender.com";
 
-export const normalizeApiBase = (value, fallback = DEFAULT_API_BASE) => {
+export const normalizeApiBase = (value, fallback = "") => {
   const rawValue = String(value || "").trim() || fallback;
+  if (!rawValue) return "";
   const withProtocol = /^https?:\/\//i.test(rawValue)
     ? rawValue
     : `https://${rawValue}`;
@@ -12,29 +12,38 @@ export const normalizeApiBase = (value, fallback = DEFAULT_API_BASE) => {
 const normalizePath = (path = "") =>
   path.startsWith("/") ? path : `/${path}`;
 
-// In dev mode, use empty string so requests go through Vite proxy → localhost:5000
-// In production, use the configured remote URL
+const resolveProductionApiBase = () =>
+  normalizeApiBase(import.meta.env.VITE_API_BASE_URL, DEFAULT_API_BASE_URL);
+
+// Dev: use VITE_API_PROXY_TARGET (defaults to hosted API)
+// Prod: use VITE_API_BASE_URL from env
 const resolveApiBase = () => {
-  if (import.meta.env.DEV) return "";
-  return normalizeApiBase(
-    import.meta.env.VITE_API_BASE_URL,
-    DEFAULT_API_BASE
-  );
+  if (import.meta.env.DEV) {
+    return normalizeApiBase(
+      import.meta.env.VITE_API_PROXY_TARGET || import.meta.env.VITE_API_BASE_URL,
+      DEFAULT_API_BASE_URL
+    );
+  }
+  return resolveProductionApiBase();
 };
 
 export const API_BASE = resolveApiBase();
-
-export const API_FALLBACK_BASE = normalizeApiBase(LEGACY_API_BASE);
+export const API_FALLBACK_BASE = normalizeApiBase(DEFAULT_API_BASE_URL);
 
 export const buildApiUrl = (path = "") =>
   `${API_BASE}${normalizePath(path)}`;
 
+export const buildApiFallbackUrl = (path = "") =>
+  `${API_FALLBACK_BASE}${normalizePath(path)}`;
+
 export const buildWebSocketUrl = (path = "") => {
-  if (import.meta.env.DEV) {
-    const target = import.meta.env.VITE_API_PROXY_TARGET || "http://localhost:5000";
-    return `${target.replace(/^http/i, "ws")}${normalizePath(path)}`;
-  }
-  return buildApiUrl(path).replace(/^http/i, "ws");
+  const base = import.meta.env.DEV
+    ? normalizeApiBase(
+        import.meta.env.VITE_API_PROXY_TARGET || import.meta.env.VITE_API_BASE_URL,
+        DEFAULT_API_BASE_URL
+      )
+    : API_BASE;
+  return `${base.replace(/^http/i, "ws")}${normalizePath(path)}`;
 };
 
 export const resolveApiAssetUrl = (value = "") => {
@@ -47,6 +56,5 @@ export const resolveApiAssetUrl = (value = "") => {
   ) {
     return normalizedValue;
   }
-
   return `${API_BASE}${normalizePath(normalizedValue)}`;
 };

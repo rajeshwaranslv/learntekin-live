@@ -1,11 +1,20 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import axios from "axios";
-import { buildApiUrl } from "../../utils/api";
+import { buildApiFallbackUrl, buildApiUrl } from "../../utils/api";
 import "./LMSPage.css";
 
 // ─── API endpoints ─────────────────────────────────────────────────────────────
-const API_COURSES   = (params = "") => buildApiUrl(`/api/courses${params}`);
-const API_ENROLL    = (id)          => buildApiUrl(`/api/courses/${id}/enroll`);
+const uniqueUrls = (...urls) => [...new Set(urls.filter(Boolean))];
+const API_COURSES = (params = "") =>
+  uniqueUrls(
+    buildApiUrl(`/api/courses${params}`),
+    buildApiFallbackUrl(`/api/courses${params}`)
+  );
+const API_ENROLL = (id) =>
+  uniqueUrls(
+    buildApiUrl(`/api/courses/${id}/enroll`),
+    buildApiFallbackUrl(`/api/courses/${id}/enroll`)
+  );
 
 // ─── Constants ─────────────────────────────────────────────────────────────────
 const CATEGORIES = ["All", "Technology", "Business", "Design", "Data Science"];
@@ -32,6 +41,53 @@ const formatINR = (amount) =>
     currency: "INR",
     maximumFractionDigits: 0,
   }).format(amount || 0);
+
+const parseCourses = (payload) => {
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload?.courses)) return payload.courses;
+  throw new Error("Invalid courses response.");
+};
+
+const isHtmlPayload = (payload) =>
+  typeof payload === "string" && /^\s*</.test(payload);
+
+const fetchCourseList = async (params = "") => {
+  let lastError;
+
+  for (const url of API_COURSES(params)) {
+    try {
+      const res = await axios.get(url);
+      return parseCourses(res.data);
+    } catch (err) {
+      lastError = err;
+    }
+  }
+
+  throw lastError;
+};
+
+const submitEnrollment = async (courseId, payload) => {
+  let lastError;
+  const urls = API_ENROLL(courseId);
+
+  for (let index = 0; index < urls.length; index += 1) {
+    try {
+      const res = await axios.post(urls[index], payload);
+      if (isHtmlPayload(res.data)) {
+        throw new Error("Invalid enrollment response.");
+      }
+      return res;
+    } catch (err) {
+      lastError = err;
+      const status = err?.response?.status;
+      const canRetry =
+        !err?.response || status === 404 || status === 405 || status >= 500;
+      if (!canRetry || index === urls.length - 1) throw err;
+    }
+  }
+
+  throw lastError;
+};
 
 // ─── Skeleton card ─────────────────────────────────────────────────────────────
 function SkeletonCourseCard() {
@@ -186,10 +242,17 @@ function EnrollModal({ course, onClose }) {
     setSub(true);
     setApiErr("");
     try {
-      await axios.post(API_ENROLL(course._id), {
-        studentName:  form.name.trim(),
-        email:        form.email.trim(),
-        phone:        form.phone.trim() || undefined,
+      const name = form.name.trim();
+      const email = form.email.trim();
+      const phone = form.phone.trim();
+
+      await submitEnrollment(course._id, {
+        name,
+        email,
+        phone: phone || undefined,
+        studentName: name,
+        studentEmail: email,
+        studentPhone: phone || undefined,
       });
       setSuccess(true);
     } catch (err) {
@@ -346,13 +409,7 @@ export default function LMSPage() {
     setLoading(true);
     setError("");
     try {
-      const res  = await axios.get(API_COURSES());
-      const data = Array.isArray(res.data)
-        ? res.data
-        : Array.isArray(res.data?.courses)
-        ? res.data.courses
-        : [];
-      setCourses(data);
+      setCourses(await fetchCourseList());
     } catch (err) {
       setError(
         err?.response?.data?.message ||

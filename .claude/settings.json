@@ -52,7 +52,26 @@
       "Bash(node -e \"const d=JSON.parse\\(require\\('fs'\\).readFileSync\\(0,'utf8'\\)\\); console.log\\(d.length+' components'\\)\")",
       "Bash(node -e \"const d=JSON.parse\\(require\\('fs'\\).readFileSync\\(0,'utf8'\\)\\); console.log\\(d.length+' charities'\\)\")",
       "Bash(curl -s \"http://localhost:5000/api/pc/components?type=cpu&active=true\")",
-      "Bash(node -e \"const d=JSON.parse\\(require\\('fs'\\).readFileSync\\(0,'utf8'\\)\\); console.log\\(typeof d[0].specs, JSON.stringify\\(d[0].specs\\)\\)\")"
+      "Bash(node -e \"const d=JSON.parse\\(require\\('fs'\\).readFileSync\\(0,'utf8'\\)\\); console.log\\(typeof d[0].specs, JSON.stringify\\(d[0].specs\\)\\)\")",
+      "Bash(node src/server.js)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code} — %{time_total}s\" https://lte-node.onrender.com/)",
+      "Bash(curl -s https://lte-node.onrender.com/api/charities)",
+      "Bash(node -e \"const d=JSON.parse\\(require\\('fs'\\).readFileSync\\(0,'utf8'\\)\\); console.log\\(d.length + ' charities'\\)\")",
+      "Bash(curl -s https://lte-node.onrender.com/api/courses)",
+      "Bash(node -e \"const d=JSON.parse\\(require\\('fs'\\).readFileSync\\(0,'utf8'\\)\\); console.log\\(d.length + ' courses'\\)\")",
+      "Bash(curl -s \"https://lte-node.onrender.com/api/pc/components\")",
+      "Bash(node -e \"const d=JSON.parse\\(require\\('fs'\\).readFileSync\\(0,'utf8'\\)\\); console.log\\(d.length + ' pc components'\\)\")",
+      "Bash(curl -s https://lte-node.onrender.com/)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\" https://lte-node-production.up.railway.app/)",
+      "Bash(npx render:*)",
+      "Bash(xargs ls:*)",
+      "Bash(python -c \"import sys,json; courses=json.load\\(sys.stdin\\); print\\(len\\(courses\\),'courses'\\); [print\\(c['_id'], c['title']\\) for c in courses[:3]]\")",
+      "Bash(curl -s -w \"\\\\nHTTP_CODE:%{http_code}\" http://localhost:5000/)",
+      "Bash(curl -s -w \"\\\\nHTTP_CODE:%{http_code}\" https://lte-node.onrender.com/)",
+      "Bash(curl -s -w \"\\\\nHTTP_CODE:%{http_code}\" https://lte-node.onrender.com/api/courses)",
+      "Bash(curl -s -X POST -H \"Content-Type: application/json\" -d '{\"studentName\":\"Test User\",\"studentEmail\":\"test-enrollment-check@example.com\",\"studentPhone\":\"\"}' \"https://lte-node.onrender.com/api/courses/69f0bb5afa3851f3b7d963bc/enroll\")",
+      "Bash(curl -s \"https://lte-node.onrender.com/api/courses/admin/enrollments/all\")",
+      "Bash(python -c \"import sys,json; data=json.load\\(sys.stdin\\); print\\(len\\(data\\),'enrollments'\\); [print\\(e.get\\('studentName','?'\\), e.get\\('studentEmail','?'\\), e.get\\('courseId',{}\\).get\\('title','?'\\) if isinstance\\(e.get\\('courseId'\\),dict\\) else e.get\\('courseId','?'\\)\\) for e in data[:5]]\")"
     ]
   }
 }

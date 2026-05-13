@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { API_FALLBACK_BASE, buildApiUrl } from "../../utils/api";
+import { buildApiUrl } from "../../utils/api";
 import "./PCBuilder.css";
 
 // ─── API endpoints ────────────────────────────────────────────────────────────
 const API_COMPONENTS   = (type) => buildApiUrl(`/api/pc/components?type=${type}&active=true`);
 const API_COMPAT_CHECK = buildApiUrl("/api/pc/components/check");
-const API_COMPAT_FALLBACK_CHECK = `${API_FALLBACK_BASE}/api/pc/components/check`;
+const API_COMPAT_FALLBACK_CHECK = API_COMPAT_CHECK;
 const API_ORDERS       = buildApiUrl("/api/pc/orders");
 const API_PAY_CONFIG   = buildApiUrl("/api/pc/payment/config");
 const API_PAY_CREATE   = buildApiUrl("/api/pc/payment/create-order");
