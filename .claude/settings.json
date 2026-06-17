@@ -71,7 +71,18 @@
       "Bash(curl -s -w \"\\\\nHTTP_CODE:%{http_code}\" https://lte-node.onrender.com/api/courses)",
       "Bash(curl -s -X POST -H \"Content-Type: application/json\" -d '{\"studentName\":\"Test User\",\"studentEmail\":\"test-enrollment-check@example.com\",\"studentPhone\":\"\"}' \"https://lte-node.onrender.com/api/courses/69f0bb5afa3851f3b7d963bc/enroll\")",
       "Bash(curl -s \"https://lte-node.onrender.com/api/courses/admin/enrollments/all\")",
-      "Bash(python -c \"import sys,json; data=json.load\\(sys.stdin\\); print\\(len\\(data\\),'enrollments'\\); [print\\(e.get\\('studentName','?'\\), e.get\\('studentEmail','?'\\), e.get\\('courseId',{}\\).get\\('title','?'\\) if isinstance\\(e.get\\('courseId'\\),dict\\) else e.get\\('courseId','?'\\)\\) for e in data[:5]]\")"
+      "Bash(python -c \"import sys,json; data=json.load\\(sys.stdin\\); print\\(len\\(data\\),'enrollments'\\); [print\\(e.get\\('studentName','?'\\), e.get\\('studentEmail','?'\\), e.get\\('courseId',{}\\).get\\('title','?'\\) if isinstance\\(e.get\\('courseId'\\),dict\\) else e.get\\('courseId','?'\\)\\) for e in data[:5]]\")",
+      "Bash(curl -s -w \"\\\\nHTTP_CODE:%{http_code}\" https://lte-node.onrender.com/api/charities)",
+      "Bash(curl -s -w \"\\\\nHTTP_CODE:%{http_code}\" -X POST -F \"name=Test Charity\" -F \"description=Test desc\" -F \"whatsapp=\" \"https://lte-node.onrender.com/api/charities\")",
+      "Bash(curl -s -X DELETE \"https://lte-node.onrender.com/api/charities/6a0427434e6839a319c54fd3\")",
+      "Bash(curl -s -w \"\\\\nHTTP_CODE:%{http_code}\" -X POST -H \"Content-Type: application/json\" -d '{\"name\":\"JSON Test\",\"description\":\"test\"}' \"https://lte-node.onrender.com/api/charities\")",
+      "Bash(curl -v -X POST -H \"Content-Type: application/json\" -d \"{\\\\\"name\\\\\":\\\\\"JSON Test\\\\\",\\\\\"description\\\\\":\\\\\"test\\\\\"}\" \"https://lte-node.onrender.com/api/charities\")",
+      "Bash(curl -s -X DELETE \"https://lte-node.onrender.com/api/charities/6a0428244e6839a319c54fe4\")",
+      "Bash(curl -s \"https://lte-node.onrender.com/api/charities\")",
+      "Bash(python -c \"import sys,json; data=json.load\\(sys.stdin\\); [print\\(d['_id'], d['name']\\) for d in data]\")",
+      "Bash(curl -s -X DELETE \"https://lte-node.onrender.com/api/charities/6a0427dd4e6839a319c54fde\")",
+      "Bash(curl -s -X DELETE \"https://lte-node.onrender.com/api/charities/6a0427bc4e6839a319c54fda\")",
+      "Bash(wait)"
     ]
   }
 }

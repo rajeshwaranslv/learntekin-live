@@ -11,7 +11,6 @@ import {
 // Component Splitted
 import Navbar from "./Components/Home/Navbar";
 import Footer from "./Components/Footer/Footer";
-import End from "./Components/Footer/End";
 
 
 //autentication
@@ -129,13 +128,7 @@ function AppShell({ showWIPPopup, closeWIPPopup, routeFallback }) {
       </Suspense>
 
       {/* Footer Section */}
-
-      <footer id="footer">
-        <div className="footer-top">
-          <Footer />
-        </div>
-        <End />
-      </footer>
+      <Footer />
 
       <Chatbot />
 

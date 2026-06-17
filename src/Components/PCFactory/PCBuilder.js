@@ -13,15 +13,15 @@ const API_PAY_VERIFY   = buildApiUrl("/api/pc/payment/verify");
 
 // ─── Component type definitions ───────────────────────────────────────────────
 const COMPONENT_TYPES = [
-  { key: "cpu",         label: "CPU",          icon: "bi-cpu",              description: "Processor" },
-  { key: "gpu",         label: "GPU",          icon: "bi-gpu-card",         description: "Graphics Card" },
-  { key: "ram",         label: "RAM",          icon: "bi-memory",           description: "Memory" },
-  { key: "storage",     label: "Storage",      icon: "bi-device-hdd",       description: "SSD / HDD" },
-  { key: "motherboard", label: "Motherboard",  icon: "bi-motherboard",      description: "Mainboard" },
-  { key: "cabinet",     label: "Cabinet",      icon: "bi-pc-display",       description: "PC Case" },
-  { key: "psu",         label: "PSU",          icon: "bi-lightning-charge", description: "Power Supply" },
+  { key: "cpu",          label: "CPU",          icon: "bi-cpu",              description: "Processor" },
+  { key: "gpu",          label: "GPU",          icon: "bi-gpu-card",         description: "Graphics Card" },
+  { key: "ram",          label: "RAM",          icon: "bi-memory",           description: "Memory" },
+  { key: "storage",      label: "Storage",      icon: "bi-device-hdd",       description: "SSD / HDD" },
+  { key: "motherboard",  label: "Motherboard",  icon: "bi-motherboard",      description: "Mainboard" },
+  { key: "cabinet",      label: "Cabinet",      icon: "bi-pc-display",       description: "PC Case" },
+  { key: "psu",          label: "PSU",          icon: "bi-lightning-charge", description: "Power Supply" },
+  { key: "gameconsole",  label: "Game Console", icon: "bi-controller",       description: "Gaming Console" },
 ];
-
 // ─── Formatters ───────────────────────────────────────────────────────────────
 const formatINR = (amount) =>
   new Intl.NumberFormat("en-IN", {
@@ -353,7 +353,7 @@ function ComponentCard({ component, isSelected, onSelect, onRemove }) {
           <span className="pcb-comp-specs-chip">
             {typeof specs === "string"
               ? specs
-              : Object.entries(specs).map(([k, v]) => `${v}`).join(" | ")}
+              : Object.entries(specs).map(([_, v]) => `${v}`).join(" | ")}
           </span>
         )}
         <p className="pcb-comp-price">{formatINR(price)}</p>

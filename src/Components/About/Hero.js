@@ -83,7 +83,7 @@ export default function Hero() {
 
           {/* Headline */}
           <h1 className="hero-headline" data-aos="fade-up" data-aos-delay="80">
-            We <span className="hero-hl">Construct</span> Your
+            We <span className="hero-hl">Construct</span> Your{" "}
             <br className="hero-br" />
             Dream Path to the{" "}
             <span className="hero-hl hero-hl--glow">Digital World</span>

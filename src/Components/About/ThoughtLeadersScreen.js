@@ -36,6 +36,28 @@ function CompanyLogo({ src, name, style, className }) {
 
 const CHARITY_API_URL = buildApiUrl("/api/charities");
 
+/* ── Fetch with retry + extended timeout (Render free-tier cold starts) ── */
+const resilientFetch = async (url, options = {}, { retries = 2, timeoutMs = 120_000 } = {}) => {
+  let lastError;
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const res = await fetch(url, { ...options, signal: controller.signal });
+      clearTimeout(timer);
+      return res;
+    } catch (err) {
+      clearTimeout(timer);
+      lastError = err;
+      if (attempt < retries && (err.name === "AbortError" || err.name === "TypeError")) {
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw lastError;
+};
+
 const ThoughtLeadersScreen = () => {
   const renderRichText = (value) => {
     const cleanValue = typeof value === "string" ? value.trim() : "";
@@ -138,7 +160,7 @@ const ThoughtLeadersScreen = () => {
     setCharityLoading(true);
     const load = async () => {
       try {
-        const res = await fetch(CHARITY_API_URL);
+        const res = await resilientFetch(CHARITY_API_URL);
         if (!res.ok) throw new Error("Failed to load charities.");
         const data = await res.json();
         if (active) { setCharities(Array.isArray(data) ? data : []); setCharityError(""); }
@@ -163,7 +185,7 @@ const ThoughtLeadersScreen = () => {
     if (!charityForm.name.trim()) return;
     setCharitySaving(true);
     try {
-      const res = await fetch(`${CHARITY_API_URL}/${editingCharity}`, {
+      const res = await resilientFetch(`${CHARITY_API_URL}/${editingCharity}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(charityForm),
@@ -179,7 +201,7 @@ const ThoughtLeadersScreen = () => {
   const handleCharityDelete = async (id) => {
     if (!window.confirm("Delete this charity?")) return;
     try {
-      await fetch(`${CHARITY_API_URL}/${id}`, { method: "DELETE" });
+      await resilientFetch(`${CHARITY_API_URL}/${id}`, { method: "DELETE" });
       setCharities((prev) => prev.filter((c) => c._id !== id));
     } catch { alert("Failed to delete charity."); }
   };
