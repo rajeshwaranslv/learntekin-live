@@ -39,9 +39,9 @@ export const buildApiFallbackUrl = (path = "") =>
 export const buildWebSocketUrl = (path = "") => {
   const base = import.meta.env.DEV
     ? normalizeApiBase(
-        import.meta.env.VITE_API_PROXY_TARGET || import.meta.env.VITE_API_BASE_URL,
-        DEFAULT_API_BASE_URL
-      )
+      import.meta.env.VITE_API_PROXY_TARGET || import.meta.env.VITE_API_BASE_URL,
+      DEFAULT_API_BASE_URL
+    )
     : API_BASE;
   return `${base.replace(/^http/i, "ws")}${normalizePath(path)}`;
 };

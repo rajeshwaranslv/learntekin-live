@@ -647,7 +647,7 @@
 
 .about-placement-linkedin:hover {
   background: #0a66c2;
-  color: #fff;
+  color: #fff !important;
   border-color: #0a66c2;
 }
 

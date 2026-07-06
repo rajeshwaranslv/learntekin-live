@@ -1,9 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
-import store from "./store/store";
-import App from "./App";
+import store from "./store/store.js";
+import App from "./App.js";
 import "./index.css";
+import { startBackendWakeup } from "./utils/wakeupBackend.js";
+
+// Kick off a backend ping immediately so Render.com cold-starts
+// complete before the user's first real API request.
+startBackendWakeup();
 
 ReactDOM.render(
   <Provider store={store}>

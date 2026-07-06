@@ -166,7 +166,7 @@
   box-shadow: 0 3px 8px rgba(26, 91, 49, 0.22);
 }
 
-.lib-tab--active:hover { background: #155027; }
+.lib-tab--active:hover {background: #e8f3ec; color: #1a5b31; }
 
 /* ── Category filter pills ─────────────────────────────────────────────────────── */
 .lib-filters {

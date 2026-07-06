@@ -37,7 +37,7 @@ const PRODUCTS = [
     href: "https://play.google.com/store/apps/details?id=com.learntekin.healthpredicct&hl=en",
   },
   {
-    label: "mummyDaddyCars",
+    label: "mD Cars ",
     href: "https://mummydaddycars.learntekin.co.in/",
   },
   {

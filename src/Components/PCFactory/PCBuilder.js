@@ -30,6 +30,39 @@ const formatINR = (amount) =>
     maximumFractionDigits: 0,
   }).format(amount || 0);
 
+const CUSTOM_COMPONENT_PREFIX = "custom-component-request";
+
+const getSelectedComponents = (selections) =>
+  Object.values(selections).filter(Boolean);
+
+const getRealComponentIds = (selections) =>
+  getSelectedComponents(selections)
+    .filter((component) => !component.isCustomRequest && component._id)
+    .map((component) => component._id);
+
+const getCustomComponents = (selections) =>
+  getSelectedComponents(selections)
+    .filter((component) => component.isCustomRequest)
+    .map((component) => ({
+      type: component.type,
+      name: component.name,
+      requestedBudget: component.requestedBudget || component.price || 0,
+      notes: component.customNotes || "",
+    }));
+
+const buildCustomRequestNotes = (customComponents) =>
+  customComponents
+    .map((component) => {
+      const budget = component.requestedBudget
+        ? `Budget: ${formatINR(component.requestedBudget)}`
+        : "Budget: Not specified";
+      const notes = component.notes ? `Notes: ${component.notes}` : "";
+      return [`${component.type}: ${component.name}`, budget, notes]
+        .filter(Boolean)
+        .join(" | ");
+    })
+    .join("\n");
+
 const COMPAT_REQUEST_BUILDERS = [
   (selectedIds) => ({ components: selectedIds }),
   (selectedIds) => ({ componentIds: Object.values(selectedIds) }),
@@ -382,6 +415,105 @@ function ComponentCard({ component, isSelected, onSelect, onRemove }) {
 }
 
 // ─── Component section (one tab pane) ────────────────────────────────────────
+function CustomRequestCard({ typeInfo, isSelected, onSelect, onRemove }) {
+  const [name, setName] = useState("");
+  const [budget, setBudget] = useState("");
+  const [notes, setNotes] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    const requestName = name.trim();
+    if (!requestName) {
+      setError("Enter the component you need.");
+      return;
+    }
+
+    const requestedBudget = Number(budget) || 0;
+    const customNotes = notes.trim();
+
+    onSelect({
+      _id: `${CUSTOM_COMPONENT_PREFIX}-${typeInfo.key}-${Date.now()}`,
+      type: typeInfo.label,
+      name: requestName,
+      brand: "Custom Request",
+      model: "",
+      specs: customNotes || "Customer requested component",
+      price: requestedBudget,
+      requestedBudget,
+      customNotes,
+      isCustomRequest: true,
+    });
+
+    setError("");
+  };
+
+  return (
+    <article className={`pcb-custom-card${isSelected ? " pcb-custom-card--selected" : ""}`}>
+      <div className="pcb-custom-card-head">
+        <span className="pcb-custom-icon">
+          <i className="bi bi-plus-circle" aria-hidden="true" />
+        </span>
+        <div>
+          <h4>Need another {typeInfo.label}?</h4>
+          <p>Request a custom part for this build.</p>
+        </div>
+      </div>
+
+      {isSelected ? (
+        <div className="pcb-custom-selected">
+          <strong>{isSelected.name}</strong>
+          <span>{isSelected.customNotes || "Our team will confirm availability."}</span>
+          <button
+            type="button"
+            className="gfg-btn gfg-btn-outline pcb-comp-btn"
+            onClick={onRemove}
+          >
+            <i className="bi bi-x-circle" aria-hidden="true" />
+            Remove Request
+          </button>
+        </div>
+      ) : (
+        <form className="pcb-custom-form" onSubmit={handleSubmit}>
+          <label>
+            Component
+            <input
+              type="text"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              placeholder={`e.g. ${typeInfo.label} under 15000`}
+            />
+          </label>
+          <label>
+            Budget
+            <input
+              type="number"
+              min="0"
+              value={budget}
+              onChange={(event) => setBudget(event.target.value)}
+              placeholder="Optional"
+            />
+          </label>
+          <label>
+            Notes
+            <textarea
+              value={notes}
+              onChange={(event) => setNotes(event.target.value)}
+              placeholder="Brand, model, performance or colour preference"
+              rows={2}
+            />
+          </label>
+          {error && <span className="pcb-custom-error">{error}</span>}
+          <button type="submit" className="gfg-btn pcb-comp-btn">
+            Add Custom Request
+          </button>
+        </form>
+      )}
+    </article>
+  );
+}
+
 function ComponentSection({ typeInfo, selected, onSelect, onRemove }) {
   const [components, setComponents] = useState([]);
   const [loading, setLoading]       = useState(true);
@@ -463,10 +595,20 @@ function ComponentSection({ typeInfo, selected, onSelect, onRemove }) {
           </button>
         </div>
       ) : components.length === 0 ? (
-        <div className="pcb-empty-state">
-          <i className={`bi ${typeInfo.icon}`} aria-hidden="true" />
-          <p>No {typeInfo.label} components available right now.</p>
-        </div>
+        <>
+          <div className="pcb-empty-state">
+            <i className={`bi ${typeInfo.icon}`} aria-hidden="true" />
+            <p>No {typeInfo.label} components available right now.</p>
+          </div>
+          <div className="pcb-comp-grid pcb-comp-grid--custom-only">
+            <CustomRequestCard
+              typeInfo={typeInfo}
+              isSelected={selected?.isCustomRequest ? selected : null}
+              onSelect={onSelect}
+              onRemove={onRemove}
+            />
+          </div>
+        </>
       ) : (
         <div className="pcb-comp-grid">
           {components.map((comp) => (
@@ -478,6 +620,12 @@ function ComponentSection({ typeInfo, selected, onSelect, onRemove }) {
               onRemove={onRemove}
             />
           ))}
+          <CustomRequestCard
+            typeInfo={typeInfo}
+            isSelected={selected?.isCustomRequest ? selected : null}
+            onSelect={onSelect}
+            onRemove={onRemove}
+          />
         </div>
       )}
     </div>
@@ -600,16 +748,16 @@ function PriceSummary({
             type="button"
             className="gfg-btn pcb-summary-btn"
             onClick={onProceed}
-            disabled={!selections.cpu}
+            disabled={selectedCount === 0}
           >
             <i className="bi bi-bag-check" aria-hidden="true" />
             Proceed to Order
           </button>
         </div>
 
-        {!selections.cpu && selectedCount > 0 && (
+        {selectedCount === 0 && (
           <p className="pcb-summary-hint">
-            Select a CPU to proceed to checkout.
+            Select a component or add a custom request to proceed.
           </p>
         )}
       </aside>
@@ -679,14 +827,6 @@ function CheckoutForm({
     }
   };
 
-  const buildComponentsPayload = () => {
-    const result = {};
-    Object.entries(selections).forEach(([key, comp]) => {
-      if (comp) result[key] = comp._id;
-    });
-    return result;
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormError(null);
@@ -698,24 +838,52 @@ function CheckoutForm({
 
     setSubmitting(true);
     try {
-      const res = await fetch(API_ORDERS, {
+      const componentIds = getRealComponentIds(selections);
+      const customComponents = getCustomComponents(selections);
+      const customNotes = buildCustomRequestNotes(customComponents);
+      const notes = [
+        form.notes.trim(),
+        customNotes ? `Custom component requests:\n${customNotes}` : "",
+      ]
+        .filter(Boolean)
+        .join("\n\n");
+
+      const orderPayload = {
+        customerName: form.customerName.trim(),
+        customerEmail: form.email.trim(),
+        customerPhone: form.phone.trim(),
+        deliveryAddress: form.deliveryAddress.trim() || undefined,
+        configName: form.configName.trim() || undefined,
+        notes: notes || undefined,
+        componentIds,
+        customComponents: customComponents.length ? customComponents : undefined,
+        totalAmount: total,
+      };
+
+      let res = await fetch(API_ORDERS, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          customerName: form.customerName.trim(),
-          customerEmail: form.email.trim(),
-          customerPhone: form.phone.trim(),
-          deliveryAddress: form.deliveryAddress.trim() || undefined,
-          configName: form.configName.trim() || undefined,
-          notes: form.notes.trim() || undefined,
-          componentIds: Object.values(buildComponentsPayload()),
-          totalAmount: total,
-        }),
+        body: JSON.stringify(orderPayload),
       });
 
       if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.message || `Order failed (HTTP ${res.status})`);
+        const firstErr = await res.json().catch(() => ({}));
+
+        if (customComponents.length > 0) {
+          const fallbackPayload = { ...orderPayload };
+          delete fallbackPayload.customComponents;
+
+          res = await fetch(API_ORDERS, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(fallbackPayload),
+          });
+        }
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => firstErr || {});
+          throw new Error(err.message || `Order failed (HTTP ${res.status})`);
+        }
       }
 
       const data = await res.json();
@@ -1078,11 +1246,18 @@ export default function PCBuilder() {
   const handleCheckCompat = async () => {
     const selectedIds = Object.fromEntries(
       Object.entries(selections)
-        .filter(([, comp]) => comp)
+        .filter(([, comp]) => comp && !comp.isCustomRequest && comp._id)
         .map(([key, comp]) => [key, comp._id])
     );
 
-    if (Object.keys(selectedIds).length === 0) return;
+    if (getSelectedComponents(selections).length === 0) return;
+
+    if (Object.keys(selectedIds).length === 0) {
+      setCompatIssues([]);
+      setCompatStatus("success");
+      setCompatMessage("Custom requests will be reviewed manually by our team.");
+      return;
+    }
 
     setCompatChecking(true);
     setCompatIssues([]);
@@ -1128,7 +1303,7 @@ export default function PCBuilder() {
   };
 
   const handleProceed = () => {
-    if (!selections.cpu) return;
+    if (getSelectedComponents(selections).length === 0) return;
     setView("checkout");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -1258,7 +1433,7 @@ export default function PCBuilder() {
                   <button
                     type="button"
                     className="gfg-btn"
-                    disabled={!selections.cpu}
+                    disabled={getSelectedComponents(selections).length === 0}
                     onClick={handleProceed}
                   >
                     <i className="bi bi-bag-check" aria-hidden="true" />
