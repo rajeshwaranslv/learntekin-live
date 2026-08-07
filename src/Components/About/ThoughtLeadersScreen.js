@@ -95,7 +95,7 @@ const ThoughtLeadersScreen = () => {
       description:
         "Crafting Your Ultimate Gaming Experience - Unleash Your Power! people work with Smart Systems. Customise your Dream PC",
       image:
-        "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.jr8x_xSVJk20ll6e2JSVyQHaD4%26pid%3DApi&f=1&ipt=c4ab2c28ce679180053ab181b784442ad795b0d3328f8e37879e1b6cfca68b48&ipo=images", // Replace with an actual image URL
+        "https://nukepc.in/_next/static/media/nuke-pc-black.27d21f4e.svg", // Replace with an actual image URL
     },
 
     {
@@ -292,11 +292,7 @@ const ThoughtLeadersScreen = () => {
         {companies.map((company, index) => (
           <div className="leader-card" key={index}>
             <h2>{company.companyName}</h2>
-            <CompanyLogo
-              src={company.image}
-              name={company.companyName}
-              style={{ height: "6rem", width: "6rem", borderRadius: "2rem" }}
-            />
+ 
 
             <p align="justify" style={{ fontWeight: "bolder" }}>
               {company.description}
