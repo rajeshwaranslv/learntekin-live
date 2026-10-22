@@ -15,10 +15,13 @@ import Footer from "./Components/Footer/Footer";
 
 //autentication
 import { AuthProvider } from "./Components/auth/authContext";
+import { CommerceProvider } from "./Components/Marketplace/CommerceContext";
 // warning popup
 import WIPPopup from "./Components/Warnings/WIPPopup";
 import PublicSplash from "./Components/Warnings/PublicSplash";
 import Chatbot from "./Components/Chatbot/Chatbot";
+import ScrollToTopButton from "./Components/Shared/ScrollToTopButton";
+import { scrollToHash } from "./utils/smoothScroll";
 
 const Hero = lazy(() => import("./Components/About/Hero"));
 const ThoughtLeadersScreen = lazy(() =>
@@ -28,7 +31,8 @@ const About = lazy(() => import("./Components/About/About"));
 const Login = lazy(() => import("./Components/auth/Login"));
 const Register = lazy(() => import("./Components/auth/Register"));
 const Services = lazy(() => import("./Components/Services/Services"));
-const Careers = lazy(() => import("./Components/forms/Careers"));
+const Careers = lazy(() => import("./Components/Careers/CareersPage"));
+const CareerDetailsPage = lazy(() => import("./Components/Careers/CareerDetailsPage"));
 const Contact = lazy(() => import("./Components/forms/Contact"));
 const Eseva = lazy(() => import("./Components/Products/Eseva/Eseva"));
 const Products = lazy(() => import("./Components/Products/Products"));
@@ -42,6 +46,11 @@ const PCBuilder = lazy(() => import("./Components/PCFactory/PCBuilder"));
 const LMSPage = lazy(() => import("./Components/LMS/LMSPage"));
 const LibraryPage = lazy(() => import("./Components/Library/LibraryPage"));
 const YoutubePromoForm = lazy(() => import("./Components/Services/YoutubePromoForm"));
+const MarketplacePage = lazy(() => import("./Components/Marketplace/MarketplacePage"));
+const ProductDetailsPage = lazy(() => import("./Components/Marketplace/ProductDetailsPage"));
+const CartPage = lazy(() => import("./Components/Marketplace/CartPage"));
+const CheckoutPage = lazy(() => import("./Components/Marketplace/CheckoutPage"));
+const UserDashboardPage = lazy(() => import("./Components/Marketplace/UserDashboardPage"));
 
 const refreshAos = () => {
   if (!window.AOS) {
@@ -86,6 +95,18 @@ function AppShell({ showWIPPopup, closeWIPPopup, routeFallback }) {
     };
   }, [location.pathname]);
 
+  useEffect(() => {
+    if (!location.hash) {
+      return undefined;
+    }
+
+    const timer = window.setTimeout(() => {
+      scrollToHash(location.hash, "smooth");
+    }, 80);
+
+    return () => window.clearTimeout(timer);
+  }, [location.pathname, location.hash]);
+
   return (
     <div className="App">
       <WIPPopup visible={showWIPPopup} onClose={closeWIPPopup} />
@@ -110,9 +131,16 @@ function AppShell({ showWIPPopup, closeWIPPopup, routeFallback }) {
             <Route exact path="/register" component={Register} />
             <Route exact path="/Services" component={Services} />
             <Route exact path="/Careers" component={Careers} />
+            <Route exact path="/careers" component={Careers} />
+            <Route exact path={["/careers/:slug", "/Careers/:slug"]} component={CareerDetailsPage} />
             <Route exact path="/Contact" component={Contact} />
             <Route exact path={["/eseva", "/ESeva"]} component={Eseva} />
             <Route exact path="/Products" component={Products} />
+            <Route exact path="/Products/marketplace" component={MarketplacePage} />
+            <Route exact path="/Products/product/:slug" component={ProductDetailsPage} />
+            <Route exact path="/cart" component={CartPage} />
+            <Route exact path="/checkout" component={CheckoutPage} />
+            <Route exact path="/dashboard" component={UserDashboardPage} />
             <Route exact path="/courseDetails" component={CourseDetails} />
             <Route exact path="/Blogs" component={Blogs} />
             <Route exact path="/faq" component={FAQSection} />
@@ -132,12 +160,7 @@ function AppShell({ showWIPPopup, closeWIPPopup, routeFallback }) {
 
       <Chatbot />
 
-      <a
-        href="#"
-        className="back-to-top d-flex align-items-center justify-content-center"
-      >
-        <i className="bi bi-arrow-up-short"></i>
-      </a>
+      <ScrollToTopButton />
     </div>
   );
 }
@@ -200,13 +223,15 @@ function App() {
 
   return (
     <AuthProvider>
-      <Router>
-        <AppShell
-          showWIPPopup={showWIPPopup}
-          closeWIPPopup={closeWIPPopup}
-          routeFallback={routeFallback}
-        />
-      </Router>
+      <CommerceProvider>
+        <Router>
+          <AppShell
+            showWIPPopup={showWIPPopup}
+            closeWIPPopup={closeWIPPopup}
+            routeFallback={routeFallback}
+          />
+        </Router>
+      </CommerceProvider>
     </AuthProvider>
   );
 }

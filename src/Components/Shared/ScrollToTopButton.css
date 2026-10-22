@@ -1,0 +1,36 @@
+.ltin-scroll-top {
+  position: fixed;
+  right: clamp(14px, 2vw, 24px);
+  bottom: clamp(14px, 2vw, 24px);
+  z-index: 1100;
+  width: 46px;
+  height: 46px;
+  border: 1px solid rgba(15, 118, 110, 0.32);
+  border-radius: 999px;
+  background: #0f766e;
+  color: #fff;
+  box-shadow: 0 14px 30px rgba(15, 118, 110, 0.28);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
+  transition: opacity 0.22s ease, visibility 0.22s ease, transform 0.22s ease;
+  cursor: pointer;
+}
+
+.ltin-scroll-top.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.ltin-scroll-top:focus-visible {
+  outline: 3px solid rgba(15, 118, 110, 0.28);
+  outline-offset: 3px;
+}
+
+.ltin-scroll-top i {
+  font-size: 1.45rem;
+}

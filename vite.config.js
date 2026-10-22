@@ -36,7 +36,7 @@ export default defineConfig(({ mode }) => {
   );
 
   const proxyTarget = normalizeApiBase(
-    env.VITE_API_PROXY_TARGET || apiBase,
+    env.VITE_API_PROXY_TARGET || env.VITE_API_BASE_URL || "http://localhost:5000",
     DEFAULT_API_BASE_URL
   );
 

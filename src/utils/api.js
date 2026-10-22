@@ -1,4 +1,5 @@
 const DEFAULT_API_BASE_URL = "https://lte-node.onrender.com";
+const DEV_API_FALLBACK_BASE = "http://localhost:5000";
 
 export const normalizeApiBase = (value, fallback = "") => {
   const rawValue = String(value || "").trim() || fallback;
@@ -20,8 +21,8 @@ const resolveProductionApiBase = () =>
 const resolveApiBase = () => {
   if (import.meta.env.DEV) {
     return normalizeApiBase(
-      import.meta.env.VITE_API_PROXY_TARGET || import.meta.env.VITE_API_BASE_URL,
-      DEFAULT_API_BASE_URL
+      import.meta.env.VITE_API_PROXY_TARGET || import.meta.env.VITE_API_BASE_URL || DEV_API_FALLBACK_BASE,
+      DEV_API_FALLBACK_BASE
     );
   }
   return resolveProductionApiBase();
@@ -30,8 +31,11 @@ const resolveApiBase = () => {
 export const API_BASE = resolveApiBase();
 export const API_FALLBACK_BASE = normalizeApiBase(DEFAULT_API_BASE_URL);
 
-export const buildApiUrl = (path = "") =>
-  `${API_BASE}${normalizePath(path)}`;
+export const buildApiUrl = (path = "") => {
+  const normalizedPath = normalizePath(path);
+  if (import.meta.env.DEV) return normalizedPath;
+  return `${API_BASE}${normalizedPath}`;
+};
 
 export const buildApiFallbackUrl = (path = "") =>
   `${API_FALLBACK_BASE}${normalizePath(path)}`;

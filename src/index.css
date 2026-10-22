@@ -100,3 +100,12 @@ a:hover {
 #main th {
   line-height: 1.65;
 }
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--ltin-header-offset, 88px);
+}
+
+section,
+[id] {
+  scroll-margin-top: var(--ltin-header-offset, 88px);
+}

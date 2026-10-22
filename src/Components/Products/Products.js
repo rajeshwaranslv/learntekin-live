@@ -104,6 +104,22 @@ const learningTracks = [
 
 const platformServices = [
   {
+    key: "marketplace",
+    icon: "bi-bag-check-fill",
+    title: "Technology Marketplace",
+    description:
+      "Shop laptops, desktops, phones, networking devices, developer tools, AI kits, software licenses, accessories, and storage with filters, cart, checkout, and order dashboard.",
+    points: [
+      "Advanced catalog filters and sorting",
+      "Cart, wishlist, compare, and quick view",
+      "GST, coupons, EMI and COD-ready checkout",
+      "Admin-ready inventory and order APIs",
+    ],
+    link: "/Products/marketplace",
+    cta: "Open Marketplace",
+    internal: true,
+  },
+  {
     key: "pc-factory",
     icon: "bi-pc-display-horizontal",
     title: "PC Factory",

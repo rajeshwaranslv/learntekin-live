@@ -7,6 +7,7 @@ import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import { useAuth } from "../auth/authContext";
 import NotificationBell from "./NotificationBell";
+import { scrollToHash } from "../../utils/smoothScroll";
 import "./Navbar.css";
 
 function AppNavbar() {
@@ -24,6 +25,7 @@ function AppNavbar() {
     "/products/pc-factory",
     "/products/lms",
     "/products/library",
+    "/products/marketplace",
   ].includes(currentPath);
 
   const isServicesRoute = ["/services", "/services/youtube-promo"].includes(currentPath);
@@ -71,6 +73,23 @@ function AppNavbar() {
   const closeMenu = () => {
     setExpanded(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const closeMenuNoScroll = () => {
+    setExpanded(false);
+  };
+
+  const handleNavClick = (event, to) => {
+    setExpanded(false);
+    if (to.includes("#")) {
+      const [, hash] = to.split("#");
+      window.setTimeout(() => scrollToHash(`#${hash}`, "smooth"), 80);
+      return;
+    }
+    if (location.pathname.toLowerCase() === to.toLowerCase()) {
+      event.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   const handleLogout = async () => {
@@ -125,7 +144,7 @@ function AppNavbar() {
           collapseOnSelect
           expanded={expanded}
           onToggle={(nextExpanded) => setExpanded(Boolean(nextExpanded))}
-          onSelect={closeMenu}
+          onSelect={closeMenuNoScroll}
           expand="lg"
           bg="light"
           variant="light"
@@ -144,7 +163,7 @@ function AppNavbar() {
                   exact
                   to="/About"
                   activeClassName="nav-link-active"
-                  onClick={closeMenu}
+                  onClick={(event) => handleNavClick(event, "/About")}
                   className="nav-route-link"
                 >
                   <span className="nav-link-label">About</span>
@@ -162,7 +181,7 @@ function AppNavbar() {
                     exact
                     to="/Services"
                     activeClassName="dropdown-item-active"
-                    onClick={closeMenu}
+                    onClick={(event) => handleNavClick(event, "/Services")}
                   >
                     All Services
                   </NavDropdown.Item>
@@ -172,7 +191,7 @@ function AppNavbar() {
                     exact
                     to="/Services/youtube-promo"
                     activeClassName="dropdown-item-active"
-                    onClick={closeMenu}
+                    onClick={(event) => handleNavClick(event, "/Services/youtube-promo")}
                   >
                     Promotional Services
                   </NavDropdown.Item>
@@ -191,7 +210,7 @@ function AppNavbar() {
                     exact
                     to="/Products"
                     activeClassName="dropdown-item-active"
-                    onClick={closeMenu}
+                    onClick={(event) => handleNavClick(event, "/Products")}
                   >
                     Products
                   </NavDropdown.Item>
@@ -200,7 +219,7 @@ function AppNavbar() {
                     exact
                     to="/eseva"
                     activeClassName="dropdown-item-active"
-                    onClick={closeMenu}
+                    onClick={(event) => handleNavClick(event, "/eseva")}
                   >
                     ESeva
                   </NavDropdown.Item>
@@ -210,7 +229,7 @@ function AppNavbar() {
                     exact
                     to="/Products/pc-factory"
                     activeClassName="dropdown-item-active"
-                    onClick={closeMenu}
+                    onClick={(event) => handleNavClick(event, "/Products/pc-factory")}
                   >
                     PC Factory
                   </NavDropdown.Item>
@@ -219,7 +238,7 @@ function AppNavbar() {
                     exact
                     to="/Products/lms"
                     activeClassName="dropdown-item-active"
-                    onClick={closeMenu}
+                    onClick={(event) => handleNavClick(event, "/Products/lms")}
                   >
                     LMS
                   </NavDropdown.Item>
@@ -228,7 +247,7 @@ function AppNavbar() {
                     exact
                     to="/Products/library"
                     activeClassName="dropdown-item-active"
-                    onClick={closeMenu}
+                    onClick={(event) => handleNavClick(event, "/Products/library")}
                   >
                     Library
                   </NavDropdown.Item>
@@ -239,7 +258,7 @@ function AppNavbar() {
                   exact
                   to="/Blogs"
                   activeClassName="nav-link-active"
-                  onClick={closeMenu}
+                  onClick={(event) => handleNavClick(event, "/Blogs")}
                   className="nav-route-link"
                 >
                   <span className="nav-link-label">Blogs</span>
@@ -249,7 +268,7 @@ function AppNavbar() {
                   exact
                   to="/Careers"
                   activeClassName="nav-link-active"
-                  onClick={closeMenu}
+                  onClick={(event) => handleNavClick(event, "/Careers")}
                   className="nav-route-link"
                 >
                   <span className="nav-link-label">Careers</span>
@@ -259,7 +278,7 @@ function AppNavbar() {
                   exact
                   to="/Contact"
                   activeClassName="nav-link-active"
-                  onClick={closeMenu}
+                  onClick={(event) => handleNavClick(event, "/Contact")}
                   className="nav-route-link"
                 >
                   <span className="nav-link-label">Contact</span>
@@ -269,7 +288,7 @@ function AppNavbar() {
                   exact
                   to="/faq"
                   activeClassName="nav-link-active"
-                  onClick={closeMenu}
+                  onClick={(event) => handleNavClick(event, "/faq")}
                   className="nav-route-link"
                 >
                   <span className="nav-link-label">FAQ</span>
@@ -301,7 +320,7 @@ function AppNavbar() {
                     exact
                     to="/login"
                     activeClassName="nav-link-active"
-                    onClick={closeMenu}
+                    onClick={(event) => handleNavClick(event, "/login")}
                     className="nav-route-link nav-auth-link"
                   >
                     <span className="nav-link-label">Login</span>

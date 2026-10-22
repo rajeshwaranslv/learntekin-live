@@ -302,7 +302,7 @@ const leaders = [
   },
   {
     name: "Rajeshwaran Selvam",
-    role: "SDE at Outlier AI | Mentor",
+    role: "SDE at Innovatiq Consulting | Mentor",
     link: "https://www.linkedin.com/in/rajeshwaranslv07/",
   },
   {
